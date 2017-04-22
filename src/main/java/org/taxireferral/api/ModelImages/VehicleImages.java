@@ -1,4 +1,4 @@
-package org.taxireferral.api.Model;
+package org.taxireferral.api.ModelImages;
 
 /**
  * Created by sumeet on 22/3/17.

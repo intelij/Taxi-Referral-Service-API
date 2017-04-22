@@ -8,7 +8,6 @@ public class Vehicle {
     // Table Name
     public static final String TABLE_NAME = "VEHICLE";
 
-
     // Column names
     public static final String VEHICLE_ID = "VEHICLE_ID"; // primary key
     public static final String MIN_TRIP_CHARGES = "MIN_TRIP_CHARGES";
@@ -18,11 +17,15 @@ public class Vehicle {
     public static final String LAT_CURRENT = "LAT_CURRENT";
     public static final String LON_CURRENT = "LON_CURRENT";
 
+    public static final String ENABLED = "ENABLED";
+    public static final String DRIVER_ID = "DRIVER_ID";
+    public static final String REGISTRATION = "REGISTRATION";
+    public static final String DRIVING_LICENSE = "DRIVING_LICENSE";
+
+    public static final String TIMESTAMP_LOCATION_UPDATED = "TIMESTAMP_LOCATION_UPDATED";
     public static final String TIMESTAMP_REGISTERED = "TIMESTAMP_REGISTERED";
     public static final String IP_ADDRESS = "IP_ADDRESS";
     public static final String PORT = "PORT";
-
-
 
 
 }

@@ -4,6 +4,7 @@ package org.taxireferral.api;
 
 import org.eclipse.jetty.server.UserIdentity;
 import org.taxireferral.api.DAORoles.DAOUser;
+import org.taxireferral.api.DAORoles.DAOUserNew;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.ModelRoles.User;
@@ -35,7 +36,7 @@ import java.util.*;
 public class AuthenticationFilter implements ContainerRequestFilter {
 
 
-    private DAOUser daoUser = Globals.daoUser;
+    private DAOUserNew daoUser = Globals.daoUserNew;
 
 
     @Context
@@ -96,9 +97,10 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             System.out.println(password);
 
             Globals.accountApproved = isUserAllowed(username, password, rolesSet);
-
-
             }
+
+
+
         }
 
 
@@ -175,6 +177,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
                 if(user.getRole()==GlobalConstants.ROLE_ADMIN_CODE)
                 {
+
                     return user;
                 }
                 else if(user.isEnabled())
@@ -183,6 +186,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                 }
                 else
                 {
+                    System.out.println("Access Denied  :  account not enabled ");
                     throw new ForbiddenException("Not Permitted");
                 }
 
@@ -191,6 +195,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
 
 
+        System.out.println("Access Denied  :   = ");
 
         throw new NotAuthorizedException("Access is Denied ! We are not able to Identify you. ");
     }

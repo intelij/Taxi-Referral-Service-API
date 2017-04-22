@@ -5,7 +5,10 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.glassfish.jersey.jetty.JettyHttpContainer;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.taxireferral.api.Globals.Globals;
+import org.taxireferral.api.ModelRoles.EmailVerificationCode;
 import org.taxireferral.api.ModelRoles.User;
+import org.taxireferral.api.WebSocket.SimpleServer;
 
 import java.io.File;
 import java.io.IOException;
@@ -173,6 +176,9 @@ public class Main {
         createTables();
         startJettyServer();
 
+
+        SimpleServer.main(null);
+
 //        startJettyServerThree();
     }
 
@@ -252,7 +258,7 @@ public class Main {
 
             statement = connection.createStatement();
 
-            statement.executeUpdate(User.upgradeTableSchema);
+//            statement.executeUpdate(User.upgradeTableSchema);
 
 
         } catch (SQLException e) {
@@ -312,7 +318,12 @@ public class Main {
 
 
             statement.executeUpdate(User.createTableUsernamesPostgres);
+            statement.executeUpdate(EmailVerificationCode.createTablePostgres);
+
+
             System.out.println("Tables Created ... !");
+
+
 
 
 
@@ -320,6 +331,28 @@ public class Main {
             // developers Note: whenever adding a table please check that its dependencies are already created.
 
             // Insert the default administrator if it does not exit
+
+
+            User admin = new User();
+            admin.setUsername("admin");
+            admin.setRole(1);
+            admin.setPassword("password");
+
+            try
+            {
+                int rowCount = Globals.daoUserNew.registerUsingUsername(admin,true);
+
+                if(rowCount==1)
+                {
+                    System.out.println("Admin Account created !");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.out.println(ex.toString());
+            }
+
+
 
             // Insert Default Settings
 

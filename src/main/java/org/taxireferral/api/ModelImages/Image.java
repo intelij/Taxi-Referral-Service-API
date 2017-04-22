@@ -1,4 +1,4 @@
-package org.taxireferral.api.Model;
+package org.taxireferral.api.ModelImages;
 
 public class Image {
 	
@@ -11,7 +11,5 @@ public class Image {
 	public void setPath(String path) {
 		this.path = path;
 	}
-	
-	
 
 }

@@ -10,6 +10,12 @@ public class User {
     // Table Name for Distributor
     public static final String TABLE_NAME = "USER_TABLE";
 
+    // constants
+
+    public static final int REGISTRATION_MODE_EMAIL = 1;
+    public static final int REGISTRATION_MODE_PHONE = 2;
+
+
     // Column names
 
     public static final String USER_ID = "USER_ID";
@@ -17,13 +23,14 @@ public class User {
     public static final String PASSWORD = "PASSWORD";
 
     public static final String E_MAIL = "E_MAIL";
-    public static final String IS_EMAIL_VERIFIED = "IS_EMAIL_VERIFIED";
+//    public static final String IS_EMAIL_VERIFIED = "IS_EMAIL_VERIFIED";
     public static final String PHONE = "PHONE";
-    public static final String IS_PHONE_VERIFIED = "IS_PHONE_VERIFIED";
+//    public static final String IS_PHONE_VERIFIED = "IS_PHONE_VERIFIED";
     public static final String NAME = "NAME";
 
     public static final String GENDER = "GENDER";
     public static final String PROFILE_IMAGE_URL = "PROFILE_IMAGE_URL";
+//    public static final String PROFILE_IMAGE_ID = "PROFILE_IMAGE_ID";
     public static final String ROLE = "ROLE";
 
     public static final String IS_ACCOUNT_PRIVATE = "IS_ACCOUNT_PRIVATE";
@@ -36,13 +43,11 @@ public class User {
     public static final String TIMESTAMP_UPDATED = "TIMESTAMP_UPDATED";
 
     public static final String TOKEN = "TOKEN";
-//    public static final String TIMESTAMP_TOKEN_ISSUED = "TIMESTAMP_TOKEN_ISSUED";
     public static final String TIMESTAMP_TOKEN_EXPIRES = "TIMESTAMP_TOKEN_EXPIRES";
-//    public static final String REFRESH_TOKEN = "REFRESH_TOKEN";
-//    public static final String TIMESTAMP_REFRESH_TOKEN_EXPIRES = "TIMESTAMP_REFRESH_TOKEN_EXPIRES";
 
-    public static final String EMAIL_VERIFICATION_CODE = "EMAIL_VERIFICATION_CODE";
-    public static final String EMAIL_VERIFICATION_CODE_TIMESTAMP_EXPIRES = "EMAIL_VERIFICATION_CODE_TIMESTAMP_EXPIRES";
+//    public static final String EMAIL_VERIFICATION_CODE = "EMAIL_VERIFICATION_CODE";
+//    public static final String EMAIL_VERIFICATION_CODE_TIMESTAMP_EXPIRES = "EMAIL_VERIFICATION_CODE_TIMESTAMP_EXPIRES";
+
 
     public static final String PHONE_VERIFICATION_CODE = "PHONE_VERIFICATION_CODE";
     public static final String PHONE_VERIFICATION_CODE_TIMESTAMP_ISSUED = "PHONE_VERIFICATION_CODE_TIMESTAMP_ISSUED";
@@ -52,6 +57,12 @@ public class User {
 
 
 
+//    + " " + User.IS_EMAIL_VERIFIED + " boolean NOT NULL default 'f',"
+//                        + " " + User.IS_PHONE_VERIFIED + " boolean NOT NULL default 'f',"
+//    + " " + User.EMAIL_VERIFICATION_CODE + "  text,"
+//            + " " + User.EMAIL_VERIFICATION_CODE_TIMESTAMP_EXPIRES + "  timestamp with time zone,"
+
+//    + " " + User.PROFILE_IMAGE_URL + " text,"
 
     // Create Table CurrentServiceConfiguration Provider
     public static final String createTableUsernamesPostgres =
@@ -59,17 +70,15 @@ public class User {
             "CREATE TABLE IF NOT EXISTS "
                     + User.TABLE_NAME + "("
                     + " " + User.USER_ID + " SERIAL PRIMARY KEY,"
-                    + " " + User.USERNAME + " text UNIQUE NOT NULL,"
+                    + " " + User.USERNAME + " text UNIQUE ,"
                     + " " + User.PASSWORD + " text UNIQUE NOT NULL,"
 
                     + " " + User.E_MAIL + " text UNIQUE ,"
-                    + " " + User.IS_EMAIL_VERIFIED + " boolean NOT NULL default 'f',"
                     + " " + User.PHONE + " text UNIQUE,"
-                    + " " + User.IS_PHONE_VERIFIED + " boolean NOT NULL default 'f',"
                     + " " + User.NAME + " text ,"
 
                     + " " + User.GENDER + " boolean,"
-                    + " " + User.PROFILE_IMAGE_URL + " text,"
+                    + " " + User.PROFILE_IMAGE_URL + " text ,"
                     + " " + User.ROLE + " int ,"
 
                     + " " + User.IS_ACCOUNT_PRIVATE + " boolean,"
@@ -82,19 +91,20 @@ public class User {
 
                     + " " + User.TOKEN + "  text,"
                     + " " + User.TIMESTAMP_TOKEN_EXPIRES + "  timestamp with time zone,"
-                    + " " + User.EMAIL_VERIFICATION_CODE + "  text,"
-                    + " " + User.EMAIL_VERIFICATION_CODE_TIMESTAMP_EXPIRES + "  timestamp with time zone"
+                    + "CHECK (" + User.USERNAME + " IS NOT NULL OR " + User.E_MAIL + " IS NOT NULL OR " + User.PHONE + " IS NOT NULL " +  ")"
                     + ")";
 
 
 
 
-    public static final String upgradeTableSchema =
-            "ALTER TABLE IF EXISTS " + User.TABLE_NAME
-                    + " ADD COLUMN IF NOT EXISTS " + User.ENABLED + " boolean NOT NULL default 'f',"
-                    + " ADD COLUMN IF NOT EXISTS " + User.GOOGLE_ID + " text,"
-                    + " ADD COLUMN IF NOT EXISTS " + User.EMAIL_VERIFICATION_CODE + " text,"
-                    + " ADD COLUMN IF NOT EXISTS " + User.EMAIL_VERIFICATION_CODE_TIMESTAMP_EXPIRES + " timestamp with time zone";
+
+
+//    public static final String upgradeTableSchema =
+//            "ALTER TABLE IF EXISTS " + User.TABLE_NAME
+//                    + " ADD COLUMN IF NOT EXISTS " + User.ENABLED + " boolean NOT NULL default 'f',"
+//                    + " ADD COLUMN IF NOT EXISTS " + User.GOOGLE_ID + " text,"
+//                    + " ADD COLUMN IF NOT EXISTS " + User.EMAIL_VERIFICATION_CODE + " text,"
+//                    + " ADD COLUMN IF NOT EXISTS " + User.EMAIL_VERIFICATION_CODE_TIMESTAMP_EXPIRES + " timestamp with time zone";
 
 
 
@@ -105,13 +115,11 @@ public class User {
     private String password;
 
     private String email;
-    private boolean isEmailVerified;
     private String phone;
-    private boolean isPhoneVerified;
     private String name;
 
     private boolean gender;
-    private String profileImageURL;
+    private String profileImagePath;
     private int role;
 
     private boolean isAccountPrivate;
@@ -123,31 +131,44 @@ public class User {
     private Timestamp timestampUpdated;
 
     private String token;
-//    private Timestamp timestampTokenIssued;
     private Timestamp timestampTokenExpires;
-//    private String refreshToken;
-//    private Timestamp timestampRefreshTokenExpires;
-
-    private String emailVerificationCode;
-    private Timestamp emailVerificationCodeTimestampExpires;
 
 
+    private String rt_email_verification_code;
+    private String rt_phone_verification_code;
+    private int rt_registration_mode; // 1 for registration by email 2 for registration by phone
 
 
-    public String getEmailVerificationCode() {
-        return emailVerificationCode;
+    public int getRt_registration_mode() {
+        return rt_registration_mode;
     }
 
-    public void setEmailVerificationCode(String emailVerificationCode) {
-        this.emailVerificationCode = emailVerificationCode;
+    public void setRt_registration_mode(int rt_registration_mode) {
+        this.rt_registration_mode = rt_registration_mode;
     }
 
-    public Timestamp getEmailVerificationCodeTimestampExpires() {
-        return emailVerificationCodeTimestampExpires;
+    public String getProfileImagePath() {
+        return profileImagePath;
     }
 
-    public void setEmailVerificationCodeTimestampExpires(Timestamp emailVerificationCodeTimestampExpires) {
-        this.emailVerificationCodeTimestampExpires = emailVerificationCodeTimestampExpires;
+    public void setProfileImagePath(String profileImagePath) {
+        this.profileImagePath = profileImagePath;
+    }
+
+    public String getRt_email_verification_code() {
+        return rt_email_verification_code;
+    }
+
+    public void setRt_email_verification_code(String rt_email_verification_code) {
+        this.rt_email_verification_code = rt_email_verification_code;
+    }
+
+    public String getRt_phone_verification_code() {
+        return rt_phone_verification_code;
+    }
+
+    public void setRt_phone_verification_code(String rt_phone_verification_code) {
+        this.rt_phone_verification_code = rt_phone_verification_code;
     }
 
     public boolean isEnabled() {
@@ -165,22 +186,6 @@ public class User {
 
     public void setGoogleID(String googleID) {
         this.googleID = googleID;
-    }
-
-    public boolean isEmailVerified() {
-        return isEmailVerified;
-    }
-
-    public void setEmailVerified(boolean emailVerified) {
-        isEmailVerified = emailVerified;
-    }
-
-    public boolean isPhoneVerified() {
-        return isPhoneVerified;
-    }
-
-    public void setPhoneVerified(boolean phoneVerified) {
-        isPhoneVerified = phoneVerified;
     }
 
     public boolean isAccountPrivate() {
@@ -256,13 +261,6 @@ public class User {
         this.gender = gender;
     }
 
-    public String getProfileImageURL() {
-        return profileImageURL;
-    }
-
-    public void setProfileImageURL(String profileImageURL) {
-        this.profileImageURL = profileImageURL;
-    }
 
     public int getRole() {
         return role;
