@@ -2,10 +2,10 @@ package org.taxireferral.api;
 
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.glassfish.jersey.jetty.JettyHttpContainer;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.taxireferral.api.Globals.Globals;
+import org.taxireferral.api.Model.VehicleTypeOld;
 import org.taxireferral.api.ModelRoles.EmailVerificationCode;
 import org.taxireferral.api.ModelRoles.User;
 import org.taxireferral.api.WebSocket.SimpleServer;
@@ -319,6 +319,7 @@ public class Main {
 
             statement.executeUpdate(User.createTableUsernamesPostgres);
             statement.executeUpdate(EmailVerificationCode.createTablePostgres);
+            statement.executeUpdate(VehicleTypeOld.createTablePostgres);
 
 
             System.out.println("Tables Created ... !");

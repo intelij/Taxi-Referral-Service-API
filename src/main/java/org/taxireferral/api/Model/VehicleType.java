@@ -2,6 +2,8 @@ package org.taxireferral.api.Model;
 
 import org.taxireferral.api.ModelRoles.User;
 
+import java.sql.Timestamp;
+
 /**
  * Created by sumeet on 22/3/17.
  */
@@ -15,6 +17,8 @@ public class VehicleType {
     public static final String VEHICLE_TYPE_ID = "VEHICLE_TYPE_ID"; // primary key
     public static final String NAME = "NAME";
     public static final String IMAGE_PATH = "IMAGE_PATH";
+    public static final String DESCRIPTION = "DESCRIPTION";
+
 
 
 
@@ -26,9 +30,14 @@ public class VehicleType {
                     + VehicleType.TABLE_NAME + "("
                     + " " + VehicleType.VEHICLE_TYPE_ID + " SERIAL PRIMARY KEY,"
                     + " " + VehicleType.NAME + " text ,"
-                    + " " + VehicleType.IMAGE_PATH + " text "
+                    + " " + VehicleType.IMAGE_PATH + " text ,"
+                    + " " + VehicleType.DESCRIPTION + " text "
                     + ")";
 
+
+
+
+    // + " " + VehicleType.TIMESTAMP_UPDATED + " timestamp with time zone not null default now() ,"
 
 
     // instance variables
@@ -36,8 +45,49 @@ public class VehicleType {
     private int vehicleTypeID;
     private String name;
     private String imagePath;
+    private String description;
+
+//    private int parent;
+    private boolean backupExists;
+    private Timestamp timestampCreated;
+//    private Timestamp timestampUpdated;
+//    private Timestamp timestampApplied;
+//    private Timestamp timestampApproved;
+//    private boolean isApproved;
+    private Integer submittedBy;
+//    private String notesForReviewer;
+//    private String reviewerFeedback;
+//    private int reviewedBy;
 
 
+
+
+
+
+    public boolean isBackupExists() {
+        return backupExists;
+    }
+
+    public void setBackupExists(boolean backupExists) {
+        this.backupExists = backupExists;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+
+    public Timestamp getTimestampCreated() {
+        return timestampCreated;
+    }
+
+    public void setTimestampCreated(Timestamp timestampCreated) {
+        this.timestampCreated = timestampCreated;
+    }
 
 
     // getter and setter methods

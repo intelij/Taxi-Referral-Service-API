@@ -450,7 +450,7 @@ public class DAOUserNew {
                 + User.NAME + ","
                 + User.GENDER + ","
                 + User.PROFILE_IMAGE_URL + ","
-//                + User.ROLE + ","
+                + User.ROLE + ","
                 + User.IS_ACCOUNT_PRIVATE + ","
                 + User.ABOUT + ""
 //                + User.TOKEN + ","
@@ -515,8 +515,8 @@ public class DAOUserNew {
 //                user.setPhoneVerified(rs.getBoolean(User.IS_PHONE_VERIFIED));
                 user.setName(rs.getString(User.NAME));
                 user.setGender(rs.getBoolean(User.GENDER));
-//                user.setProfileImage(rs.getInt(User.PROFILE_IMAGE_ID));
-//                user.setRole(rs.getInt(User.ROLE));
+                user.setProfileImagePath(rs.getString(User.PROFILE_IMAGE_URL));
+                user.setRole(rs.getInt(User.ROLE));
                 user.setAccountPrivate(rs.getBoolean(User.IS_ACCOUNT_PRIVATE));
                 user.setAbout(rs.getString(User.ABOUT));
 

@@ -61,8 +61,8 @@ public class DAOVehicleModel {
     // timestamp created
     // timestamp updated
     // timestamp applied   // required for versioning and submissions
-    // isApproved
     // timestamp approved // required for submission
+    // isApproved
     // submitted by (user id of the person who made the submission) // required for both versioning and
     // notes for reviewer (Required for submissions)
     // reviewer feedback  (Required for submissions)
