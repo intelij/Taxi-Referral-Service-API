@@ -58,6 +58,10 @@ public class VehicleTypeDAONew {
         int idOfInsertedRow = -1;
         int rowCountItems = -1;
 
+
+        int idOfInsertedRowVersion = -1;
+        int rowCountVersion = -1;
+
         String insert = "";
         String insertVersion = "";
 
@@ -83,7 +87,7 @@ public class VehicleTypeDAONew {
 
                                     + VehicleTypeVersion.IS_APPROVED + ""
                                 + ") " +
-                            "VALUES(?,?,?, ?,?,?,?,?,? ,?,?,?)";
+                            "VALUES(?,?,?, ?,?,?,? ,?)";
 
 
         try {
@@ -122,6 +126,15 @@ public class VehicleTypeDAONew {
             statementVersion.setTimestamp(++i,new Timestamp(System.currentTimeMillis()));
             statementVersion.setTimestamp(++i,new Timestamp(System.currentTimeMillis()));
             statementVersion.setObject(++i,true);  // approval is true for all approved inserts
+
+            rowCountVersion = statementVersion.executeUpdate();
+            ResultSet rs_version = statementInsert.getGeneratedKeys();
+
+            if(rs.next())
+            {
+                idOfInsertedRowVersion = rs_version.getInt(1);
+            }
+
 
             connection.commit();
 
@@ -474,11 +487,29 @@ public class VehicleTypeDAONew {
                 statement.setString(++i,vehicleType.getImagePath());
                 statement.setString(++i,vehicleType.getDescription());
 
-                statement.setObject(++i,vehicleType.getVersionID());
+                if(vehicleType.getVersionID()==0)
+                {
+                    statement.setObject(++i,null);
+                }
+                else
+                {
+                    statement.setObject(++i,vehicleType.getVersionID());
+                }
+
                 statement.setObject(++i,vehicleType.getSubmittedBy());
                 statement.setString(++i,vehicleType.getNotesForReviewer());
 
                 rowCount = statement.executeUpdate();
+
+                ResultSet rs = statement.getGeneratedKeys();
+
+                if(rs.next())
+                {
+                    idOfInsertedRow = rs.getInt(1);
+                }
+
+
+
 
                 connection.commit();
 

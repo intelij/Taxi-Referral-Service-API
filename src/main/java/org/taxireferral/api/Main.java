@@ -5,7 +5,9 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.taxireferral.api.Globals.Globals;
+import org.taxireferral.api.Model.VehicleType;
 import org.taxireferral.api.Model.VehicleTypeOld;
+import org.taxireferral.api.Model.VehicleTypeVersion;
 import org.taxireferral.api.ModelRoles.EmailVerificationCode;
 import org.taxireferral.api.ModelRoles.User;
 import org.taxireferral.api.WebSocket.SimpleServer;
@@ -319,8 +321,8 @@ public class Main {
 
             statement.executeUpdate(User.createTableUsernamesPostgres);
             statement.executeUpdate(EmailVerificationCode.createTablePostgres);
-            statement.executeUpdate(VehicleTypeOld.createTablePostgres);
-
+            statement.executeUpdate(VehicleType.createTablePostgres);
+            statement.executeUpdate(VehicleTypeVersion.createTablePostgres);
 
             System.out.println("Tables Created ... !");
 

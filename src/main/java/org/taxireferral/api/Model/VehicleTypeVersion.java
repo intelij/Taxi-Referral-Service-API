@@ -14,7 +14,7 @@ public class VehicleTypeVersion {
 
 
     // Column names
-    public static final String VERSION_ID = "VEHICLE_TYPE_ID"; // primary key
+    public static final String VERSION_ID = "VERSION_ID"; // primary key
     public static final String NAME = "NAME";
     public static final String IMAGE_PATH = "IMAGE_PATH";
     public static final String DESCRIPTION = "DESCRIPTION";
