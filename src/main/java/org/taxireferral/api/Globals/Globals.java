@@ -8,6 +8,7 @@ import org.glassfish.jersey.media.sse.SseBroadcaster;
 import org.taxireferral.api.DAORoles.DAOEmailVerificationCodes;
 import org.taxireferral.api.DAORoles.DAOUser;
 import org.taxireferral.api.DAORoles.DAOUserNew;
+import org.taxireferral.api.DAOs.VehicleTypeDAOGet;
 import org.taxireferral.api.DAOs.VehicleTypeDAONew;
 import org.taxireferral.api.JDBCContract;
 import org.taxireferral.api.ModelRoles.EmailVerificationCode;
@@ -38,6 +39,7 @@ public class Globals {
     public static DAOUserNew daoUserNew = new DAOUserNew();
     public static DAOEmailVerificationCodes daoVerificationCodes = new DAOEmailVerificationCodes();
     public static VehicleTypeDAONew daoVehicleTypeNew = new VehicleTypeDAONew();
+    public static VehicleTypeDAOGet daoVehicleTypeGet = new VehicleTypeDAOGet();
 
     // static reference for holding security accountApproved
 

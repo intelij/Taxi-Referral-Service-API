@@ -6,6 +6,7 @@ import org.taxireferral.api.DAOs.VehicleTypeDAONew;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.VehicleTypeVersion;
+import org.taxireferral.api.ModelEndpoints.VehicleTypeEndPoint;
 import org.taxireferral.api.ModelImages.Image;
 import org.taxireferral.api.ModelRoles.User;
 
@@ -359,6 +360,68 @@ public class VehicleTypeResource {
 
         return null;
     }
+
+
+
+
+
+
+
+
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getVehicleType(
+            @QueryParam("SubmittedBy")Integer submittedBy,
+            @QueryParam("ParentIDNull")Boolean parentIDNULL,
+            @QueryParam("ParentID")Integer parentID,
+            @QueryParam("SortBy") String sortBy,
+            @QueryParam("Limit")Integer limit, @QueryParam("Offset")Integer offset,
+            @QueryParam("GetRowCount")boolean getRowCount)
+    {
+
+
+        final int max_limit = 100;
+
+        VehicleTypeEndPoint endPoint = new VehicleTypeEndPoint();
+
+        if(limit!= null)
+        {
+            if(limit>=max_limit)
+            {
+                limit = max_limit;
+            }
+
+            endPoint.setLimit(limit);
+            endPoint.setMax_limit(max_limit);
+            endPoint.setOffset(offset);
+        }
+
+
+
+
+        endPoint =  Globals.daoVehicleTypeGet.getVehicleType(
+            submittedBy,parentIDNULL,parentID,sortBy,limit,offset,getRowCount
+        );
+
+
+
+//		try {
+//			Thread.sleep(1000);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+
+
+        //Marker
+
+        return Response.status(Response.Status.OK)
+                .entity(endPoint)
+                .build();
+    }
+
+
+
 
 
 
