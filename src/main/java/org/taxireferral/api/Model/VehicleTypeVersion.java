@@ -12,7 +12,6 @@ public class VehicleTypeVersion {
     // Table Name
     public static final String TABLE_NAME = "VEHICLE_TYPE_VERSION";
 
-
     // Column names
     public static final String VERSION_ID = "VERSION_ID"; // primary key
     public static final String NAME = "NAME";
@@ -82,6 +81,7 @@ public class VehicleTypeVersion {
     private String notesForReviewer;
     private String reviewerFeedback;
     private Integer reviewedBy;
+
 
     // meta data for temporary server to client communication
     // note that fields starting with rt_ prefix are not stored in the database
@@ -213,7 +213,6 @@ public class VehicleTypeVersion {
     }
 
     // getter and setter methods
-
 
     public int getVersionID() {
         return versionID;

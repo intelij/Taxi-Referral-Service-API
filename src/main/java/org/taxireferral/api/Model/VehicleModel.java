@@ -19,5 +19,4 @@ public class VehicleModel {
     public static final String SEATING_CAPACITY = "SEATING_CAPACITY";
 
 
-
 }

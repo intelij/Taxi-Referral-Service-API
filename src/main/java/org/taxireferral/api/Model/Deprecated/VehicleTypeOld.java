@@ -1,4 +1,4 @@
-package org.taxireferral.api.Model;
+package org.taxireferral.api.Model.Deprecated;
 
 import org.taxireferral.api.ModelRoles.User;
 

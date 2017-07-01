@@ -366,6 +366,53 @@ public class UserResourceNew {
 
         boolean result = daoUser.checkUsernameExists(username);
 
+        System.out.println(username);
+
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        if(result)
+        {
+            return Response.status(Response.Status.OK)
+                    .build();
+
+        } else
+        {
+            return Response.status(Response.Status.NO_CONTENT)
+                    .build();
+        }
+
+    }
+
+
+    @GET
+    @Path("/CheckEmailVerificationCode/{email}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response checkEmailVerificationCode(
+            @PathParam("email")String email,
+            @QueryParam("VerificationCode")String verificationCode
+    )
+    {
+        // Roles allowed not used for this method due to performance and effeciency requirements. Also
+        // this endpoint doesnt required to be secured as it does not expose any confidential information
+
+        boolean result = daoUser.checkEmailVerificationCode(email,verificationCode);
+
+        System.out.println(email);
+
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
         if(result)
         {
             return Response.status(Response.Status.OK)
@@ -425,6 +472,15 @@ public class UserResourceNew {
             // we choose not to send password over the wire for security reasons
             user.setPassword(null);
 
+            if(user.getRole() == GlobalConstants.ROLE_DRIVER_CODE)
+            {
+
+                // if role is driver then add vehicle if it exists
+//                user.setRt_vehicle(Globals.);
+            }
+
+
+
             if(rowsUpdated==1)
             {
 
@@ -447,6 +503,7 @@ public class UserResourceNew {
         }
 
     }
+
 
 
 
@@ -503,6 +560,9 @@ public class UserResourceNew {
 
         User user = new User();
         user.setUsername(username);
+        user.setPhone(username); // username could be phone number
+        user.setEmail(username); // username could be email
+
         user.setPassword(password);
         user.setToken(token);
         user.setTimestampTokenExpires(timestampExpiry);
@@ -536,6 +596,9 @@ public class UserResourceNew {
 
 
 
+
+
+
     @PUT
     @Path("/SendEmailVerificationCode/{email}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -552,6 +615,7 @@ public class UserResourceNew {
             // verification code not generated for this email so generate one and send this to the user
 
             String emailVerificationCode = new BigInteger(30, Globals.random).toString(32);
+
             Timestamp timestampExpiry
                     = new Timestamp(
                     System.currentTimeMillis()
@@ -676,6 +740,9 @@ public class UserResourceNew {
 
         return null;
     }
+
+
+
 
 
 

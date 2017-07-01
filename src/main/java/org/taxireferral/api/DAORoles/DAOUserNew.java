@@ -73,7 +73,7 @@ public class DAOUserNew {
                 + User.ABOUT + ""
                 + ") "
                 + " Select "
-                + " ?,?,? ,?,?,? ,?,?,?,? "
+                + " ?,? ,?,? ,?,?,?,? "
                 + " from " + EmailVerificationCode.TABLE_NAME
                 + " WHERE "
                 + "("
@@ -100,7 +100,7 @@ public class DAOUserNew {
 
 //            statement.setString(++i,user.getPhone());
             statement.setString(++i,user.getName());
-            statement.setObject(++i,user.isGender());
+            statement.setObject(++i,user.getGender());
 
             statement.setString(++i,user.getProfileImagePath());
             statement.setObject(++i,user.getRole());
@@ -108,16 +108,17 @@ public class DAOUserNew {
             statement.setString(++i,user.getAbout());
 
 
-            // check username is not null
-            statement.setString(++i,user.getUsername());
+//             check username is not null
+//            statement.setString(++i,user.getUsername());
+
 
             // check email is verification code to ensure email belongs to user
             statement.setString(++i,user.getEmail());
             statement.setString(++i,user.getRt_email_verification_code());
 
             // check phone is verified or not to ensure phone belongs to user
-            statement.setString(++i,user.getPhone());
-            statement.setString(++i,user.getRt_phone_verification_code());
+//            statement.setString(++i,user.getPhone());
+//            statement.setString(++i,user.getRt_phone_verification_code());
 
             rowCountItems = statement.executeUpdate();
 
@@ -183,6 +184,8 @@ public class DAOUserNew {
 
 
 
+
+
     public int registerUsingPhone(User user, boolean getRowCount)
     {
 
@@ -198,7 +201,7 @@ public class DAOUserNew {
 
                 + User.USERNAME + ","
                 + User.PASSWORD + ","
-                + User.E_MAIL + ","
+//                + User.E_MAIL + ","
 
                 + User.PHONE + ","
                 + User.NAME + ","
@@ -233,11 +236,11 @@ public class DAOUserNew {
 
             statement.setString(++i,user.getUsername());
             statement.setString(++i,user.getPassword());
-            statement.setString(++i,user.getEmail());
+//            statement.setString(++i,user.getEmail());
 
             statement.setString(++i,user.getPhone());
             statement.setString(++i,user.getName());
-            statement.setObject(++i,user.isGender());
+            statement.setObject(++i,user.getGender());
 
             statement.setString(++i,user.getProfileImagePath());
             statement.setObject(++i,user.getRole());
@@ -354,7 +357,7 @@ public class DAOUserNew {
             statement.setString(++i,user.getPassword());
 
             statement.setString(++i,user.getName());
-            statement.setObject(++i,user.isGender());
+            statement.setObject(++i,user.getGender());
 
             statement.setString(++i,user.getProfileImagePath());
             statement.setObject(++i,user.getRole());
@@ -371,6 +374,7 @@ public class DAOUserNew {
             {
                 idOfInsertedRow = rs.getInt(1);
             }
+
 
 
 
@@ -426,12 +430,7 @@ public class DAOUserNew {
 
 
 
-
-
-
-
-
-
+    
 
 
     public User getProfile(String username, String password)
@@ -714,7 +713,7 @@ public class DAOUserNew {
 
             statement.setString(++i,user.getPhone());
             statement.setString(++i,user.getName());
-            statement.setObject(++i,user.isGender());
+            statement.setObject(++i,user.getGender());
 
 //            statement.setInt(++i,user.getProfileImageID());
             statement.setObject(++i,user.getRole());
@@ -834,7 +833,7 @@ public class DAOUserNew {
 
             statement.setString(++i,user.getPhone());
             statement.setString(++i,user.getName());
-            statement.setObject(++i,user.isGender());
+            statement.setObject(++i,user.getGender());
 
             statement.setString(++i,user.getProfileImagePath());
             statement.setObject(++i,user.isAccountPrivate());
@@ -957,7 +956,11 @@ public class DAOUserNew {
 
         String query = "SELECT " + User.USERNAME
                 + " FROM " + User.TABLE_NAME
-                + " WHERE " + User.USERNAME + " = ?";
+                + " WHERE "
+                + User.USERNAME + " = ?" + " OR "
+                + User.E_MAIL + " = ? " + " OR "
+                + User.PHONE + " = ?";
+
 
         Connection connection = null;
         PreparedStatement statement = null;
@@ -974,7 +977,11 @@ public class DAOUserNew {
             connection = dataSource.getConnection();
             statement = connection.prepareStatement(query);
 
-            statement.setObject(1,username);
+            int i = 0;
+            statement.setObject(++i,username);
+            statement.setObject(++i,username);
+            statement.setObject(++i,username);
+
 
             rs = statement.executeQuery();
 
@@ -984,6 +991,87 @@ public class DAOUserNew {
 
                 return true;
             }
+
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally
+
+        {
+
+            try {
+                if(rs!=null)
+                {rs.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(statement!=null)
+                {statement.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return false;
+    }
+
+
+
+    public boolean checkEmailVerificationCode(String email, String verificationCode)
+    {
+
+
+        String query = "SELECT " + EmailVerificationCode.EMAIL + ""
+                    + " FROM "   + EmailVerificationCode.TABLE_NAME
+                    + " WHERE "  + EmailVerificationCode.EMAIL + " = ? "
+                    + " AND "    + EmailVerificationCode.VERIFICATION_CODE + " = ? "
+                    + " AND "    + EmailVerificationCode.TIMESTAMP_EXPIRES + " > now()";
+
+
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+
+        //Distributor distributor = null;
+        User user = null;
+
+        try {
+
+//            System.out.println(query);
+
+            connection = dataSource.getConnection();
+            statement = connection.prepareStatement(query);
+
+            int i = 0;
+            statement.setString(++i,email);
+            statement.setString(++i,verificationCode);
+
+
+            rs = statement.executeQuery();
+
+            while(rs.next())
+            {
+                return true;
+            }
+
+
 
 
         } catch (SQLException e) {
@@ -1233,9 +1321,6 @@ public class DAOUserNew {
 
         return user;
     }
-
-
-
 
 
 

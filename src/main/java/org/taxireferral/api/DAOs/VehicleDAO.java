@@ -1,7 +1,18 @@
 package org.taxireferral.api.DAOs;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
+import org.taxireferral.api.Model.Vehicle;
+import org.taxireferral.api.Model.VehicleType;
+import org.taxireferral.api.Model.VehicleTypeVersion;
+import org.taxireferral.api.ModelEndpoints.VehicleEndPoint;
+import org.taxireferral.api.ModelEndpoints.VehicleTypeEndPoint;
+import org.taxireferral.api.ModelRoles.User;
+import org.taxireferral.api.ModelUtility.Location;
+
+import java.sql.*;
+import java.util.ArrayList;
 
 /**
  * Created by sumeet on 18/4/17.
@@ -10,13 +21,946 @@ public class VehicleDAO {
 
     private HikariDataSource dataSource = Globals.getDataSource();
 
-    // add vehicle
-    // update vehicle
-    // update location
-    // get location
-    // getVehicle(int driverID) : get vehicle details for driver
-    // getVehicles(double latPickUp, double latPickUp, String searchString)
+    // add / insert vehicle (Vehicle vehicle)
+    // update vehicle (Vehicle vehicle)
+    // update location (double lat, double lon)
     // updateStatus(int status) : update status for drivers
+    // delete vehicle
+
+    // getVehicle(int driverID) : get vehicle details for driver ID
+    // getVehicles(double latPickUp, double latPickUp, String searchString)
+
+
+
+
+    public int insert_vehicle(Vehicle vehicle, boolean getRowCount)
+    {
+        Connection connection = null;
+        PreparedStatement statementInsert = null;
+
+        int idOfInsertedRow = -1;
+        int rowCountItems = -1;
+
+
+        String insert = "";
+
+
+        insert = "INSERT INTO "
+                + Vehicle.TABLE_NAME
+                + "("
+
+                + Vehicle.DRIVER_ID + ","
+                + Vehicle.PROFILE_IMAGE_URL + ","
+
+                + Vehicle.MIN_TRIP_CHARGES + ","
+                + Vehicle.CHARGES_PER_KM + ""
+                + ") "
+                + "VALUES(?,?,?,?)";
+
+
+
+
+        try {
+
+            connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
+
+
+            statementInsert = connection.prepareStatement(insert,PreparedStatement.RETURN_GENERATED_KEYS);
+            int i = 0;
+
+
+            statementInsert.setObject(++i,vehicle.getDriverID());
+            statementInsert.setString(++i,vehicle.getProfileImageURL());
+            statementInsert.setObject(++i,vehicle.getMinTripCharges());
+            statementInsert.setObject(++i,vehicle.getChargesPerKM());
+
+
+            rowCountItems = statementInsert.executeUpdate();
+            ResultSet rs = statementInsert.getGeneratedKeys();
+
+            if(rs.next())
+            {
+                idOfInsertedRow = rs.getInt(1);
+            }
+
+
+
+
+            connection.commit();
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+            if (connection != null) {
+                try {
+
+                    idOfInsertedRow=-1;
+                    rowCountItems = 0;
+
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        finally
+        {
+
+
+            if (statementInsert != null) {
+                try {
+                    statementInsert.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        if(getRowCount)
+        {
+            return rowCountItems;
+        }
+        else
+        {
+            return idOfInsertedRow;
+        }
+    }
+
+
+
+
+
+    public int update_vehicle_by_admin(Vehicle vehicle)
+    {
+
+        Connection connection = null;
+        PreparedStatement statementUpdate = null;
+
+        int rowCountItems = -1;
+
+        String update = "";
+
+
+
+        update =  " UPDATE " + Vehicle.TABLE_NAME
+                + " SET " + Vehicle.ENABLED + "=?"
+                + " WHERE " + Vehicle.VEHICLE_ID + " = ?";
+
+
+
+
+        try {
+
+            connection = dataSource.getConnection();
+//            connection.setAutoCommit(false);
+
+
+            statementUpdate = connection.prepareStatement(update,PreparedStatement.RETURN_GENERATED_KEYS);
+            int i = 0;
+
+
+            statementUpdate.setObject(++i,vehicle.isEnabled());
+            statementUpdate.setObject(++i,vehicle.getVehicleID());
+
+            rowCountItems = statementUpdate.executeUpdate();
+
+
+//            connection.commit();
+
+        } catch (SQLException e) {
+
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+//            if (connection != null) {
+//                try {
+//
+//                    idOfInsertedRow=-1;
+//                    rowCountItems = 0;
+//
+//                    connection.rollback();
+//                } catch (SQLException e1) {
+//                    e1.printStackTrace();
+//                }
+//            }
+        }
+        finally
+        {
+
+            if (statementUpdate != null) {
+                try {
+                    statementUpdate.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+
+
+        return rowCountItems;
+    }
+
+
+
+
+    public int update_vehicle(Vehicle vehicle)
+    {
+
+        Connection connection = null;
+        PreparedStatement statementUpdate = null;
+
+        int rowCountItems = -1;
+
+        String update = "";
+
+
+
+        update = "UPDATE " + Vehicle.TABLE_NAME
+                + " SET "
+                + Vehicle.PROFILE_IMAGE_URL + "=?,"
+                + Vehicle.MIN_TRIP_CHARGES + "=?,"
+                + Vehicle.CHARGES_PER_KM + "=?"
+                + " WHERE " + Vehicle.VEHICLE_ID + " = ?";
+
+
+
+
+        try {
+
+            connection = dataSource.getConnection();
+//            connection.setAutoCommit(false);
+
+
+            statementUpdate = connection.prepareStatement(update,PreparedStatement.RETURN_GENERATED_KEYS);
+            int i = 0;
+
+
+            statementUpdate.setString(++i,vehicle.getProfileImageURL());
+            statementUpdate.setObject(++i,vehicle.getMinTripCharges());
+            statementUpdate.setObject(++i,vehicle.getChargesPerKM());
+
+            statementUpdate.setObject(++i,vehicle.getVehicleID());
+
+            rowCountItems = statementUpdate.executeUpdate();
+
+
+
+
+
+//            connection.commit();
+
+        } catch (SQLException e) {
+
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+//            if (connection != null) {
+//                try {
+//
+//                    idOfInsertedRow=-1;
+//                    rowCountItems = 0;
+//
+//                    connection.rollback();
+//                } catch (SQLException e1) {
+//                    e1.printStackTrace();
+//                }
+//            }
+        }
+        finally
+        {
+
+            if (statementUpdate != null) {
+                try {
+                    statementUpdate.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+
+
+        return rowCountItems;
+    }
+
+
+
+
+    public int update_location(Location location,int vehicleID)
+    {
+
+        Connection connection = null;
+        PreparedStatement statementUpdate = null;
+
+//        int idOfInsertedRow = -1;
+        int rowCountItems = -1;
+
+        String update = "";
+
+
+
+        update = "UPDATE " + Vehicle.TABLE_NAME
+
+                + " SET "
+
+                + Vehicle.LAT_CURRENT + "=?,"
+                + Vehicle.LON_CURRENT + "=?,"
+                + Vehicle.TIMESTAMP_LOCATION_UPDATED + "= now()"
+
+                + " WHERE " + Vehicle.VEHICLE_ID + " = ?";
+
+
+
+
+        try {
+
+            connection = dataSource.getConnection();
+//            connection.setAutoCommit(false);
+
+
+            statementUpdate = connection.prepareStatement(update,PreparedStatement.RETURN_GENERATED_KEYS);
+            int i = 0;
+
+
+            statementUpdate.setObject(++i,location.getLatitude());
+            statementUpdate.setObject(++i,location.getLongitude());
+
+            statementUpdate.setObject(++i,vehicleID);
+
+            rowCountItems = statementUpdate.executeUpdate();
+
+//            connection.commit();
+
+        } catch (SQLException e) {
+
+
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+//            if (connection != null) {
+//                try {
+//
+//                    idOfInsertedRow=-1;
+//                    rowCountItems = 0;
+//
+//                    connection.rollback();
+//                } catch (SQLException e1) {
+//                    e1.printStackTrace();
+//                }
+//            }
+        }
+        finally
+        {
+
+            if (statementUpdate != null) {
+                try {
+                    statementUpdate.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+
+        return rowCountItems;
+    }
+
+
+
+
+
+
+    public int update_status(int status, int vehicleID)
+    {
+
+        Connection connection = null;
+        PreparedStatement statementUpdate = null;
+
+//        int idOfInsertedRow = -1;
+        int rowCountItems = -1;
+
+        String update = "";
+
+
+
+        update = "UPDATE " + Vehicle.TABLE_NAME
+
+                + " SET "
+                + Vehicle.VEHICLE_STATUS + "=?"
+                + " WHERE " + Vehicle.VEHICLE_ID + " = ?";
+
+
+
+
+        try {
+
+            connection = dataSource.getConnection();
+//            connection.setAutoCommit(false);
+
+
+            statementUpdate = connection.prepareStatement(update,PreparedStatement.RETURN_GENERATED_KEYS);
+            int i = 0;
+
+
+            statementUpdate.setObject(++i,status);
+            statementUpdate.setObject(++i,vehicleID);
+
+            rowCountItems = statementUpdate.executeUpdate();
+
+//            connection.commit();
+
+        } catch (SQLException e) {
+
+
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+//            if (connection != null) {
+//                try {
+//
+//                    idOfInsertedRow=-1;
+//                    rowCountItems = 0;
+//
+//                    connection.rollback();
+//                } catch (SQLException e1) {
+//                    e1.printStackTrace();
+//                }
+//            }
+        }
+        finally
+        {
+
+            if (statementUpdate != null) {
+                try {
+                    statementUpdate.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+
+        return rowCountItems;
+    }
+
+
+
+
+    public int deleteVehicle(int vehicleID)
+    {
+
+        String deleteStatement = "DELETE FROM " + Vehicle.TABLE_NAME + " WHERE " + Vehicle.VEHICLE_ID + " = ?";
+
+        Connection connection= null;
+        PreparedStatement statement = null;
+        int rowCountDeleted = 0;
+
+
+        try {
+
+            connection = dataSource.getConnection();
+            statement = connection.prepareStatement(deleteStatement);
+            statement.setInt(1,vehicleID);
+
+            rowCountDeleted = statement.executeUpdate();
+
+            System.out.println("Rows Deleted: " + rowCountDeleted);
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        finally
+
+        {
+
+            try {
+
+                if(statement!=null)
+                {statement.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return rowCountDeleted;
+    }
+
+
+
+
+
+
+
+
+
+    public Vehicle getVehicle(int driverID,
+                              Double latCenter, Double lonCenter)
+    {
+
+        String query = " ";
+
+
+        query = "SELECT "
+                + " (6371.01 * acos(cos( radians(" + latCenter + ")) * cos( radians(" + Vehicle.LAT_CURRENT + " )) * cos(radians( "
+                + Vehicle.LON_CURRENT + ") - radians("
+                + lonCenter + "))" + " + sin( radians(" + latCenter + ")) * sin(radians(" + Vehicle.LAT_CURRENT + "))))" + " as distance ,"
+
+                + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.PROFILE_IMAGE_URL + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + ","
+
+                + Vehicle.TABLE_NAME + "." + Vehicle.MIN_TRIP_CHARGES + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.CHARGES_PER_KM + ","
+
+                + Vehicle.TABLE_NAME + "." + Vehicle.LAT_CURRENT + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.LON_CURRENT + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.TIMESTAMP_LOCATION_UPDATED + ""
+
+                + " FROM " + Vehicle.TABLE_NAME
+                + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = " + driverID;
+
+
+//        + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.ENABLED +  "= TRUE "
+
+
+        query = query + " group by " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID ;
+
+
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet rs = null;
+
+        Vehicle vehicle = null;
+
+        try {
+
+            connection = dataSource.getConnection();
+            statement = connection.createStatement();
+            rs = statement.executeQuery(query);
+
+
+            while(rs.next())
+            {
+
+
+                vehicle = new Vehicle();
+
+                vehicle.setRt_distance(rs.getFloat("distance"));
+
+                vehicle.setVehicleID(rs.getInt(Vehicle.VEHICLE_ID));
+                vehicle.setDriverID(rs.getInt(Vehicle.DRIVER_ID));
+                vehicle.setProfileImageURL(rs.getString(Vehicle.PROFILE_IMAGE_URL));
+
+                vehicle.setVehicleStatus(rs.getInt(Vehicle.VEHICLE_STATUS));
+
+                vehicle.setMinTripCharges(rs.getInt(Vehicle.MIN_TRIP_CHARGES));
+                vehicle.setChargesPerKM(rs.getInt(Vehicle.CHARGES_PER_KM));
+
+                vehicle.setLatCurrent(rs.getFloat(Vehicle.LAT_CURRENT));
+                vehicle.setLonCurrent(rs.getFloat(Vehicle.LON_CURRENT));
+
+                vehicle.setLocationUpdated(rs.getTimestamp(Vehicle.TIMESTAMP_LOCATION_UPDATED));
+
+
+
+            }
+
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally
+
+        {
+
+            try {
+                if(rs!=null)
+                {rs.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(statement!=null)
+                {statement.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return vehicle;
+    }
+
+
+
+
+
+    public VehicleEndPoint getTaxisAvailable(
+            Double latPickUp, Double lonPickUp,
+            Boolean gender,
+            String sortBy,
+            Integer limit, Integer offset,
+            boolean getRowCount,
+            boolean getOnlyMetadata
+    ) {
+
+
+        boolean isfirst = true;
+
+        String queryCount = "";
+
+//		String queryNormal = "SELECT * FROM " + Item.TABLE_NAME;
+
+
+        String queryJoin = "SELECT DISTINCT "
+
+                + "6371 * acos( cos( radians("
+                + latPickUp + ")) * cos( radians(" +  Vehicle.LAT_CURRENT +  ") ) * cos(radians(" + Vehicle.LON_CURRENT +  ") - radians("
+                + lonPickUp + "))"
+                + " + sin( radians(" + latPickUp + ")) * sin(radians(" + Vehicle.LAT_CURRENT + "))) as distance" + ","
+
+
+                + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.PROFILE_IMAGE_URL + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + ","
+
+                + Vehicle.TABLE_NAME + "." + Vehicle.MIN_TRIP_CHARGES + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.CHARGES_PER_KM + ","
+
+                + Vehicle.TABLE_NAME + "." + Vehicle.LAT_CURRENT + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.LON_CURRENT + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.TIMESTAMP_LOCATION_UPDATED + ","
+
+                + User.TABLE_NAME + "." + User.PHONE + ","
+                + User.TABLE_NAME + "." + User.NAME + ","
+                + User.TABLE_NAME + "." + User.GENDER + ","
+                + User.TABLE_NAME + "." + User.PROFILE_IMAGE_URL + ""
+
+                + " FROM " + Vehicle.TABLE_NAME
+                + " INNER JOIN " + User.TABLE_NAME + " ON (" + Vehicle.DRIVER_ID + " = " + User.USER_ID + ")"
+                + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.ENABLED + " = TRUE "
+                + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.AVIALABLE;
+
+
+//                + " LEFT OUTER JOIN " + VehicleTypeVersion.TABLE_NAME
+//                + " ON (" + VehicleType.TABLE_NAME + "." + VehicleType.VEHICLE_TYPE_ID + " = " + VehicleTypeVersion.TABLE_NAME + "." + VehicleTypeVersion.PARENT + ")";
+
+
+
+
+        if(gender != null)
+        {
+            queryJoin = queryJoin + " AND " + User.TABLE_NAME + "." + User.GENDER + " = ?";
+        }
+//
+
+
+
+        // all the non-aggregate columns which are present in select must be present in group by also.
+        queryJoin = queryJoin
+
+                + " group by "
+                + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ","
+                + User.TABLE_NAME + "." + User.USER_ID;
+
+
+        queryCount = queryJoin;
+
+
+
+        if(sortBy!=null)
+        {
+            if(!sortBy.equals(""))
+            {
+                String queryPartSortBy = " ORDER BY " + sortBy;
+
+//				queryNormal = queryNormal + queryPartSortBy;
+                queryJoin = queryJoin + queryPartSortBy;
+            }
+        }
+
+
+
+        if(limit != null)
+        {
+
+            String queryPartLimitOffset = "";
+
+            if(offset!=null)
+            {
+                queryPartLimitOffset = " LIMIT " + limit + " " + " OFFSET " + offset;
+
+            }else
+            {
+                queryPartLimitOffset = " LIMIT " + limit + " " + " OFFSET " + 0;
+            }
+
+
+//			queryNormal = queryNormal + queryPartLimitOffset;
+            queryJoin = queryJoin + queryPartLimitOffset;
+        }
+
+
+
+
+
+
+		/*
+
+		Applying filters Ends
+
+		 */
+
+        // Applying filters
+
+
+
+
+        queryCount = "SELECT COUNT(*) as item_count FROM (" + queryCount + ") AS temp";
+
+
+        VehicleEndPoint endPoint = new VehicleEndPoint();
+
+        ArrayList<Vehicle> itemList = new ArrayList<Vehicle>();
+        Connection connection = null;
+
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+        PreparedStatement statementCount = null;
+        ResultSet resultSetCount = null;
+
+        try {
+
+            connection = dataSource.getConnection();
+
+            int i = 0;
+
+
+            if(!getOnlyMetadata)
+            {
+                statement = connection.prepareStatement(queryJoin);
+
+                if(gender!=null)
+                {
+                    statement.setObject(++i,gender);
+                }
+
+
+                rs = statement.executeQuery();
+
+                while(rs.next())
+                {
+
+                    Vehicle vehicle = new Vehicle();
+
+                    vehicle.setRt_distance(rs.getFloat("distance"));
+
+                    vehicle.setVehicleID(rs.getInt(Vehicle.VEHICLE_ID));
+                    vehicle.setDriverID(rs.getInt(Vehicle.DRIVER_ID));
+                    vehicle.setProfileImageURL(rs.getString(Vehicle.PROFILE_IMAGE_URL));
+
+                    vehicle.setVehicleStatus(rs.getInt(Vehicle.VEHICLE_STATUS));
+
+                    vehicle.setMinTripCharges(rs.getInt(Vehicle.MIN_TRIP_CHARGES));
+                    vehicle.setChargesPerKM(rs.getInt(Vehicle.CHARGES_PER_KM));
+
+                    vehicle.setLatCurrent(rs.getFloat(Vehicle.LAT_CURRENT));
+                    vehicle.setLonCurrent(rs.getFloat(Vehicle.LON_CURRENT));
+
+                    vehicle.setLocationUpdated(rs.getTimestamp(Vehicle.TIMESTAMP_LOCATION_UPDATED));
+
+                    User driver = new User();
+
+                    driver.setUserID(vehicle.getDriverID());
+                    driver.setPhone(rs.getString(User.PHONE));
+                    driver.setName(rs.getString(User.NAME));
+                    driver.setGender(rs.getBoolean(User.GENDER));
+                    driver.setProfileImagePath(rs.getString(User.PROFILE_IMAGE_URL));
+
+                    vehicle.setRt_driver(driver);
+
+                    itemList.add(vehicle);
+                }
+
+                endPoint.setResults(itemList);
+
+            }
+
+
+            if(getRowCount)
+            {
+                statementCount = connection.prepareStatement(queryCount);
+
+                i = 0;
+
+                if(gender!=null)
+                {
+                    statementCount.setObject(++i,gender);
+                }
+
+
+                resultSetCount = statementCount.executeQuery();
+
+                while(resultSetCount.next())
+                {
+                    endPoint.setItemCount(resultSetCount.getInt("item_count"));
+                }
+            }
+
+
+
+
+
+
+        }
+        catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
+        finally
+
+        {
+
+            try {
+                if(rs!=null)
+                {rs.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(statement!=null)
+                {statement.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+
+
+            try {
+                if(resultSetCount!=null)
+                {resultSetCount.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(statementCount!=null)
+                {statementCount.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return endPoint;
+    }
+
+
+
+
+
+
+
+
+
+
 
     /*******************
      *
@@ -108,6 +1052,10 @@ public class VehicleDAO {
      *
      *
      */
+
+
+
+
 
 
 

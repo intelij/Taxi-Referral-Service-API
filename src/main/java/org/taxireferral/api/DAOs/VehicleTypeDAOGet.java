@@ -224,13 +224,13 @@ public class VehicleTypeDAOGet {
                 i = 0;
                 if(submittedBy!=null)
                 {
-                    statement.setInt(++i,submittedBy);
+                    statementCount.setInt(++i,submittedBy);
                 }
 
 
                 if(parentID!=null)
                 {
-                    statement.setInt(++i,parentID);
+                    statementCount.setInt(++i,parentID);
                 }
 
 

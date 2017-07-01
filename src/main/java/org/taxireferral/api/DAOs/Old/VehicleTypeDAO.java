@@ -1,8 +1,8 @@
-package org.taxireferral.api.DAOs;
+package org.taxireferral.api.DAOs.Old;
 
 import com.zaxxer.hikari.HikariDataSource;
 import org.taxireferral.api.Globals.Globals;
-import org.taxireferral.api.Model.VehicleTypeOld;
+import org.taxireferral.api.Model.Deprecated.VehicleTypeOld;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

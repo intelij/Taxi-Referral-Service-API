@@ -97,7 +97,7 @@ public class DAOUser {
 
             statement.setString(++i,user.getPhone());
             statement.setString(++i,user.getName());
-            statement.setObject(++i,user.isGender());
+            statement.setObject(++i,user.getGender());
 
 //            statement.setObject(++i,user.getProfileImageID());
             statement.setObject(++i,user.getRole());

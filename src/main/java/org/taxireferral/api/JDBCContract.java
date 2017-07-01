@@ -1,6 +1,6 @@
 package org.taxireferral.api;
 
-import org.taxireferral.api.ModelRoles.Admin;
+import org.taxireferral.api.ModelRoles.Deprecated.Admin;
 
 public class JDBCContract {
 	

@@ -1,5 +1,7 @@
 package org.taxireferral.api.ModelRoles;
 
+import org.taxireferral.api.Model.Vehicle;
+
 import java.sql.Timestamp;
 
 /**
@@ -7,17 +9,16 @@ import java.sql.Timestamp;
  */
 public class User {
 
-    // Table Name for Distributor
+
+    // Table Name for User
     public static final String TABLE_NAME = "USER_TABLE";
 
     // constants
-
     public static final int REGISTRATION_MODE_EMAIL = 1;
     public static final int REGISTRATION_MODE_PHONE = 2;
 
 
     // Column names
-
     public static final String USER_ID = "USER_ID";
     public static final String USERNAME = "USERNAME";
     public static final String PASSWORD = "PASSWORD";
@@ -30,12 +31,10 @@ public class User {
 
     public static final String GENDER = "GENDER";
     public static final String PROFILE_IMAGE_URL = "PROFILE_IMAGE_URL";
-//    public static final String PROFILE_IMAGE_ID = "PROFILE_IMAGE_ID";
     public static final String ROLE = "ROLE";
 
     public static final String IS_ACCOUNT_PRIVATE = "IS_ACCOUNT_PRIVATE";
     public static final String ABOUT = "ABOUT";
-
     public static final String ENABLED = "ENABLED";
     public static final String GOOGLE_ID = "GOOGLE_ID";
 
@@ -71,7 +70,7 @@ public class User {
                     + User.TABLE_NAME + "("
                     + " " + User.USER_ID + " SERIAL PRIMARY KEY,"
                     + " " + User.USERNAME + " text UNIQUE ,"
-                    + " " + User.PASSWORD + " text UNIQUE NOT NULL,"
+                    + " " + User.PASSWORD + " text NOT NULL,"
 
                     + " " + User.E_MAIL + " text UNIQUE ,"
                     + " " + User.PHONE + " text UNIQUE,"
@@ -118,7 +117,7 @@ public class User {
     private String phone;
     private String name;
 
-    private boolean gender;
+    private Boolean gender;
     private String profileImagePath;
     private int role;
 
@@ -137,7 +136,38 @@ public class User {
     private String rt_email_verification_code;
     private String rt_phone_verification_code;
     private int rt_registration_mode; // 1 for registration by email 2 for registration by phone
+    private Vehicle rt_vehicle;
 
+
+
+
+
+    // Getters and Setters
+
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Boolean getGender() {
+        return gender;
+    }
+
+    public void setGender(Boolean gender) {
+        this.gender = gender;
+    }
+
+    public Vehicle getRt_vehicle() {
+        return rt_vehicle;
+    }
+
+    public void setRt_vehicle(Vehicle rt_vehicle) {
+        this.rt_vehicle = rt_vehicle;
+    }
 
     public int getRt_registration_mode() {
         return rt_registration_mode;
@@ -169,14 +199,6 @@ public class User {
 
     public void setRt_phone_verification_code(String rt_phone_verification_code) {
         this.rt_phone_verification_code = rt_phone_verification_code;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
 
@@ -252,16 +274,6 @@ public class User {
         this.name = name;
     }
 
-
-    public boolean isGender() {
-        return gender;
-    }
-
-    public void setGender(boolean gender) {
-        this.gender = gender;
-    }
-
-
     public int getRole() {
         return role;
     }
@@ -302,7 +314,6 @@ public class User {
     public void setTimestampTokenExpires(Timestamp timestampTokenExpires) {
         this.timestampTokenExpires = timestampTokenExpires;
     }
-
 
 
 }

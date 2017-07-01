@@ -3,7 +3,6 @@ package org.taxireferral.api.DAOs;
 import com.zaxxer.hikari.HikariDataSource;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.VehicleType;
-import org.taxireferral.api.Model.VehicleTypeOld;
 import org.taxireferral.api.Model.VehicleTypeVersion;
 
 import java.sql.*;
