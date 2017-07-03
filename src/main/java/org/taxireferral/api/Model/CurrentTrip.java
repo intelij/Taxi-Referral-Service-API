@@ -39,12 +39,10 @@ public class CurrentTrip {
 
 
     public static final String FREE_PICKUP_DISTANCE = "FREE_PICKUP_DISTANCE";
-    public static final String CHARGES_PER_KM = "CHARGES_PER_KM";
     public static final String MIN_TRIP_CHARGES = "MIN_TRIP_CHARGES";
+    public static final String CHARGES_PER_KM = "CHARGES_PER_KM";
     public static final String REFERRAL_CHARGES = "REFERRAL_CHARGES";
 
-    // people above 18 are considered as adults in the context of taxi referral service
-    public static final String ADULTS_TOTAL = "ADULTS_TOTAL";
 
 
 //    public static final String LAT_CURRENT = "LAT_CURRENT"; // not required - because it equals vehicle coordinates
@@ -53,4 +51,8 @@ public class CurrentTrip {
     // fraud detection mechanisms
     // 1. If distance travelled is not in sync with
     // shortest distance calculated with lat and lon then its a case of fraud or tampering
+
+
+
+
 }

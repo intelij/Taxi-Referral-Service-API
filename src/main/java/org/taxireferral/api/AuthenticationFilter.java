@@ -74,7 +74,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             if (authorization == null || authorization.isEmpty()) {
 //                requestContext.abortWith(ACCESS_DENIED);
 
-                System.out.println("Access Denied ! ");
+                System.out.println("Access Denied : Auth header empty ! ");
                 throw new NotAuthorizedException("Access is Denied ! Credentials not present");
             }
 
@@ -85,7 +85,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             String usernameAndPassword = new String(Base64.getDecoder().decode(encodedUserPassword.getBytes()));
 
 
-            System.out.println("Username:Password" + usernameAndPassword);
+            System.out.println("Username:Password | " + usernameAndPassword);
 
             //Split username and password tokens
             final StringTokenizer tokenizer = new StringTokenizer(usernameAndPassword, ":");
@@ -132,7 +132,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
         for(String role : rolesSet)
         {
-                System.out.println("Shop Admin null ...");
+//                System.out.println("Shop Admin null ...");
 
             if(role.equals(GlobalConstants.ROLE_ADMIN))
             {
@@ -158,20 +158,23 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             if(user.getRole()==roleID)
             {
 
-                if(user.getRole()==GlobalConstants.ROLE_ADMIN_CODE)
-                {
+                return user;
 
-                    return user;
-                }
-                else if(user.isEnabled())
-                {
-                    return user;
-                }
-                else
-                {
-                    System.out.println("Access Denied  :  account not enabled ");
-                    throw new ForbiddenException("Not Permitted");
-                }
+                // dont check for whether account is enabled
+//                if(user.getRole()==GlobalConstants.ROLE_ADMIN_CODE)
+//                {
+//
+//                    return user;
+//                }
+//                else if(user.isEnabled())
+//                {
+//                    return user;
+//                }
+//                else
+//                {
+//                    System.out.println("Access Denied  :  account not enabled ");
+//                    throw new ForbiddenException("Not Permitted");
+//                }
 
             }
         }

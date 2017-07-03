@@ -94,10 +94,31 @@ public class UserResourceNew {
         if(user.getRt_registration_mode()==User.REGISTRATION_MODE_EMAIL)
         {
             idOfInsertedRow = daoUser.registerUsingEmail(user,false);
+
+            if(idOfInsertedRow>=1)
+            {
+                // registration successful therefore send email to notify the user
+                Mail.using(Globals.configurationMailgun)
+                        .body()
+                        .h1("Registration successful for your account")
+                        .p("Your account has been Created.")
+                        .h3("Your E-mail : " + user.getEmail())
+                        .p("You can login with your email and password that you have provided. Thanks for registering with Taxi Referral Service (TRS).")
+                        .mail()
+                        .to(user.getEmail())
+                        .subject("Taxi Referral Service : Account Registered")
+                        .from("Taxi Referral Service","noreply@taxireferral.org")
+                        .build()
+                        .send();
+
+
+            }
         }
         else if(user.getRt_registration_mode()==User.REGISTRATION_MODE_PHONE)
         {
             idOfInsertedRow = daoUser.registerUsingPhone(user,false);
+
+            // send notification to the mobile number via SMS
         }
 
 

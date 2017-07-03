@@ -141,6 +141,7 @@ public class VehicleResource {
     @PUT
     @Path("/UpdateBySelf/{VehicleID}")
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_DRIVER})
     public Response updateBySelf(Vehicle vehicle, @PathParam("VehicleID")int vehicleID)
     {
 
@@ -284,6 +285,7 @@ public class VehicleResource {
 
 
 //    @QueryParam("Status")Integer status,
+
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
