@@ -77,12 +77,11 @@ public class Vehicle {
                     + " " + Vehicle.LAT_CURRENT + " float NOT NULL default 0,"
                     + " " + Vehicle.LON_CURRENT + " float NOT NULL default 0,"
                     + " " + Vehicle.TIMESTAMP_LOCATION_UPDATED + "  timestamp with time zone NOT NULL DEFAULT now(),"
-
                     + " " + Vehicle.TIMESTAMP_PROFILE_CREATED + "  timestamp with time zone NOT NULL DEFAULT now(),"
-
                     + " FOREIGN KEY(" + Vehicle.DRIVER_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE"
-
                     + ")";
+
+
 
 
 

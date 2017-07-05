@@ -590,7 +590,7 @@ public class UserResourceNew {
 
         int rowsUpdated = daoUser.updateToken(user);
 
-
+        user.setPassword(null);
 
 
         if(rowsUpdated==1)

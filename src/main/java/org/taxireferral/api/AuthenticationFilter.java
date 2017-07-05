@@ -1,9 +1,6 @@
 package org.taxireferral.api;
 
 
-
-import org.eclipse.jetty.server.UserIdentity;
-import org.taxireferral.api.DAORoles.DAOUser;
 import org.taxireferral.api.DAORoles.DAOUserNew;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
@@ -18,7 +15,6 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -26,6 +22,8 @@ import java.util.*;
 /**
  * Created by sumeet on 9/9/16.
  */
+
+
 
 
 
@@ -97,6 +95,8 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             System.out.println(password);
 
             Globals.accountApproved = isUserAllowed(username, password, rolesSet);
+
+
             }
 
 
@@ -183,6 +183,9 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         System.out.println("Access Denied  :   = ");
         throw new NotAuthorizedException("Access is Denied ! We are not able to Identify you. ");
     }
+
+
+
 
 
 

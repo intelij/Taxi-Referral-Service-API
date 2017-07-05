@@ -1139,13 +1139,8 @@ public class DAOUserNew {
                 + " AND " + User.PASSWORD + " = ? ";
 
 //        + " OR " + " CAST ( " +  User.USER_ID + " AS text ) " + " = ? "
-
-
 //                + User.USERNAME + " = ?"
 //                + " AND " + User.PASSWORD + " = ?";
-
-
-
 
 
         Connection connection = null;

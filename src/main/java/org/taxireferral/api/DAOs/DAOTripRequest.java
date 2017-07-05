@@ -3,6 +3,7 @@ package org.taxireferral.api.DAOs;
 import com.zaxxer.hikari.HikariDataSource;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
+import org.taxireferral.api.Model.CurrentTrip;
 import org.taxireferral.api.Model.TripRequest;
 import org.taxireferral.api.Model.Vehicle;
 import org.taxireferral.api.ModelEndpoints.TripRequestEndPoint;
@@ -33,8 +34,11 @@ public class DAOTripRequest {
 
 
 
+
     public int create_trip_request(TripRequest tripRequest, boolean getRowCount)
     {
+        // note of precaution : please check the end user id is the id of the user who is requesting to create the trip
+
         Connection connection = null;
         PreparedStatement statementInsert = null;
 
@@ -170,7 +174,7 @@ public class DAOTripRequest {
 
 
 
-    public int set_request_approved(int tripRequestID)
+    public int set_request_approved(int tripRequestID, int driverID)
     {
 
         Connection connection = null;
@@ -183,10 +187,21 @@ public class DAOTripRequest {
 
 
         update =  " UPDATE " + TripRequest.TABLE_NAME
-                + " SET " + TripRequest.TRIP_REQUEST_STATUS + " = " + GlobalConstants.REQUEST_APPROVED
-                + " WHERE " + TripRequest.TRIP_REQUEST_ID + " = ?"
-                + " AND " + TripRequest.TRIP_REQUEST_STATUS + " = " + GlobalConstants.TAXI_REQUESTED;
+                + " SET "    + TripRequest.TRIP_REQUEST_STATUS + " = " + GlobalConstants.REQUEST_APPROVED
+                + " FROM "   + Vehicle.TABLE_NAME
+                + " WHERE "  + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID
+                + " AND "    + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ? "
+                + " AND "    + TripRequest.TABLE_NAME + "." + TripRequest.TRIP_REQUEST_ID + " = ?"
+                + " AND "    + TripRequest.TABLE_NAME + "." + TripRequest.TRIP_REQUEST_STATUS + " = " + GlobalConstants.TAXI_REQUESTED;
 
+
+
+//        + " FROM "   + Vehicle.TABLE_NAME
+
+//        + " AND "    + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID
+//                + " AND "    + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ? "
+
+//        + " AND " + TripRequest.VEHICLE_ID + " = (SELECT " + Vehicle.VEHICLE_ID + " FROM " + Vehicle.TABLE_NAME + " WHERE " + Vehicle.DRIVER_ID + " =?)"
 
 
 
@@ -200,7 +215,7 @@ public class DAOTripRequest {
             int i = 0;
 
 
-//            statementUpdate.setObject(++i,status);
+            statementUpdate.setObject(++i,driverID);
             statementUpdate.setObject(++i,tripRequestID);
 
             rowCountItems = statementUpdate.executeUpdate();
@@ -246,7 +261,7 @@ public class DAOTripRequest {
 
 
 
-    public int request_pick_up(int tripRequestID)
+    public int request_pick_up(int tripRequestID, int endUserID)
     {
 
         Connection connection = null;
@@ -261,6 +276,7 @@ public class DAOTripRequest {
         update =  " UPDATE " + TripRequest.TABLE_NAME
                 + " SET " + TripRequest.TRIP_REQUEST_STATUS + " = " + GlobalConstants.PICKUP_REQUESTED
                 + " WHERE " + TripRequest.TRIP_REQUEST_ID + " = ?"
+                + " AND " + TripRequest.END_USER_ID + " = ?"
                 + " AND " + TripRequest.TRIP_REQUEST_STATUS + " = " + GlobalConstants.REQUEST_APPROVED;
 
 
@@ -276,8 +292,8 @@ public class DAOTripRequest {
             int i = 0;
 
 
-//            statementUpdate.setObject(++i,status);
             statementUpdate.setObject(++i,tripRequestID);
+            statementUpdate.setObject(++i,endUserID);
 
             rowCountItems = statementUpdate.executeUpdate();
 
@@ -323,14 +339,15 @@ public class DAOTripRequest {
 
 
 
+
     public TripRequestEndPoint getTripRequests(
             Integer endUserID,
             Integer vehicleID,
             String sortBy,
             Integer limit, Integer offset,
             boolean getRowCount,
-            boolean getOnlyMetadata
-    ) {
+            boolean getOnlyMetadata)
+    {
 
 
         boolean isfirst = true;
@@ -391,7 +408,10 @@ public class DAOTripRequest {
                 + " INNER JOIN " + Vehicle.TABLE_NAME + " ON (" + TripRequest.VEHICLE_ID + " = " + Vehicle.VEHICLE_ID + ")"
                 + " INNER JOIN " + User.TABLE_NAME + " ON (" + Vehicle.DRIVER_ID + " = " + User.USER_ID + ")"
                 + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.ENABLED + " = TRUE "
-                + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.AVIALABLE;
+                + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.AVIALABLE
+                + " AND " + TripRequest.TABLE_NAME + "." + TripRequest.TIMESTAMP_EXPIRES + " > now()";
+
+
 
 
         if(endUserID != null)

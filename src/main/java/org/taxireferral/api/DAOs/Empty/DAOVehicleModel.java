@@ -1,4 +1,4 @@
-package org.taxireferral.api.DAOs;
+package org.taxireferral.api.DAOs.Empty;
 
 /**
  * Created by sumeet on 20/4/17.

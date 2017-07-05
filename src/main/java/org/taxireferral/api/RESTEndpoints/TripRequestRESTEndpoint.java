@@ -8,6 +8,7 @@ import org.taxireferral.api.Model.TripRequest;
 import org.taxireferral.api.Model.Vehicle;
 import org.taxireferral.api.ModelEndpoints.TripRequestEndPoint;
 import org.taxireferral.api.ModelEndpoints.VehicleEndPoint;
+import org.taxireferral.api.ModelRoles.User;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
@@ -29,30 +30,22 @@ public class TripRequestRESTEndpoint {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_END_USER,GlobalConstants.ROLE_ADMIN,GlobalConstants.ROLE_STAFF,GlobalConstants.ROLE_DRIVER})
     public Response createTripRequest(TripRequest tripRequest)
     {
 
         int idOfInsertedRow = -1;
 
-//        if (Globals.accountApproved instanceof User)
-//        {
-//            if(((User)Globals.accountApproved).getRole() != GlobalConstants.ROLE_DRIVER_CODE)
-//            {
-//                throw new ForbiddenException();
-//            }
-//
-//
-//            idOfInsertedRow = daoVehicle.insert_vehicle(vehicle,false);
-//
-//            vehicle.setVehicleID(idOfInsertedRow);
-//        }
 
-
+        if(Globals.accountApproved instanceof User)
+        {
+            tripRequest.setEndUserID(((User) Globals.accountApproved).getUserID());
+        }
 
 
         idOfInsertedRow = daoTripRequest.create_trip_request(tripRequest,false);
         tripRequest.setTripRequestID(idOfInsertedRow);
-
+        tripRequest.setTripRequestStatus(GlobalConstants.TAXI_REQUESTED);
 
 
         if(idOfInsertedRow >=1)
@@ -85,19 +78,12 @@ public class TripRequestRESTEndpoint {
     {
 
 
-//        if(Globals.accountApproved instanceof User) {
-
-        // checking permission
-//            Staff staff = (Staff) Globals.accountApproved;
-//            if (!staff.isApproveShops())
-//            {
-//                 the staff member doesnt have persmission to post Item Category
-//                throw new ForbiddenException("Not Permitted");
-//            }
-//        }
+        if(! (Globals.accountApproved instanceof User)) {
+            return null;
+        }
 
 
-        int rowCount = daoTripRequest.set_request_approved(tripRequestID);
+        int rowCount = daoTripRequest.set_request_approved(tripRequestID,((User) Globals.accountApproved).getUserID());
 
 
         if(rowCount >= 1)
@@ -122,38 +108,29 @@ public class TripRequestRESTEndpoint {
     @PUT
     @Path("/RequestPickup/{TripRequestID}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({GlobalConstants.ROLE_END_USER})
+    @RolesAllowed({GlobalConstants.ROLE_END_USER,GlobalConstants.ROLE_ADMIN,GlobalConstants.ROLE_STAFF,GlobalConstants.ROLE_DRIVER})
     public Response requestPickUp(@PathParam("TripRequestID")int tripRequestID)
     {
 
-
-//        if(Globals.accountApproved instanceof User) {
-
-        // checking permission
-//            Staff staff = (Staff) Globals.accountApproved;
-//            if (!staff.isApproveShops())
-//            {
-//                 the staff member doesnt have persmission to post Item Category
-//                throw new ForbiddenException("Not Permitted");
-//            }
-//        }
-
-
-        int rowCount = daoTripRequest.request_pick_up(tripRequestID);
-
-
-        if(rowCount >= 1)
+        if(Globals.accountApproved instanceof User)
         {
+            int rowCount = daoTripRequest.request_pick_up(tripRequestID,((User) Globals.accountApproved).getUserID());
 
-            return Response.status(Response.Status.OK)
-                    .build();
-        }
-        else if(rowCount <= 0)
-        {
+            if(rowCount >= 1)
+            {
 
-            return Response.status(Response.Status.NOT_MODIFIED)
-                    .build();
+                return Response.status(Response.Status.OK)
+                        .build();
+            }
+            else if(rowCount <= 0)
+            {
+
+                return Response.status(Response.Status.NOT_MODIFIED)
+                        .build();
+            }
+
         }
+
 
         return null;
     }
