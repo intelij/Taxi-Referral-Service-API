@@ -6,6 +6,7 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import jdk.nashorn.internal.objects.Global;
 import net.coobird.thumbnailator.Thumbnails;
 import net.sargue.mailgun.Mail;
 import org.taxireferral.api.DAORoles.DAOUserNew;
@@ -345,8 +346,8 @@ public class UserResourceNew {
                     .entity(userChecked)
                     .build();
         }
-
     }
+
 
 
 
@@ -473,7 +474,7 @@ public class UserResourceNew {
 
 
         String token = new BigInteger(130, Globals.random).toString(32);
-        Timestamp timestampExpiry = new Timestamp(System.currentTimeMillis() + 1*3*60*1000);
+        Timestamp timestampExpiry = new Timestamp(System.currentTimeMillis() + GlobalConstants.TOKEN_DURATION_MINUTES * 60 * 10);
 
         User user = daoUser.getProfile(username,password);
 
@@ -570,7 +571,7 @@ public class UserResourceNew {
 
         String token = new BigInteger(130, Globals.random).toString(32);
 
-        Timestamp timestampExpiry = new Timestamp(System.currentTimeMillis() + 1*3*60*1000);
+        Timestamp timestampExpiry = new Timestamp(System.currentTimeMillis() + GlobalConstants.TOKEN_DURATION_MINUTES*60*1000);
 
 
 //        Date dt = new Date();

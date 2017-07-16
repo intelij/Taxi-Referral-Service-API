@@ -160,7 +160,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
                 return user;
 
-                // dont check for whether account is enabled
+                // do not check for whether account is enabled
 //                if(user.getRole()==GlobalConstants.ROLE_ADMIN_CODE)
 //                {
 //
@@ -183,6 +183,8 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         System.out.println("Access Denied  :   = ");
         throw new NotAuthorizedException("Access is Denied ! We are not able to Identify you. ");
     }
+
+
 
 
 

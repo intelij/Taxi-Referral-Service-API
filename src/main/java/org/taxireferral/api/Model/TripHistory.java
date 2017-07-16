@@ -21,6 +21,10 @@ public class TripHistory {
     public static final String DRIVER_RATING = "DRIVER_RATING";
     public static final String END_USER_RATING = "END_USER_RATING";
 
+    public static final String DRIVER_FEEDBACK = "END_USER_RATING";
+    public static final String END_USER_FEEDBACK = "END_USER_RATING";
+
+
     public static final String TIMESTAMP_CREATED = "TIMESTAMP_CREATED";
     public static final String TIMESTAMP_STARTED = "TIMESTAMP_STARTED";
     public static final String TIMESTAMP_FINISHED = "TIMESTAMP_FINISHED";

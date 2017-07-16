@@ -7,8 +7,9 @@ import org.taxireferral.api.Model.CurrentTrip;
 import org.taxireferral.api.Model.TripRequest;
 import org.taxireferral.api.Model.Vehicle;
 import org.taxireferral.api.ModelEndpoints.TripRequestEndPoint;
-import org.taxireferral.api.ModelEndpoints.VehicleEndPoint;
+import org.taxireferral.api.ModelRoles.EmailVerificationCode;
 import org.taxireferral.api.ModelRoles.User;
+import org.taxireferral.api.ModelUtility.Location;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -20,17 +21,302 @@ public class DAOTripRequest {
 
     private HikariDataSource dataSource = Globals.getDataSource();
 
-
-
     // create trip request
-
     // set_request_approved
+            // - extend expiry to few more minutes
     // request_pick_up
-                // getTripStatus - not required
+            // getTripStatus - not required
+
+    // approvePickup - by driver - deletes the request and copy request into current trip
+        // - copy trip request into current trip
+        // - delete the trip request
+        // - update the taxi vehicle status to occupied
+        // - notify driver about status update
+
+
+    // getTripRequests - for end user
+    // getTripRequests - for driver
+
+
+    // check request sent
+
+
+    /* PENDING METHODS */
 
     // deleteExpiredRequests - deletes all the expired requests in the table - triggered every day or every week or on certain events
-    // approvePickup - by driver - deletes the request and copy request into current trip
-    // getTripRequests
+
+
+
+
+    public boolean checkTripRequestExists(int endUserID, int vehicleID)
+    {
+
+
+        String query = "SELECT " + TripRequest.TRIP_REQUEST_ID + ""
+                + " FROM "   + TripRequest.TABLE_NAME
+                + " WHERE "  + TripRequest.END_USER_ID + " = ? "
+                + " AND "    + TripRequest.VEHICLE_ID + " = ? "
+                + " AND "    + TripRequest.TIMESTAMP_EXPIRES + " > now()";
+
+
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+
+        try {
+
+//            System.out.println(query);
+
+            connection = dataSource.getConnection();
+            statement = connection.prepareStatement(query);
+
+            int i = 0;
+            statement.setObject(++i,endUserID);
+            statement.setObject(++i,vehicleID);
+
+            rs = statement.executeQuery();
+
+            while(rs.next())
+            {
+                return true;
+            }
+
+
+
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally
+
+        {
+
+            try {
+                if(rs!=null)
+                {rs.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(statement!=null)
+                {statement.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return false;
+    }
+
+
+
+    public int approve_pickup(int tripRequestID, int driverID, boolean getRowCount, Location currentLocation)
+    {
+        // note of precaution : please check the end user id is the id of the user who is requesting to create the trip
+
+        Connection connection = null;
+        PreparedStatement statementInsert = null;
+        PreparedStatement statementDelete = null;
+        PreparedStatement statementUpdate = null;
+
+        int idOfInsertedRow = -1;
+        int rowCountItems = -1;
+
+        int rowCountDelete = -1;
+        int rowCountUpdateStatus = -1;
+
+
+        String deleteTripRequest = "";
+        String updateStatus = "";
+
+
+        String insert = "";
+
+        insert = "INSERT INTO " + CurrentTrip.TABLE_NAME
+                + "("
+                + CurrentTrip.VEHICLE_ID + ","
+                + CurrentTrip.END_USER_ID + ","
+
+                + CurrentTrip.CURRENT_TRIP_STATUS + ","
+
+                + CurrentTrip.LAT_START_LOCATION + ","
+                + CurrentTrip.LON_START_LOCATION + ","
+
+                + CurrentTrip.FREE_PICKUP_DISTANCE + ","
+                + CurrentTrip.REFERRAL_CHARGES + ","
+
+                + CurrentTrip.MIN_TRIP_CHARGES + ","
+                + CurrentTrip.CHARGES_PER_KM + ""
+                + ") "
+                + " SELECT "
+                + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + ","
+                + TripRequest.TABLE_NAME + "." + TripRequest.END_USER_ID + ","
+
+                + GlobalConstants.PICKUP_APPROVED + ","
+
+                + currentLocation.getLatitude() + ","
+                + currentLocation.getLongitude() + ","
+
+                + GlobalConstants.free_pickup_distance + ","
+                + GlobalConstants.taxi_referral_charges + ","
+
+                + Vehicle.TABLE_NAME + "." + Vehicle.MIN_TRIP_CHARGES + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.CHARGES_PER_KM + ""
+
+                + " FROM " + TripRequest.TABLE_NAME
+                + " INNER JOIN " + Vehicle.TABLE_NAME + " ON " + "(" + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
+                + " INNER JOIN " + User.TABLE_NAME + " ON (" + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID  + " )"
+                + " WHERE " + TripRequest.TABLE_NAME + "." + TripRequest.TRIP_REQUEST_ID + " = ? "
+                + " AND " + TripRequest.TABLE_NAME + "." + TripRequest.TRIP_REQUEST_STATUS + " = ? "
+                + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
+
+
+
+        deleteTripRequest =   " DELETE FROM " + TripRequest.TABLE_NAME
+                            + " WHERE " + TripRequest.TRIP_REQUEST_ID + " = ?";
+
+
+        updateStatus =  " UPDATE " + Vehicle.TABLE_NAME +
+                        " SET " + Vehicle.VEHICLE_STATUS + " = ? " +
+                        " FROM " + User.TABLE_NAME +
+                        " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID +
+                        " AND " + User.USER_ID + " = ? ";
+
+
+
+        try {
+
+            connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
+
+            statementInsert = connection.prepareStatement(insert,PreparedStatement.RETURN_GENERATED_KEYS);
+            int i = 0;
+
+            statementInsert.setObject(++i,tripRequestID);
+            statementInsert.setObject(++i,GlobalConstants.PICKUP_REQUESTED);
+            statementInsert.setObject(++i,driverID);
+
+            rowCountItems = statementInsert.executeUpdate();
+            ResultSet rs = statementInsert.getGeneratedKeys();
+            if(rs.next())
+            {
+                idOfInsertedRow = rs.getInt(1);
+            }
+
+
+            if(idOfInsertedRow > 0)
+            {
+                // execute the following statements only if the insert is successful
+
+
+                statementDelete = connection.prepareStatement(deleteTripRequest);
+                i = 0;
+
+                statementDelete.setObject(++i,tripRequestID);
+                rowCountDelete = statementDelete.executeUpdate();
+
+
+
+                statementUpdate = connection.prepareStatement(updateStatus);
+                i = 0;
+
+                statementUpdate.setObject(++i,GlobalConstants.OCCUPIED);
+                statementUpdate.setObject(++i,driverID);
+
+                rowCountUpdateStatus = statementUpdate.executeUpdate();
+            }
+
+
+
+
+            connection.commit();
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+            if (connection != null) {
+                try {
+
+                    idOfInsertedRow=-1;
+                    rowCountItems = 0;
+
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        finally
+        {
+
+
+            if (statementInsert != null) {
+                try {
+                    statementInsert.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+
+            if (statementDelete != null) {
+                try {
+                    statementDelete.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            if (statementUpdate != null) {
+                try {
+                    statementUpdate.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        if(getRowCount)
+        {
+            return rowCountItems;
+        }
+        else
+        {
+            return idOfInsertedRow;
+        }
+    }
+
+
+
+
 
 
 
@@ -185,14 +471,21 @@ public class DAOTripRequest {
         String update = "";
 
 
+        Timestamp timestampExpiry = new Timestamp(System.currentTimeMillis() + GlobalConstants.TRIP_REQUEST_EXPIRY_EXTENSION_MINUTES * 60 * 1000);
+
+
 
         update =  " UPDATE " + TripRequest.TABLE_NAME
-                + " SET "    + TripRequest.TRIP_REQUEST_STATUS + " = " + GlobalConstants.REQUEST_APPROVED
+                + " SET "
+                + TripRequest.TRIP_REQUEST_STATUS + " = " + GlobalConstants.REQUEST_APPROVED + ","
+                + TripRequest.TIMESTAMP_EXPIRES + " = ?"
                 + " FROM "   + Vehicle.TABLE_NAME
                 + " WHERE "  + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID
                 + " AND "    + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ? "
                 + " AND "    + TripRequest.TABLE_NAME + "." + TripRequest.TRIP_REQUEST_ID + " = ?"
                 + " AND "    + TripRequest.TABLE_NAME + "." + TripRequest.TRIP_REQUEST_STATUS + " = " + GlobalConstants.TAXI_REQUESTED;
+
+
 
 
 
@@ -214,7 +507,7 @@ public class DAOTripRequest {
             statementUpdate = connection.prepareStatement(update,PreparedStatement.RETURN_GENERATED_KEYS);
             int i = 0;
 
-
+            statementUpdate.setTimestamp(++i,timestampExpiry);
             statementUpdate.setObject(++i,driverID);
             statementUpdate.setObject(++i,tripRequestID);
 

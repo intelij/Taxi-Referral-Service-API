@@ -9,6 +9,7 @@ import org.taxireferral.api.Model.Vehicle;
 import org.taxireferral.api.ModelEndpoints.TripRequestEndPoint;
 import org.taxireferral.api.ModelEndpoints.VehicleEndPoint;
 import org.taxireferral.api.ModelRoles.User;
+import org.taxireferral.api.ModelUtility.Location;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
@@ -140,6 +141,86 @@ public class TripRequestRESTEndpoint {
 
 
 
+    @PUT
+    @Path("/ApprovePickup/{TripRequestID}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_DRIVER})
+    public Response approvePickup( Location location,@PathParam("TripRequestID")int tripRequestID)
+    {
+
+
+        if(! (Globals.accountApproved instanceof User)) {
+            return null;
+        }
+
+
+        int rowCount = daoTripRequest.approve_pickup(
+                tripRequestID,((User) Globals.accountApproved).getUserID(),
+                true,location
+        );
+
+
+
+        if(rowCount >= 1)
+        {
+
+            return Response.status(Response.Status.OK)
+                    .build();
+        }
+        else if(rowCount <= 0)
+        {
+
+            return Response.status(Response.Status.NOT_MODIFIED)
+                    .build();
+        }
+
+        return null;
+    }
+
+
+
+    @GET
+    @Path("/CheckTripRequestExists")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response checkTripRequestExist(
+            @QueryParam("EndUserID") int endUserID,
+            @QueryParam("VehicleID") int vehicleID
+    )
+    {
+        // Roles allowed not used for this method due to performance and effeciency requirements. Also
+        // this endpoint doesnt required to be secured as it does not expose any confidential information
+
+        boolean result = daoTripRequest.checkTripRequestExists(endUserID,vehicleID);
+
+//        System.out.println(email);
+
+
+        try {
+            Thread.sleep(400);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        if(result)
+        {
+            return Response.status(Response.Status.OK)
+                    .build();
+
+        }
+        else
+        {
+            return Response.status(Response.Status.NO_CONTENT)
+                    .build();
+        }
+
+    }
+
+
+
+
+
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTaxisAvailable(
@@ -197,6 +278,7 @@ public class TripRequestRESTEndpoint {
                 .entity(endPoint)
                 .build();
     }
+
 
 
 

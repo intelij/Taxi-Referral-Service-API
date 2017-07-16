@@ -26,9 +26,10 @@ public class GlobalConstants {
 
 
     // constants
-    public static final int TOKEN_DURATION_MINUTES = 3;
+    public static final int TOKEN_DURATION_MINUTES = 20;
     public static final int EMAIL_VERIFICATION_CODE_EXPIRY_MINUTES = 10;
     public static final int TRIP_REQUEST_EXPIRY_MINUTES = 10;
+    public static final int TRIP_REQUEST_EXPIRY_EXTENSION_MINUTES = 10;
 
 
     public static final int max_limit = 100;    // 100 items per fetch
@@ -52,6 +53,7 @@ public class GlobalConstants {
 
 
 
+
     // Current Trip Status
     public static final int PICKUP_APPROVED = 1;
     public static final int START_JOURNEY_REQUESTED_BY_DRIVER = 2;
@@ -61,9 +63,9 @@ public class GlobalConstants {
 
 //    public static final int PICKUP_LOCATION_SENT = 3;
 
-
     // Vehicle status
     public static final int AVIALABLE = 1;
     public static final int NOT_AVIALABLE = 2;
     public static final int OCCUPIED = 3;
+
 }

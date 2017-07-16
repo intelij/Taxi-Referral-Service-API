@@ -4,7 +4,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.CurrentTrip;
-import org.taxireferral.api.Model.TripRequest;
 import org.taxireferral.api.Model.Vehicle;
 
 import java.sql.Connection;
@@ -29,12 +28,25 @@ public class DAOCurrentTrip {
             // - updates the pick_up_distance
             // - updates the pick_up_location and address
             // - updates the timestamp started
+
+
+
+
+    /* PENDING */
+
     // finish_trip - copy the current trip into the trip history and then deletes the current trip
             // - updates the distance travelled for trip
             // - updates the destination_coordinates and address
             // - updates timestamp finished
             // - copies the current trip into the trip history table
             // - deletes the trip details in current trip table
+            // - update the taxi vehicle status to available
+            // - notify driver about status update
+
+
+    // GetCurrentTrip - fetches the list of current trips
+        // getCurrentTripEndUser(int endUserID)
+        // getCurrentTripDriver(int driverID)
 
 
 
@@ -135,6 +147,7 @@ public class DAOCurrentTrip {
                 + " AND " + CurrentTrip.CURRENT_TRIP_STATUS + " = " + GlobalConstants.PICKUP_APPROVED;
 
 
+
         try {
 
             connection = dataSource.getConnection();
@@ -187,7 +200,7 @@ public class DAOCurrentTrip {
 
 
 
-    public int approve_start_by_driver(CurrentTrip currentTrip)
+    public int approve_start_by_driver(CurrentTrip currentTrip, int driverID)
     {
 
         Connection connection = null;
@@ -198,7 +211,6 @@ public class DAOCurrentTrip {
         String update = "";
 
 
-
         update =  " UPDATE " + CurrentTrip.TABLE_NAME
                 + " SET "
                 + CurrentTrip.CURRENT_TRIP_STATUS + " = " + GlobalConstants.START_APPROVED_AND_TRIP_STARTED + ","
@@ -207,8 +219,15 @@ public class DAOCurrentTrip {
                 + CurrentTrip.LON_PICK_UP_LOCATION + " = ?,"
                 + CurrentTrip.PICK_UP_ADDRESS + " = ?,"
                 + CurrentTrip.TIMESTAMP_STARTED + " = now(),"
-                + " WHERE " + CurrentTrip.CURRENT_TRIP_ID + " = ?"
-                + " AND " + CurrentTrip.CURRENT_TRIP_STATUS + " = " + GlobalConstants.START_JOURNEY_REQUESTED_BY_END_USER;
+                + " FROM "   + Vehicle.TABLE_NAME
+                + " WHERE "  + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_ID + " = ? "
+                + " AND "    + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID
+                + " AND "    + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ? "
+                + " AND "    + CurrentTrip.CURRENT_TRIP_STATUS + " = " + GlobalConstants.START_JOURNEY_REQUESTED_BY_END_USER;
+
+
+//                + " WHERE " + CurrentTrip.CURRENT_TRIP_ID + " = ?"
+
 
 
         try {
@@ -225,7 +244,9 @@ public class DAOCurrentTrip {
             statementUpdate.setObject(++i,currentTrip.getLatPickUpLocation());
             statementUpdate.setObject(++i,currentTrip.getLonPickUpLocation());
             statementUpdate.setString(++i,currentTrip.getPickUpAddress());
+
             statementUpdate.setObject(++i,currentTrip.getCurrentTripID());
+            statementUpdate.setObject(++i,driverID);
 
             rowCountItems = statementUpdate.executeUpdate();
 
@@ -269,7 +290,7 @@ public class DAOCurrentTrip {
 
 
 
-    public int approve_start_by_end_user(CurrentTrip currentTrip)
+    public int approve_start_by_end_user(CurrentTrip currentTrip, int endUserID)
     {
         // please ensure that if of user making the request is same as id of end user in the current trip
 
@@ -311,7 +332,7 @@ public class DAOCurrentTrip {
             statementUpdate.setString(++i,currentTrip.getPickUpAddress());
 
             statementUpdate.setObject(++i,currentTrip.getCurrentTripID());
-            statementUpdate.setObject(++i,currentTrip.getEndUserID());
+            statementUpdate.setObject(++i,endUserID);
 
             rowCountItems = statementUpdate.executeUpdate();
 
@@ -350,17 +371,6 @@ public class DAOCurrentTrip {
 
         return rowCountItems;
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
