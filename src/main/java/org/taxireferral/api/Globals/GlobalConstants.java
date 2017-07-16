@@ -61,6 +61,7 @@ public class GlobalConstants {
     public static final int START_APPROVED_AND_TRIP_STARTED = 4;
 
 
+
 //    public static final int PICKUP_LOCATION_SENT = 3;
 
     // Vehicle status
