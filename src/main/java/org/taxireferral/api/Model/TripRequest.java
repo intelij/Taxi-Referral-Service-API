@@ -103,10 +103,19 @@ public class TripRequest {
 
     // stores the taxi
     private Vehicle rt_vehicle;
+    private User rt_end_user;
 
 
 
     // getter and setters
+
+    public User getRt_end_user() {
+        return rt_end_user;
+    }
+
+    public void setRt_end_user(User rt_end_user) {
+        this.rt_end_user = rt_end_user;
+    }
 
     public Vehicle getRt_vehicle() {
         return rt_vehicle;

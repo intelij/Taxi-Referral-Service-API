@@ -25,6 +25,11 @@ public class VehicleDAO {
     // update vehicle (Vehicle vehicle)
     // update location (double lat, double lon)
     // updateStatus(int status) : update status for drivers
+
+        /* Set Status for Taxi */
+    // setTaxiAvailable(int userID)
+    // setTaxiNotAvailable(int userID)
+
     // delete vehicle
 
     // getVehicle(int driverID) : get vehicle details for driver ID
@@ -408,6 +413,170 @@ public class VehicleDAO {
         return rowCountItems;
     }
 
+
+
+    public int setTaxiNotAvailable(int userID)
+    {
+
+        Connection connection = null;
+        PreparedStatement statementUpdate = null;
+
+//        int idOfInsertedRow = -1;
+        int rowCountItems = -1;
+
+        String update = "";
+
+
+
+        update =  " UPDATE " + Vehicle.TABLE_NAME
+                + " SET " + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.NOT_AVIALABLE
+                + " FROM " + User.TABLE_NAME
+                + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID
+                + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ?"
+                + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.AVIALABLE;
+
+
+        try {
+
+            connection = dataSource.getConnection();
+//            connection.setAutoCommit(false);
+
+
+            statementUpdate = connection.prepareStatement(update,PreparedStatement.RETURN_GENERATED_KEYS);
+            int i = 0;
+
+            statementUpdate.setObject(++i,userID);
+
+            rowCountItems = statementUpdate.executeUpdate();
+
+//            connection.commit();
+
+        } catch (SQLException e) {
+
+
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+//            if (connection != null) {
+//                try {
+//
+//                    idOfInsertedRow=-1;
+//                    rowCountItems = 0;
+//
+//                    connection.rollback();
+//                } catch (SQLException e1) {
+//                    e1.printStackTrace();
+//                }
+//            }
+        }
+        finally
+        {
+
+            if (statementUpdate != null) {
+                try {
+                    statementUpdate.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+
+        return rowCountItems;
+    }
+
+
+
+
+    public int setTaxiAvailable(int userID)
+    {
+
+        Connection connection = null;
+        PreparedStatement statementUpdate = null;
+
+//        int idOfInsertedRow = -1;
+        int rowCountItems = -1;
+
+        String update = "";
+
+
+
+        update =  " UPDATE " + Vehicle.TABLE_NAME
+                + " SET " + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.AVIALABLE
+                + " FROM " + User.TABLE_NAME
+                + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID
+                + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ?"
+                + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.NOT_AVIALABLE;
+
+
+        try {
+
+            connection = dataSource.getConnection();
+//            connection.setAutoCommit(false);
+
+
+            statementUpdate = connection.prepareStatement(update,PreparedStatement.RETURN_GENERATED_KEYS);
+            int i = 0;
+
+            statementUpdate.setObject(++i,userID);
+
+            rowCountItems = statementUpdate.executeUpdate();
+
+//            connection.commit();
+
+        } catch (SQLException e) {
+
+
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+//            if (connection != null) {
+//                try {
+//
+//                    idOfInsertedRow=-1;
+//                    rowCountItems = 0;
+//
+//                    connection.rollback();
+//                } catch (SQLException e1) {
+//                    e1.printStackTrace();
+//                }
+//            }
+        }
+        finally
+        {
+
+            if (statementUpdate != null) {
+                try {
+                    statementUpdate.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+
+        return rowCountItems;
+    }
 
 
 

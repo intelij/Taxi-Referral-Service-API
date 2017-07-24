@@ -52,7 +52,7 @@ public class GlobalConstants {
 //    public static final int PICKUP_APPROVED = 4;  // Color : Green
 
 
-
+    
 
     // Current Trip Status
     public static final int PICKUP_APPROVED = 1;

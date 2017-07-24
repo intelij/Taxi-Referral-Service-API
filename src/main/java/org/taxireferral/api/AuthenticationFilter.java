@@ -26,10 +26,6 @@ import java.util.*;
 
 
 
-
-
-
-
 @Provider
 public class AuthenticationFilter implements ContainerRequestFilter {
 
@@ -180,7 +176,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         }
 
 
-        System.out.println("Access Denied  :   = ");
+        System.out.println("Access Denied  : Role not allowed ");
         throw new NotAuthorizedException("Access is Denied ! We are not able to Identify you. ");
     }
 

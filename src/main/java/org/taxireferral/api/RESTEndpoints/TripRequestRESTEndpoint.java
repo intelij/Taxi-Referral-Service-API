@@ -218,6 +218,95 @@ public class TripRequestRESTEndpoint {
 
 
 
+    @GET
+    @Path("/CheckTripStatus")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_END_USER,GlobalConstants.ROLE_DRIVER,GlobalConstants.ROLE_STAFF,GlobalConstants.ROLE_ADMIN})
+    public Response checkTripStatus(
+            @QueryParam("TripRequestID") int tripRequestID
+    )
+    {
+        // Roles allowed not used for this method due to performance and effeciency requirements. Also
+        // this endpoint doesnt required to be secured as it does not expose any confidential information
+
+
+        User user = (User) Globals.accountApproved;
+
+        TripRequest result = daoTripRequest.checkTripRequestStatus(tripRequestID,user.getUserID());
+
+//        System.out.println(email);
+
+
+        try {
+            Thread.sleep(400);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        if(result!=null)
+        {
+            return Response.status(Response.Status.OK)
+                    .entity(result)
+                    .build();
+
+        }
+        else
+        {
+            return Response.status(Response.Status.NO_CONTENT)
+                    .build();
+        }
+
+    }
+
+
+
+    @GET
+    @Path("/CheckTripStatusForDriver")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_DRIVER})
+    public Response checkTripStatusForDriver(
+            @QueryParam("TripRequestID") int tripRequestID
+    )
+    {
+
+        // Roles allowed not used for this method due to performance and effeciency requirements. Also
+        // this endpoint doesnt required to be secured as it does not expose any confidential information
+
+
+        User user = (User) Globals.accountApproved;
+
+        TripRequest result = daoTripRequest.checkTripRequestStatusForDriver(tripRequestID,user.getUserID());
+
+//        System.out.println(email);
+
+
+        try {
+            Thread.sleep(400);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        if(result!=null)
+        {
+            return Response.status(Response.Status.OK)
+                    .entity(result)
+                    .build();
+
+        }
+        else
+        {
+            return Response.status(Response.Status.NO_CONTENT)
+                    .build();
+        }
+
+    }
+
+
+
+
+
 
 
 
@@ -258,6 +347,66 @@ public class TripRequestRESTEndpoint {
 
 
         endPoint = daoTripRequest.getTripRequests(endUserID,vehicleID
+                ,sortBy,limit,offset,
+                getRowCount,getOnlyMetaData
+        );
+
+
+
+
+//		try {
+//			Thread.sleep(1000);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+
+
+        //Marker
+
+        return Response.status(Response.Status.OK)
+                .entity(endPoint)
+                .build();
+    }
+
+
+
+    @GET
+    @Path("/TripRequestsForDriver")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getTripRequestsForDriver(
+            @QueryParam("EndUserID") Integer endUserID,
+            @QueryParam("VehicleID") Integer vehicleID,
+            @QueryParam("SortBy") String sortBy,
+            @QueryParam("Limit")Integer limit, @QueryParam("Offset")Integer offset,
+            @QueryParam("GetRowCount")boolean getRowCount,
+            @QueryParam("MetadataOnly")boolean getOnlyMetaData)
+    {
+
+
+
+        TripRequestEndPoint endPoint = new TripRequestEndPoint();
+
+        if(limit!=null)
+        {
+            if(limit >= GlobalConstants.max_limit)
+            {
+                limit = GlobalConstants.max_limit;
+            }
+
+            if(offset==null)
+            {
+                offset = 0;
+            }
+
+            endPoint.setLimit(limit);
+            endPoint.setOffset(offset);
+            endPoint.setMax_limit(GlobalConstants.max_limit);
+
+        }
+
+
+
+        endPoint = daoTripRequest.getTripRequestsForDriver(endUserID,vehicleID
                 ,sortBy,limit,offset,
                 getRowCount,getOnlyMetaData
         );

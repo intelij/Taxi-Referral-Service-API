@@ -253,6 +253,78 @@ public class VehicleResource {
 
 
 
+    @PUT
+    @Path("/SetTaxiAvailable")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_DRIVER})
+    public Response setTaxiAvailable()
+    {
+
+//        if(Globals.accountApproved instanceof User)
+//        {
+//            shop.setShopAdminID(((ShopAdmin) Globals.accountApproved).getShopAdminID());
+//        }
+//        else
+//        {
+//            throw new ForbiddenException();
+//        }
+
+
+        int rowCount = daoVehicle.setTaxiAvailable(((User)Globals.accountApproved).getUserID());
+
+        if(rowCount >= 1)
+        {
+            return Response.status(Response.Status.OK)
+                    .build();
+        }
+        else if(rowCount <= 0)
+        {
+            return Response.status(Response.Status.NOT_MODIFIED)
+                    .build();
+        }
+
+
+        return null;
+    }
+
+
+    @PUT
+    @Path("/SetTaxiNotAvailable")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_DRIVER})
+    public Response setTaxiNotAvailable()
+    {
+
+//        if(Globals.accountApproved instanceof User)
+//        {
+//            shop.setShopAdminID(((ShopAdmin) Globals.accountApproved).getShopAdminID());
+//        }
+//        else
+//        {
+//            throw new ForbiddenException();
+//        }
+
+
+        int rowCount = daoVehicle.setTaxiNotAvailable(((User)Globals.accountApproved).getUserID());
+
+        if(rowCount >= 1)
+        {
+            return Response.status(Response.Status.OK)
+                    .build();
+        }
+        else if(rowCount <= 0)
+        {
+            return Response.status(Response.Status.NOT_MODIFIED)
+                    .build();
+        }
+
+
+        return null;
+    }
+
+
+
+
 
 //    @RolesAllowed({GlobalConstants.ROLE_DRIVER,GlobalConstants.ROLE_ADMIN,GlobalConstants.ROLE_STAFF})
 
