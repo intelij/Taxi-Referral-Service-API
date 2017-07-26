@@ -24,11 +24,13 @@ public class DAOCurrentTrip {
             // - updates the pick_up_distance
             // - updates the pick_up_location and address
             // - updates timestamp started
+            // - notify the end-user
+
     // approve_start_by_end_user - similar to above except for current status check
             // - updates the pick_up_distance
             // - updates the pick_up_location and address
             // - updates the timestamp started
-
+            // - notify the driver
 
 
 
@@ -38,15 +40,22 @@ public class DAOCurrentTrip {
             // - updates the distance travelled for trip
             // - updates the destination_coordinates and address
             // - updates timestamp finished
+
             // - copies the current trip into the trip history table
             // - deletes the trip details in current trip table
             // - update the taxi vehicle status to available
             // - notify driver about status update
 
+    // getCurrentTripEndUser(int endUserID)
+    // getCurrentTripDriver(int driverID)
+
+    // cancelTripByDriver(int driverID,int currentTripID)
+    // cancelTripByEndUser(int endUserID,int currentTripID)
+
+
+    /* To be reviewed */
 
     // GetCurrentTrip - fetches the list of current trips
-        // getCurrentTripEndUser(int endUserID)
-        // getCurrentTripDriver(int driverID)
 
 
 

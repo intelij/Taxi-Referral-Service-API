@@ -23,6 +23,7 @@ public class DAOTripRequest {
     private HikariDataSource dataSource = Globals.getDataSource();
 
     // create trip request
+
     // set_request_approved
             // - extend expiry to few more minutes
     // request_pick_up
@@ -42,8 +43,6 @@ public class DAOTripRequest {
 
     // checkTripRequestStatus(int tripRequestID,int endUserID)
     // checkTripRequestStatusForDriver(int tripRequestID,int driverID)
-
-
 
 
     /* PENDING METHODS */
@@ -180,9 +179,8 @@ public class DAOTripRequest {
             while(rs.next())
             {
                 tripRequest = new TripRequest();
-
-
-
+                tripRequest.setTripRequestStatus(rs.getInt(TripRequest.TRIP_REQUEST_STATUS));
+                tripRequest.setTripRequestID(rs.getInt(TripRequest.TRIP_REQUEST_ID));
             }
 
 
@@ -725,7 +723,6 @@ public class DAOTripRequest {
         }
 
 
-
         return rowCountItems;
     }
 
@@ -1217,7 +1214,7 @@ public class DAOTripRequest {
                 + User.TABLE_NAME + "." + User.PHONE + ","
                 + User.TABLE_NAME + "." + User.NAME + ","
                 + User.TABLE_NAME + "." + User.GENDER + ","
-                + User.TABLE_NAME + "." + User.PROFILE_IMAGE_URL + ""
+                + User.TABLE_NAME + "." + User.PROFILE_IMAGE_URL + " as user_profile_image"
 
                 + " FROM " + TripRequest.TABLE_NAME
                 + " INNER JOIN " + Vehicle.TABLE_NAME + " ON (" + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
@@ -1393,7 +1390,8 @@ public class DAOTripRequest {
                     endUser.setPhone(rs.getString(User.PHONE));
                     endUser.setName(rs.getString(User.NAME));
                     endUser.setGender(rs.getBoolean(User.GENDER));
-                    endUser.setProfileImagePath(rs.getString(User.PROFILE_IMAGE_URL));
+                    endUser.setProfileImagePath(rs.getString("user_profile_image"));
+
 
                     tripRequest.setRt_end_user(endUser);
 
