@@ -63,8 +63,8 @@ public class TripHistory {
                     + TripHistory.TABLE_NAME + "("
 
                     + " " + TripHistory.TRIP_HISTORY_ID + " SERIAL PRIMARY KEY,"
-                    + " " + TripHistory.VEHICLE_ID + " int UNIQUE NOT NULL,"
-                    + " " + TripHistory.END_USER_ID + " int UNIQUE NOT NULL,"
+                    + " " + TripHistory.VEHICLE_ID + " int NOT NULL,"
+                    + " " + TripHistory.END_USER_ID + " int NOT NULL,"
 
                     + " " + TripHistory.DRIVER_RATING + " int," // can be null
                     + " " + TripHistory.END_USER_RATING + " int," // can be null

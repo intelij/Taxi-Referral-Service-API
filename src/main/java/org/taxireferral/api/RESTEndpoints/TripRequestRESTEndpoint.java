@@ -312,7 +312,7 @@ public class TripRequestRESTEndpoint {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTaxisAvailable(
+    public Response getTripRequestsEndUser(
             @QueryParam("EndUserID") Integer endUserID,
             @QueryParam("VehicleID") Integer vehicleID,
             @QueryParam("SortBy") String sortBy,

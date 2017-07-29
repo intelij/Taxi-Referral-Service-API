@@ -8,10 +8,7 @@ import org.glassfish.jersey.media.sse.SseBroadcaster;
 import org.taxireferral.api.DAORoles.DAOEmailVerificationCodes;
 import org.taxireferral.api.DAORoles.DAOUser;
 import org.taxireferral.api.DAORoles.DAOUserNew;
-import org.taxireferral.api.DAOs.DAOTripRequest;
-import org.taxireferral.api.DAOs.VehicleDAO;
-import org.taxireferral.api.DAOs.VehicleTypeDAOGet;
-import org.taxireferral.api.DAOs.VehicleTypeDAONew;
+import org.taxireferral.api.DAOs.*;
 import org.taxireferral.api.JDBCContract;
 import org.taxireferral.api.Model.TripRequest;
 import org.taxireferral.api.ModelRoles.EmailVerificationCode;
@@ -42,6 +39,7 @@ public class Globals {
     public static DAOUserNew daoUserNew = new DAOUserNew();
     public static VehicleDAO vehicleDAO = new VehicleDAO();
     public static DAOTripRequest tripRequestDAO = new DAOTripRequest();
+    public static DAOCurrentTrip daoCurrentTrip = new DAOCurrentTrip();
 
 
     public static DAOEmailVerificationCodes daoVerificationCodes = new DAOEmailVerificationCodes();

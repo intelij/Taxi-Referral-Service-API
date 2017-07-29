@@ -131,9 +131,31 @@ public class CurrentTrip {
     private double chargesPerKm;
 
 
+    private Vehicle rt_vehicle;
+    private User rt_end_user;
+
+
+
 
 
     // getter and setters
+
+
+    public Vehicle getRt_vehicle() {
+        return rt_vehicle;
+    }
+
+    public void setRt_vehicle(Vehicle rt_vehicle) {
+        this.rt_vehicle = rt_vehicle;
+    }
+
+    public User getRt_end_user() {
+        return rt_end_user;
+    }
+
+    public void setRt_end_user(User rt_end_user) {
+        this.rt_end_user = rt_end_user;
+    }
 
     public int getCurrentTripID() {
         return currentTripID;

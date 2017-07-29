@@ -26,6 +26,7 @@ public class DAOTripRequest {
 
     // set_request_approved
             // - extend expiry to few more minutes
+
     // request_pick_up
             // getTripStatus - not required
 
@@ -148,12 +149,12 @@ public class DAOTripRequest {
                   + TripRequest.TABLE_NAME + "." + TripRequest.TRIP_REQUEST_STATUS + ""
                 + " FROM "   + TripRequest.TABLE_NAME
                 + " INNER JOIN " + Vehicle.TABLE_NAME + " ON (" + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
-                + " INNER JOIN " + User.TABLE_NAME + " ON (" + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID + ")"
-                + " WHERE "  + TripRequest.TRIP_REQUEST_ID + " = ? "
-                + " AND "    + User.USER_ID + " = ? "
+                + " WHERE "  + TripRequest.TABLE_NAME + "." + TripRequest.TRIP_REQUEST_ID + " = ? "
+                + " AND "    + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ? "
                 + " AND "    + TripRequest.TIMESTAMP_EXPIRES + " > now()";
 
-
+//        + " INNER JOIN " + User.TABLE_NAME + " ON (" + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID + ")"
+//        + " AND "    + User.USER_ID + " = ? "
 
         Connection connection = null;
         PreparedStatement statement = null;
