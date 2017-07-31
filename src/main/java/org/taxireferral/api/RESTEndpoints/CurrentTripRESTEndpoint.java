@@ -6,6 +6,7 @@ import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.CurrentTrip;
 import org.taxireferral.api.Model.TripHistory;
 import org.taxireferral.api.ModelRoles.User;
+import org.taxireferral.api.ModelUtility.LocationCurrentTrip;
 
 
 import javax.annotation.security.RolesAllowed;
@@ -26,6 +27,41 @@ public class CurrentTripRESTEndpoint {
 
 
     private DAOCurrentTrip daoCurrentTrip = Globals.daoCurrentTrip;
+
+
+
+
+    @PUT
+    @Path("/UpdateDistanceAndLocation")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_DRIVER})
+    public Response updateDistanceAndLocation(LocationCurrentTrip locationCurrentTrip)
+    {
+
+
+        int rowCount = daoCurrentTrip.update_location_and_distance(
+                ((User) Globals.accountApproved).getUserID(),
+                locationCurrentTrip
+        );
+
+        if(rowCount >= 1)
+        {
+
+            return Response.status(Response.Status.OK)
+                    .build();
+        }
+        else if(rowCount <= 0)
+        {
+
+            return Response.status(Response.Status.NOT_MODIFIED)
+                    .build();
+        }
+
+        return null;
+    }
+
+
+
 
 
     @PUT
@@ -300,9 +336,6 @@ public class CurrentTripRESTEndpoint {
                     .build();
         }
     }
-
-
-
 
 
 

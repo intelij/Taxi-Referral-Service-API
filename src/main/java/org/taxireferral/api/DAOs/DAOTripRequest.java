@@ -336,6 +336,14 @@ public class DAOTripRequest {
                 + CurrentTrip.LAT_START_LOCATION + ","
                 + CurrentTrip.LON_START_LOCATION + ","
 
+                + CurrentTrip.LAT_PICK_UP_LOCATION + ","
+                + CurrentTrip.LON_PICK_UP_LOCATION + ","
+                + CurrentTrip.PICK_UP_ADDRESS + ","
+
+                + CurrentTrip.LAT_DESTINATION + ","
+                + CurrentTrip.LON_DESTINATION + ","
+                + CurrentTrip.DESTINATION_ADDRESS + ","
+
                 + CurrentTrip.FREE_PICKUP_DISTANCE + ","
                 + CurrentTrip.REFERRAL_CHARGES + ","
 
@@ -350,6 +358,14 @@ public class DAOTripRequest {
 
                 + currentLocation.getLatitude() + ","
                 + currentLocation.getLongitude() + ","
+
+                + TripRequest.TABLE_NAME + "." + TripRequest.LAT_PICK_UP + ","
+                + TripRequest.TABLE_NAME + "." + TripRequest.LON_PICK_UP + ","
+                + TripRequest.TABLE_NAME + "." + TripRequest.PICK_UP_ADDRESS + ","
+
+                + TripRequest.TABLE_NAME + "." + TripRequest.LAT_DESTINATION + ","
+                + TripRequest.TABLE_NAME + "." + TripRequest.LON_DESTINATION + ","
+                + TripRequest.TABLE_NAME + "." + TripRequest.DESTINATION_ADDRESS + ","
 
                 + GlobalConstants.free_pickup_distance + ","
                 + GlobalConstants.taxi_referral_charges + ","

@@ -7,6 +7,7 @@ import org.taxireferral.api.Model.CurrentTrip;
 import org.taxireferral.api.Model.TripHistory;
 import org.taxireferral.api.Model.Vehicle;
 import org.taxireferral.api.ModelRoles.User;
+import org.taxireferral.api.ModelUtility.LocationCurrentTrip;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,7 +22,7 @@ public class DAOCurrentTrip {
     private HikariDataSource dataSource = Globals.getDataSource();
 
 
-    // getStatusCurrentTrip
+
 
     // finish_trip - copy the current trip into the trip history and then deletes the current trip
                     // - updates the distance travelled for trip
@@ -53,6 +54,7 @@ public class DAOCurrentTrip {
 
     // getCurrentTripEndUser(int endUserID)
     // getCurrentTripDriver(int driverID)
+    // getStatusCurrentTripDriver(int driverID)
 
 
 
@@ -70,7 +72,138 @@ public class DAOCurrentTrip {
 
 
 
+
+
 //    int currentTripID
+
+
+
+
+
+    public int update_location_and_distance(int driverID, LocationCurrentTrip locationCurrentTrip)
+    {
+
+        Connection connection = null;
+
+        PreparedStatement statementUpdateLocation = null;
+        PreparedStatement statementUpdateDistance = null;
+
+        int rowCountUpdateLocation = -1;
+        int rowCountUpdateDistance = -1;
+
+        String updateLocation = "";
+        String updateDistance = "";
+
+
+
+        updateLocation = " UPDATE " + Vehicle.TABLE_NAME +
+
+                        " SET "
+                        + Vehicle.LAT_CURRENT + "=?,"
+                        + Vehicle.LON_CURRENT + "=?,"
+                        + Vehicle.TIMESTAMP_LOCATION_UPDATED + "= now()"
+
+                        + " FROM " + User.TABLE_NAME
+                        + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID
+                        + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
+
+
+        updateDistance = " UPDATE " + CurrentTrip.TABLE_NAME +
+
+                " SET "
+                + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + " = " + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + " + ?,"
+                + CurrentTrip.DISTANCE_TRAVELLED_FOR_TRIP + " = " + CurrentTrip.DISTANCE_TRAVELLED_FOR_TRIP + " + ?"
+
+                + " FROM " + Vehicle.TABLE_NAME
+                + " WHERE " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID
+                + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ?";
+
+
+
+
+        try {
+
+            connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
+
+            statementUpdateLocation = connection.prepareStatement(updateLocation);
+            int i = 0;
+
+            statementUpdateLocation.setObject(++i,locationCurrentTrip.getLatitude());
+            statementUpdateLocation.setObject(++i,locationCurrentTrip.getLongitude());
+            statementUpdateLocation.setObject(++i,driverID);
+
+            rowCountUpdateLocation = statementUpdateLocation.executeUpdate();
+
+
+
+            statementUpdateDistance = connection.prepareStatement(updateDistance);
+            i = 0;
+
+            statementUpdateLocation.setObject(++i,locationCurrentTrip.getDistancePickupIncrement());
+            statementUpdateLocation.setObject(++i,locationCurrentTrip.getDistanceTripIncrement());
+            statementUpdateLocation.setObject(++i,driverID);
+
+            rowCountUpdateLocation = statementUpdateLocation.executeUpdate();
+
+
+            connection.commit();
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+            if (connection != null) {
+                try {
+
+
+                    rowCountUpdateLocation = 0;
+                    rowCountUpdateDistance = 0;
+
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        finally
+        {
+
+
+            if (statementUpdateLocation != null) {
+                try {
+                    statementUpdateLocation.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+
+            if (statementUpdateDistance != null) {
+                try {
+                    statementUpdateDistance.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+
+        return rowCountUpdateLocation;
+    }
+
+
 
 
 
@@ -297,395 +430,6 @@ public class DAOCurrentTrip {
 
 
 
-
-
-
-
-
-    public CurrentTrip getCurrentTripForEndUser(int endUserID)
-    {
-
-        String query = " SELECT "
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_ID + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.END_USER_ID + ","
-
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_STATUS + ","
-
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TIMESTAMP_CREATED + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TIMESTAMP_STARTED + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TIMESTAMP_FINISHED + ","
-
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LAT_START_LOCATION + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LON_START_LOCATION + ","
-
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LAT_PICK_UP_LOCATION + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LON_PICK_UP_LOCATION + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.PICK_UP_ADDRESS + ","
-
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LAT_DESTINATION + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LON_DESTINATION + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DESTINATION_ADDRESS + ","
-
-
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_TRIP + ","
-
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.FREE_PICKUP_DISTANCE + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.REFERRAL_CHARGES + ","
-
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.MIN_TRIP_CHARGES + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CHARGES_PER_KM + ","
-
-                        + User.TABLE_NAME + "." + User.PHONE + ","
-                        + User.TABLE_NAME + "." + User.NAME + ","
-                        + User.TABLE_NAME + "." + User.GENDER + ","
-                        + User.TABLE_NAME + "." + User.PROFILE_IMAGE_URL + ""
-
-                        + " FROM "   + CurrentTrip.TABLE_NAME
-                        + " INNER JOIN " + Vehicle.TABLE_NAME + " ON (" + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
-                        + " INNER JOIN " + User.TABLE_NAME + " ON (" + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID + ")"
-                        + " WHERE "  + CurrentTrip.TABLE_NAME + "." + CurrentTrip.END_USER_ID + " = ? ";
-
-
-
-//        + " AND "    + User.USER_ID + " = ? "
-
-        Connection connection = null;
-        PreparedStatement statement = null;
-        ResultSet rs = null;
-
-
-        CurrentTrip currentTrip = null;
-
-        try {
-
-//            System.out.println(query);
-
-            connection = dataSource.getConnection();
-            statement = connection.prepareStatement(query);
-
-            int i = 0;
-            statement.setObject(++i,endUserID);
-
-
-            rs = statement.executeQuery();
-
-            while(rs.next())
-            {
-                currentTrip = new CurrentTrip();
-                currentTrip.setCurrentTripID(rs.getInt(CurrentTrip.CURRENT_TRIP_ID));
-                currentTrip.setVehicleID(rs.getInt(CurrentTrip.VEHICLE_ID));
-                currentTrip.setEndUserID(rs.getInt(CurrentTrip.END_USER_ID));
-
-                currentTrip.setCurrentTripStatus(rs.getInt(CurrentTrip.CURRENT_TRIP_STATUS));
-
-                currentTrip.setTimestampCreated(rs.getTimestamp(CurrentTrip.TIMESTAMP_CREATED));
-                currentTrip.setTimestampStarted(rs.getTimestamp(CurrentTrip.TIMESTAMP_STARTED));
-                currentTrip.setTimestampFinished(rs.getTimestamp(CurrentTrip.TIMESTAMP_FINISHED));
-
-                currentTrip.setLatStartLocation(rs.getDouble(CurrentTrip.LAT_START_LOCATION));
-                currentTrip.setLonStartLocation(rs.getDouble(CurrentTrip.LON_START_LOCATION));
-
-                currentTrip.setLatPickUpLocation(rs.getDouble(CurrentTrip.LAT_PICK_UP_LOCATION));
-                currentTrip.setLonPickUpLocation(rs.getDouble(CurrentTrip.LON_PICK_UP_LOCATION));
-                currentTrip.setPickUpAddress(rs.getString(CurrentTrip.PICK_UP_ADDRESS));
-
-                currentTrip.setLatDestination(rs.getDouble(CurrentTrip.LAT_DESTINATION));
-                currentTrip.setLonDestination(rs.getDouble(CurrentTrip.LON_DESTINATION));
-                currentTrip.setDestinationAddress(rs.getString(CurrentTrip.DESTINATION_ADDRESS));
-
-                currentTrip.setDistanceTravelledForPickup(rs.getDouble(CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP));
-                currentTrip.setDistanceTravelledForTrip(rs.getDouble(CurrentTrip.DISTANCE_TRAVELLED_FOR_TRIP));
-
-                currentTrip.setFreePickUpDistance(rs.getDouble(CurrentTrip.FREE_PICKUP_DISTANCE));
-                currentTrip.setReferralCharges(rs.getDouble(CurrentTrip.REFERRAL_CHARGES));
-
-                currentTrip.setMinTripCharges(rs.getDouble(CurrentTrip.MIN_TRIP_CHARGES));
-                currentTrip.setChargesPerKm(rs.getDouble(CurrentTrip.CHARGES_PER_KM));
-            }
-
-
-
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } finally
-
-        {
-
-            try {
-                if(rs!=null)
-                {rs.close();}
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-            try {
-
-                if(statement!=null)
-                {statement.close();}
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-            try {
-
-                if(connection!=null)
-                {connection.close();}
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        return currentTrip;
-    }
-
-
-
-
-
-
-    public CurrentTrip getCurrentTripStatusForDriver(int driverID)
-    {
-
-        String query =
-                        " SELECT "
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_ID + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_STATUS + ""
-
-                        + " FROM "   + CurrentTrip.TABLE_NAME
-                        + " INNER JOIN " + Vehicle.TABLE_NAME + " ON (" + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
-                        + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ? ";
-
-
-
-        Connection connection = null;
-        PreparedStatement statement = null;
-        ResultSet rs = null;
-
-
-        CurrentTrip currentTrip = null;
-
-        try {
-
-//            System.out.println(query);
-
-            connection = dataSource.getConnection();
-            statement = connection.prepareStatement(query);
-
-            int i = 0;
-
-            statement.setObject(++i,driverID);
-
-
-            rs = statement.executeQuery();
-
-            while(rs.next())
-            {
-                currentTrip = new CurrentTrip();
-                currentTrip.setCurrentTripID(rs.getInt(CurrentTrip.CURRENT_TRIP_ID));
-                currentTrip.setCurrentTripStatus(rs.getInt(CurrentTrip.CURRENT_TRIP_STATUS));
-            }
-
-
-
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } finally
-
-        {
-
-            try {
-                if(rs!=null)
-                {rs.close();}
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-            try {
-
-                if(statement!=null)
-                {statement.close();}
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-            try {
-
-                if(connection!=null)
-                {connection.close();}
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        return currentTrip;
-    }
-
-
-
-
-    public CurrentTrip getCurrentTripForDriver(int driverID)
-    {
-
-        String query =
-                        " SELECT "
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_ID + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.END_USER_ID + ","
-
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_STATUS + ","
-
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TIMESTAMP_CREATED + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TIMESTAMP_STARTED + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TIMESTAMP_FINISHED + ","
-
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LAT_START_LOCATION + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LON_START_LOCATION + ","
-
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LAT_PICK_UP_LOCATION + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LON_PICK_UP_LOCATION + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.PICK_UP_ADDRESS + ","
-
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LAT_DESTINATION + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LON_DESTINATION + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DESTINATION_ADDRESS + ","
-
-
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_TRIP + ","
-
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.FREE_PICKUP_DISTANCE + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.REFERRAL_CHARGES + ","
-
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.MIN_TRIP_CHARGES + ","
-                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CHARGES_PER_KM + ","
-
-                        + User.TABLE_NAME + "." + User.PHONE + ","
-                        + User.TABLE_NAME + "." + User.NAME + ","
-                        + User.TABLE_NAME + "." + User.GENDER + ","
-                        + User.TABLE_NAME + "." + User.PROFILE_IMAGE_URL + ""
-
-                        + " FROM "   + CurrentTrip.TABLE_NAME
-                        + " INNER JOIN " + User.TABLE_NAME + " ON (" + User.TABLE_NAME + "." + User.USER_ID + " = " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.END_USER_ID + ")"
-                        + " INNER JOIN " + Vehicle.TABLE_NAME + " ON (" + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
-                        + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ? ";
-
-
-
-        Connection connection = null;
-        PreparedStatement statement = null;
-        ResultSet rs = null;
-
-
-        CurrentTrip currentTrip = null;
-
-        try {
-
-//            System.out.println(query);
-
-            connection = dataSource.getConnection();
-            statement = connection.prepareStatement(query);
-
-            int i = 0;
-
-            statement.setObject(++i,driverID);
-
-
-            rs = statement.executeQuery();
-
-            while(rs.next())
-            {
-                currentTrip = new CurrentTrip();
-
-                currentTrip.setCurrentTripID(rs.getInt(CurrentTrip.CURRENT_TRIP_ID));
-                currentTrip.setVehicleID(rs.getInt(CurrentTrip.VEHICLE_ID));
-                currentTrip.setEndUserID(rs.getInt(CurrentTrip.END_USER_ID));
-
-                currentTrip.setCurrentTripStatus(rs.getInt(CurrentTrip.CURRENT_TRIP_STATUS));
-
-                currentTrip.setTimestampCreated(rs.getTimestamp(CurrentTrip.TIMESTAMP_CREATED));
-                currentTrip.setTimestampStarted(rs.getTimestamp(CurrentTrip.TIMESTAMP_STARTED));
-                currentTrip.setTimestampFinished(rs.getTimestamp(CurrentTrip.TIMESTAMP_FINISHED));
-
-                currentTrip.setLatStartLocation(rs.getDouble(CurrentTrip.LAT_START_LOCATION));
-                currentTrip.setLonStartLocation(rs.getDouble(CurrentTrip.LON_START_LOCATION));
-
-                currentTrip.setLatPickUpLocation(rs.getDouble(CurrentTrip.LAT_PICK_UP_LOCATION));
-                currentTrip.setLonPickUpLocation(rs.getDouble(CurrentTrip.LON_PICK_UP_LOCATION));
-                currentTrip.setPickUpAddress(rs.getString(CurrentTrip.PICK_UP_ADDRESS));
-
-                currentTrip.setLatDestination(rs.getDouble(CurrentTrip.LAT_DESTINATION));
-                currentTrip.setLonDestination(rs.getDouble(CurrentTrip.LON_DESTINATION));
-                currentTrip.setDestinationAddress(rs.getString(CurrentTrip.DESTINATION_ADDRESS));
-
-                currentTrip.setDistanceTravelledForPickup(rs.getDouble(CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP));
-                currentTrip.setDistanceTravelledForTrip(rs.getDouble(CurrentTrip.DISTANCE_TRAVELLED_FOR_TRIP));
-
-                currentTrip.setFreePickUpDistance(rs.getDouble(CurrentTrip.FREE_PICKUP_DISTANCE));
-                currentTrip.setReferralCharges(rs.getDouble(CurrentTrip.REFERRAL_CHARGES));
-
-                currentTrip.setMinTripCharges(rs.getDouble(CurrentTrip.MIN_TRIP_CHARGES));
-                currentTrip.setChargesPerKm(rs.getDouble(CurrentTrip.CHARGES_PER_KM));
-
-
-                User endUser = new User();
-
-                endUser.setUserID(currentTrip.getEndUserID());
-                endUser.setPhone(rs.getString(User.PHONE));
-                endUser.setName(rs.getString(User.NAME));
-                endUser.setGender(rs.getBoolean(User.GENDER));
-                endUser.setProfileImagePath(rs.getString(User.PROFILE_IMAGE_URL));
-
-                currentTrip.setRt_end_user(endUser);
-            }
-
-
-
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } finally
-
-        {
-
-            try {
-                if(rs!=null)
-                {rs.close();}
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-            try {
-
-                if(statement!=null)
-                {statement.close();}
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-            try {
-
-                if(connection!=null)
-                {connection.close();}
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        return currentTrip;
-    }
 
 
 
@@ -1021,6 +765,398 @@ public class DAOCurrentTrip {
 
         return rowCountItems;
     }
+
+
+
+
+
+
+    public CurrentTrip getCurrentTripForEndUser(int endUserID)
+    {
+
+        String query = " SELECT "
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_ID + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.END_USER_ID + ","
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_STATUS + ","
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TIMESTAMP_CREATED + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TIMESTAMP_STARTED + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TIMESTAMP_FINISHED + ","
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LAT_START_LOCATION + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LON_START_LOCATION + ","
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LAT_PICK_UP_LOCATION + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LON_PICK_UP_LOCATION + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.PICK_UP_ADDRESS + ","
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LAT_DESTINATION + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LON_DESTINATION + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DESTINATION_ADDRESS + ","
+
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_TRIP + ","
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.FREE_PICKUP_DISTANCE + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.REFERRAL_CHARGES + ","
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.MIN_TRIP_CHARGES + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CHARGES_PER_KM + ","
+
+                + User.TABLE_NAME + "." + User.PHONE + ","
+                + User.TABLE_NAME + "." + User.NAME + ","
+                + User.TABLE_NAME + "." + User.GENDER + ","
+                + User.TABLE_NAME + "." + User.PROFILE_IMAGE_URL + ""
+
+                + " FROM "   + CurrentTrip.TABLE_NAME
+                + " INNER JOIN " + Vehicle.TABLE_NAME + " ON (" + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
+                + " INNER JOIN " + User.TABLE_NAME + " ON (" + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID + ")"
+                + " WHERE "  + CurrentTrip.TABLE_NAME + "." + CurrentTrip.END_USER_ID + " = ? ";
+
+
+
+//        + " AND "    + User.USER_ID + " = ? "
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+
+        CurrentTrip currentTrip = null;
+
+        try {
+
+//            System.out.println(query);
+
+            connection = dataSource.getConnection();
+            statement = connection.prepareStatement(query);
+
+            int i = 0;
+            statement.setObject(++i,endUserID);
+
+
+            rs = statement.executeQuery();
+
+            while(rs.next())
+            {
+                currentTrip = new CurrentTrip();
+                currentTrip.setCurrentTripID(rs.getInt(CurrentTrip.CURRENT_TRIP_ID));
+                currentTrip.setVehicleID(rs.getInt(CurrentTrip.VEHICLE_ID));
+                currentTrip.setEndUserID(rs.getInt(CurrentTrip.END_USER_ID));
+
+                currentTrip.setCurrentTripStatus(rs.getInt(CurrentTrip.CURRENT_TRIP_STATUS));
+
+                currentTrip.setTimestampCreated(rs.getTimestamp(CurrentTrip.TIMESTAMP_CREATED));
+                currentTrip.setTimestampStarted(rs.getTimestamp(CurrentTrip.TIMESTAMP_STARTED));
+                currentTrip.setTimestampFinished(rs.getTimestamp(CurrentTrip.TIMESTAMP_FINISHED));
+
+                currentTrip.setLatStartLocation(rs.getDouble(CurrentTrip.LAT_START_LOCATION));
+                currentTrip.setLonStartLocation(rs.getDouble(CurrentTrip.LON_START_LOCATION));
+
+                currentTrip.setLatPickUpLocation(rs.getDouble(CurrentTrip.LAT_PICK_UP_LOCATION));
+                currentTrip.setLonPickUpLocation(rs.getDouble(CurrentTrip.LON_PICK_UP_LOCATION));
+                currentTrip.setPickUpAddress(rs.getString(CurrentTrip.PICK_UP_ADDRESS));
+
+                currentTrip.setLatDestination(rs.getDouble(CurrentTrip.LAT_DESTINATION));
+                currentTrip.setLonDestination(rs.getDouble(CurrentTrip.LON_DESTINATION));
+                currentTrip.setDestinationAddress(rs.getString(CurrentTrip.DESTINATION_ADDRESS));
+
+                currentTrip.setDistanceTravelledForPickup(rs.getDouble(CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP));
+                currentTrip.setDistanceTravelledForTrip(rs.getDouble(CurrentTrip.DISTANCE_TRAVELLED_FOR_TRIP));
+
+                currentTrip.setFreePickUpDistance(rs.getDouble(CurrentTrip.FREE_PICKUP_DISTANCE));
+                currentTrip.setReferralCharges(rs.getDouble(CurrentTrip.REFERRAL_CHARGES));
+
+                currentTrip.setMinTripCharges(rs.getDouble(CurrentTrip.MIN_TRIP_CHARGES));
+                currentTrip.setChargesPerKm(rs.getDouble(CurrentTrip.CHARGES_PER_KM));
+            }
+
+
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally
+
+        {
+
+            try {
+                if(rs!=null)
+                {rs.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(statement!=null)
+                {statement.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return currentTrip;
+    }
+
+
+
+
+
+
+    public CurrentTrip getCurrentTripStatusForDriver(int driverID)
+    {
+
+        String query =
+                " SELECT "
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_ID + ","
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_STATUS + ""
+
+                        + " FROM "   + CurrentTrip.TABLE_NAME
+                        + " INNER JOIN " + Vehicle.TABLE_NAME + " ON (" + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
+                        + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ? ";
+
+
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+
+        CurrentTrip currentTrip = null;
+
+        try {
+
+//            System.out.println(query);
+
+            connection = dataSource.getConnection();
+            statement = connection.prepareStatement(query);
+
+            int i = 0;
+
+            statement.setObject(++i,driverID);
+
+
+            rs = statement.executeQuery();
+
+            while(rs.next())
+            {
+                currentTrip = new CurrentTrip();
+                currentTrip.setCurrentTripID(rs.getInt(CurrentTrip.CURRENT_TRIP_ID));
+                currentTrip.setCurrentTripStatus(rs.getInt(CurrentTrip.CURRENT_TRIP_STATUS));
+            }
+
+
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally
+
+        {
+
+            try {
+                if(rs!=null)
+                {rs.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(statement!=null)
+                {statement.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return currentTrip;
+    }
+
+
+
+
+    public CurrentTrip getCurrentTripForDriver(int driverID)
+    {
+
+        String query =
+                " SELECT "
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_ID + ","
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + ","
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.END_USER_ID + ","
+
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_STATUS + ","
+
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TIMESTAMP_CREATED + ","
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TIMESTAMP_STARTED + ","
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TIMESTAMP_FINISHED + ","
+
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LAT_START_LOCATION + ","
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LON_START_LOCATION + ","
+
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LAT_PICK_UP_LOCATION + ","
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LON_PICK_UP_LOCATION + ","
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.PICK_UP_ADDRESS + ","
+
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LAT_DESTINATION + ","
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LON_DESTINATION + ","
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DESTINATION_ADDRESS + ","
+
+
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + ","
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_TRIP + ","
+
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.FREE_PICKUP_DISTANCE + ","
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.REFERRAL_CHARGES + ","
+
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.MIN_TRIP_CHARGES + ","
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CHARGES_PER_KM + ","
+
+                        + User.TABLE_NAME + "." + User.PHONE + ","
+                        + User.TABLE_NAME + "." + User.NAME + ","
+                        + User.TABLE_NAME + "." + User.GENDER + ","
+                        + User.TABLE_NAME + "." + User.PROFILE_IMAGE_URL + ""
+
+                        + " FROM "   + CurrentTrip.TABLE_NAME
+                        + " INNER JOIN " + User.TABLE_NAME + " ON (" + User.TABLE_NAME + "." + User.USER_ID + " = " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.END_USER_ID + ")"
+                        + " INNER JOIN " + Vehicle.TABLE_NAME + " ON (" + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
+                        + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ? ";
+
+
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+
+        CurrentTrip currentTrip = null;
+
+        try {
+
+//            System.out.println(query);
+
+            connection = dataSource.getConnection();
+            statement = connection.prepareStatement(query);
+
+            int i = 0;
+
+            statement.setObject(++i,driverID);
+
+
+            rs = statement.executeQuery();
+
+            while(rs.next())
+            {
+                currentTrip = new CurrentTrip();
+
+                currentTrip.setCurrentTripID(rs.getInt(CurrentTrip.CURRENT_TRIP_ID));
+                currentTrip.setVehicleID(rs.getInt(CurrentTrip.VEHICLE_ID));
+                currentTrip.setEndUserID(rs.getInt(CurrentTrip.END_USER_ID));
+
+                currentTrip.setCurrentTripStatus(rs.getInt(CurrentTrip.CURRENT_TRIP_STATUS));
+
+                currentTrip.setTimestampCreated(rs.getTimestamp(CurrentTrip.TIMESTAMP_CREATED));
+                currentTrip.setTimestampStarted(rs.getTimestamp(CurrentTrip.TIMESTAMP_STARTED));
+                currentTrip.setTimestampFinished(rs.getTimestamp(CurrentTrip.TIMESTAMP_FINISHED));
+
+                currentTrip.setLatStartLocation(rs.getDouble(CurrentTrip.LAT_START_LOCATION));
+                currentTrip.setLonStartLocation(rs.getDouble(CurrentTrip.LON_START_LOCATION));
+
+                currentTrip.setLatPickUpLocation(rs.getDouble(CurrentTrip.LAT_PICK_UP_LOCATION));
+                currentTrip.setLonPickUpLocation(rs.getDouble(CurrentTrip.LON_PICK_UP_LOCATION));
+                currentTrip.setPickUpAddress(rs.getString(CurrentTrip.PICK_UP_ADDRESS));
+
+                currentTrip.setLatDestination(rs.getDouble(CurrentTrip.LAT_DESTINATION));
+                currentTrip.setLonDestination(rs.getDouble(CurrentTrip.LON_DESTINATION));
+                currentTrip.setDestinationAddress(rs.getString(CurrentTrip.DESTINATION_ADDRESS));
+
+                currentTrip.setDistanceTravelledForPickup(rs.getDouble(CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP));
+                currentTrip.setDistanceTravelledForTrip(rs.getDouble(CurrentTrip.DISTANCE_TRAVELLED_FOR_TRIP));
+
+                currentTrip.setFreePickUpDistance(rs.getDouble(CurrentTrip.FREE_PICKUP_DISTANCE));
+                currentTrip.setReferralCharges(rs.getDouble(CurrentTrip.REFERRAL_CHARGES));
+
+                currentTrip.setMinTripCharges(rs.getDouble(CurrentTrip.MIN_TRIP_CHARGES));
+                currentTrip.setChargesPerKm(rs.getDouble(CurrentTrip.CHARGES_PER_KM));
+
+
+                User endUser = new User();
+
+                endUser.setUserID(currentTrip.getEndUserID());
+                endUser.setPhone(rs.getString(User.PHONE));
+                endUser.setName(rs.getString(User.NAME));
+                endUser.setGender(rs.getBoolean(User.GENDER));
+                endUser.setProfileImagePath(rs.getString(User.PROFILE_IMAGE_URL));
+
+                currentTrip.setRt_end_user(endUser);
+            }
+
+
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally
+
+        {
+
+            try {
+                if(rs!=null)
+                {rs.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(statement!=null)
+                {statement.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return currentTrip;
+    }
+
+
 
 
 

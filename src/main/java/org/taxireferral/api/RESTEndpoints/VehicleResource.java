@@ -179,10 +179,14 @@ public class VehicleResource {
 //    @RolesAllowed({GlobalConstants.ROLE_DRIVER})
 
     @PUT
-    @Path("/UpdateLocation/{VehicleID}")
+    @Path("/UpdateLocation")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateLocation(Location location, @PathParam("VehicleID")int vehicleID)
+    public Response updateLocation(Location location)
     {
+
+//        , @PathParam("VehicleID")int vehicleID
+//        /{VehicleID}
+
 
 //        if(Globals.accountApproved instanceof User)
 //        {
@@ -194,7 +198,7 @@ public class VehicleResource {
 //        }
 
 
-        int rowCount = daoVehicle.update_location(location,vehicleID);
+        int rowCount = daoVehicle.update_location(location,((User)Globals.accountApproved).getUserID());
 
         if(rowCount >= 1)
         {

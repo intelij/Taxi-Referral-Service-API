@@ -324,7 +324,7 @@ public class VehicleDAO {
 
 
 
-    public int update_location(Location location,int vehicleID)
+    public int update_location(Location location,int driverID)
     {
 
         Connection connection = null;
@@ -345,7 +345,12 @@ public class VehicleDAO {
                 + Vehicle.LON_CURRENT + "=?,"
                 + Vehicle.TIMESTAMP_LOCATION_UPDATED + "= now()"
 
-                + " WHERE " + Vehicle.VEHICLE_ID + " = ?";
+                + " FROM " + User.TABLE_NAME
+                + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID
+                + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
+
+
+//        + " WHERE " + Vehicle.VEHICLE_ID + " = ?";
 
 
 
@@ -363,7 +368,7 @@ public class VehicleDAO {
             statementUpdate.setObject(++i,location.getLatitude());
             statementUpdate.setObject(++i,location.getLongitude());
 
-            statementUpdate.setObject(++i,vehicleID);
+            statementUpdate.setObject(++i,driverID);
 
             rowCountItems = statementUpdate.executeUpdate();
 
