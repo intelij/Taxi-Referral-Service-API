@@ -181,6 +181,7 @@ public class VehicleResource {
     @PUT
     @Path("/UpdateLocation")
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_DRIVER})
     public Response updateLocation(Location location)
     {
 
@@ -221,39 +222,39 @@ public class VehicleResource {
 
 //    @RolesAllowed({GlobalConstants.ROLE_DRIVER})
 
-    @PUT
-    @Path("/UpdateStatus/{VehicleID}/Status/{Status}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateStatus(@PathParam("Status") int status, @PathParam("VehicleID")int vehicleID)
-    {
-
-//        if(Globals.accountApproved instanceof User)
+//    @PUT
+//    @Path("/UpdateStatus/{VehicleID}/Status/{Status}")
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    public Response updateStatus(@PathParam("Status") int status, @PathParam("VehicleID")int vehicleID)
+//    {
+//
+////        if(Globals.accountApproved instanceof User)
+////        {
+////            shop.setShopAdminID(((ShopAdmin) Globals.accountApproved).getShopAdminID());
+////        }
+////        else
+////        {
+////            throw new ForbiddenException();
+////        }
+//
+//
+//
+//        int rowCount = daoVehicle.update_status(status,vehicleID);
+//
+//        if(rowCount >= 1)
 //        {
-//            shop.setShopAdminID(((ShopAdmin) Globals.accountApproved).getShopAdminID());
+//            return Response.status(Response.Status.OK)
+//                    .build();
 //        }
-//        else
+//        else if(rowCount <= 0)
 //        {
-//            throw new ForbiddenException();
+//            return Response.status(Response.Status.NOT_MODIFIED)
+//                    .build();
 //        }
-
-
-
-        int rowCount = daoVehicle.update_status(status,vehicleID);
-
-        if(rowCount >= 1)
-        {
-            return Response.status(Response.Status.OK)
-                    .build();
-        }
-        else if(rowCount <= 0)
-        {
-            return Response.status(Response.Status.NOT_MODIFIED)
-                    .build();
-        }
-
-
-        return null;
-    }
+//
+//
+//        return null;
+//    }
 
 
 

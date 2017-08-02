@@ -21,10 +21,11 @@ public class Vehicle {
     public static final String VEHICLE_MODEL_NAME = "VEHICLE_MODEL_NAME";
     public static final String SEATING_CAPACITY = "SEATING_CAPACITY";
 
-
     public static final String PROFILE_IMAGE_URL = "PROFILE_IMAGE_URL";
 
     public static final String ENABLED = "ENABLED";
+    public static final String ENABLED_UPTO = "ENABLED_UPTO";
+
     public static final String VEHICLE_STATUS = "VEHICLE_STATUS";
 
 
@@ -65,9 +66,14 @@ public class Vehicle {
                     + " " + Vehicle.VEHICLE_ID + " SERIAL PRIMARY KEY,"
                     + " " + Vehicle.DRIVER_ID + " int UNIQUE NOT NULL ,"
 
-                    + " " + Vehicle.PROFILE_IMAGE_URL + " text ,"
+                    + " " + Vehicle.VEHICLE_MODEL_NAME + " text,"
+                    + " " + Vehicle.SEATING_CAPACITY + " int NOT NULL DEFAULT 0,"
+
+                    + " " + Vehicle.PROFILE_IMAGE_URL + " text,"
 
                     + " " + Vehicle.ENABLED + " boolean NOT NULL default 'f',"
+                    + " " + Vehicle.ENABLED_UPTO + " timestamp with time zone NOT NULL DEFAULT now(),"
+
                     + " " + Vehicle.VEHICLE_STATUS + " int NOT NULL default 2,"
                     // 2 stands for status not-available. Refer GlobalConstants for the values
 
@@ -76,6 +82,7 @@ public class Vehicle {
 
                     + " " + Vehicle.LAT_CURRENT + " float NOT NULL default 0,"
                     + " " + Vehicle.LON_CURRENT + " float NOT NULL default 0,"
+
                     + " " + Vehicle.TIMESTAMP_LOCATION_UPDATED + "  timestamp with time zone NOT NULL DEFAULT now(),"
                     + " " + Vehicle.TIMESTAMP_PROFILE_CREATED + "  timestamp with time zone NOT NULL DEFAULT now(),"
                     + " FOREIGN KEY(" + Vehicle.DRIVER_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE"
@@ -88,6 +95,8 @@ public class Vehicle {
     // instance variables
     private int vehicleID;
     private int driverID;
+
+
 
     private String profileImageURL;
 

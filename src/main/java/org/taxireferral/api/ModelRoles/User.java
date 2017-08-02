@@ -10,13 +10,14 @@ import java.sql.Timestamp;
 public class User {
 
 
-    // Table Name for User
-    public static final String TABLE_NAME = "USER_TABLE";
 
     // constants
     public static final int REGISTRATION_MODE_EMAIL = 1;
     public static final int REGISTRATION_MODE_PHONE = 2;
 
+
+    // Table Name for User
+    public static final String TABLE_NAME = "USER_TABLE";
 
     // Column names
     public static final String USER_ID = "USER_ID";
@@ -44,24 +45,20 @@ public class User {
     public static final String TOKEN = "TOKEN";
     public static final String TIMESTAMP_TOKEN_EXPIRES = "TIMESTAMP_TOKEN_EXPIRES";
 
-//    public static final String EMAIL_VERIFICATION_CODE = "EMAIL_VERIFICATION_CODE";
-//    public static final String EMAIL_VERIFICATION_CODE_TIMESTAMP_EXPIRES = "EMAIL_VERIFICATION_CODE_TIMESTAMP_EXPIRES";
+
+    // current_due = total_billed - total_credits - total_paid
+    public static final String CURRENT_DUES = "CURRENT_DUES";
+    public static final String TOTAL_BILLED = "TOTAL_BILLED";
+    public static final String TOTAL_CREDITS = "TOTAL_CREDITS";
+    public static final String TOTAL_PAID = "TOTAL_PAID";
+
+    public static final String REFERRED_BY = "REFERRED_BY";
+    public static final String IS_REFERRER_CREDITED = "IS_REFERRER_CREDITED";
+
+    // verified accounts are an indication that identity of the user is verified by a staff member
+    public static final String IS_VERIFIED = "IS_VERIFIED";
 
 
-    public static final String PHONE_VERIFICATION_CODE = "PHONE_VERIFICATION_CODE";
-    public static final String PHONE_VERIFICATION_CODE_TIMESTAMP_ISSUED = "PHONE_VERIFICATION_CODE_TIMESTAMP_ISSUED";
-
-
-
-
-
-
-//    + " " + User.IS_EMAIL_VERIFIED + " boolean NOT NULL default 'f',"
-//                        + " " + User.IS_PHONE_VERIFIED + " boolean NOT NULL default 'f',"
-//    + " " + User.EMAIL_VERIFICATION_CODE + "  text,"
-//            + " " + User.EMAIL_VERIFICATION_CODE_TIMESTAMP_EXPIRES + "  timestamp with time zone,"
-
-//    + " " + User.PROFILE_IMAGE_URL + " text,"
 
     // Create Table CurrentServiceConfiguration Provider
     public static final String createTableUsernamesPostgres =

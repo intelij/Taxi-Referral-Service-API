@@ -9,26 +9,24 @@ public class LocationCurrentTrip {
 
     private double latitude;
     private double longitude;
-    private double distancePickupIncrement;
-    private double distanceTripIncrement;
+    private double distanceTravelledForPickup;
+    private double distanceTravelledForTrip;
 
 
-
-
-    public double getDistancePickupIncrement() {
-        return distancePickupIncrement;
+    public double getDistanceTravelledForPickup() {
+        return distanceTravelledForPickup;
     }
 
-    public void setDistancePickupIncrement(double distancePickupIncrement) {
-        this.distancePickupIncrement = distancePickupIncrement;
+    public void setDistanceTravelledForPickup(double distanceTravelledForPickup) {
+        this.distanceTravelledForPickup = distanceTravelledForPickup;
     }
 
-    public double getDistanceTripIncrement() {
-        return distanceTripIncrement;
+    public double getDistanceTravelledForTrip() {
+        return distanceTravelledForTrip;
     }
 
-    public void setDistanceTripIncrement(double distanceTripIncrement) {
-        this.distanceTripIncrement = distanceTripIncrement;
+    public void setDistanceTravelledForTrip(double distanceTravelledForTrip) {
+        this.distanceTravelledForTrip = distanceTravelledForTrip;
     }
 
     public double getLatitude() {

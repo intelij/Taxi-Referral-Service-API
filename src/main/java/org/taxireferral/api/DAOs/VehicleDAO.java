@@ -337,6 +337,24 @@ public class VehicleDAO {
 
 
 
+//        update = "UPDATE " + Vehicle.TABLE_NAME
+//
+//                + " SET "
+//
+//                + Vehicle.LAT_CURRENT + "=?,"
+//                + Vehicle.LON_CURRENT + "=?,"
+//                + Vehicle.TIMESTAMP_LOCATION_UPDATED + "= now()"
+//
+//                + " FROM " + User.TABLE_NAME
+//                + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID
+//                + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
+
+
+//        + " WHERE " + Vehicle.VEHICLE_ID + " = ?";
+
+
+
+
         update = "UPDATE " + Vehicle.TABLE_NAME
 
                 + " SET "
@@ -345,13 +363,7 @@ public class VehicleDAO {
                 + Vehicle.LON_CURRENT + "=?,"
                 + Vehicle.TIMESTAMP_LOCATION_UPDATED + "= now()"
 
-                + " FROM " + User.TABLE_NAME
-                + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID
-                + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
-
-
-//        + " WHERE " + Vehicle.VEHICLE_ID + " = ?";
-
+                + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ?";
 
 
 
@@ -432,13 +444,19 @@ public class VehicleDAO {
         String update = "";
 
 
+//        update =  " UPDATE " + Vehicle.TABLE_NAME
+//                + " SET " + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.NOT_AVIALABLE
+//                + " FROM " + User.TABLE_NAME
+//                + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID
+//                + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ?"
+//                + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.AVIALABLE;
+
 
         update =  " UPDATE " + Vehicle.TABLE_NAME
                 + " SET " + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.NOT_AVIALABLE
-                + " FROM " + User.TABLE_NAME
-                + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID
-                + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ?"
+                + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ?"
                 + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.AVIALABLE;
+
 
 
         try {
@@ -516,11 +534,17 @@ public class VehicleDAO {
 
 
 
+//        update =  " UPDATE " + Vehicle.TABLE_NAME
+//                + " SET " + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.AVIALABLE
+//                + " FROM " + User.TABLE_NAME
+//                + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID
+//                + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ?"
+//                + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.NOT_AVIALABLE;
+
+
         update =  " UPDATE " + Vehicle.TABLE_NAME
                 + " SET " + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.AVIALABLE
-                + " FROM " + User.TABLE_NAME
-                + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID
-                + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ?"
+                + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ?"
                 + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.NOT_AVIALABLE;
 
 
@@ -587,6 +611,7 @@ public class VehicleDAO {
 
 
 
+    // marked as deprecated
     public int update_status(int status, int vehicleID)
     {
 
@@ -676,7 +701,9 @@ public class VehicleDAO {
     public int deleteVehicle(int vehicleID)
     {
 
-        String deleteStatement = "DELETE FROM " + Vehicle.TABLE_NAME + " WHERE " + Vehicle.VEHICLE_ID + " = ?";
+        String deleteStatement =  " DELETE FROM " + Vehicle.TABLE_NAME
+                                + " WHERE " + Vehicle.VEHICLE_ID + " = ?";
+
 
         Connection connection= null;
         PreparedStatement statement = null;
@@ -842,6 +869,9 @@ public class VehicleDAO {
 
         return vehicle;
     }
+
+
+
 
 
 
@@ -1226,14 +1256,4 @@ public class VehicleDAO {
      *
      *
      */
-
-
-
-
-
-
-
-
-
-
 }

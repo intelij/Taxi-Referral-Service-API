@@ -44,20 +44,23 @@ public class CurrentTripRESTEndpoint {
                 locationCurrentTrip
         );
 
-        if(rowCount >= 1)
+
+        if(rowCount >= 2)
         {
 
             return Response.status(Response.Status.OK)
                     .build();
         }
-        else if(rowCount <= 0)
+        else
         {
+//            if(rowCount <= 0)
+
 
             return Response.status(Response.Status.NOT_MODIFIED)
                     .build();
         }
 
-        return null;
+
     }
 
 

@@ -23,17 +23,15 @@ public class GlobalConstants {
 
 
 
-
-
     // constants
-    public static final int TOKEN_DURATION_MINUTES = 20;
+    public static final int TOKEN_DURATION_MINUTES = 1;
     public static final int EMAIL_VERIFICATION_CODE_EXPIRY_MINUTES = 10;
     public static final int TRIP_REQUEST_EXPIRY_MINUTES = 10;
     public static final int TRIP_REQUEST_EXPIRY_EXTENSION_MINUTES = 10;
 
 
-    public static final int max_limit = 100;    // 100 items per fetch
 
+    public static final int max_limit = 100;    // 100 items per fetch
     // constants for restricting taxi charges
     public static final int max_min_trip_charges = 20;    // 20 bucks
     public static final int max_charges_per_km = 12;  // 12 bucks per km
@@ -41,6 +39,7 @@ public class GlobalConstants {
 //    public static final int max_free_pickup_distance = 3; // 3 km
     public static final int free_pickup_distance = 3; // 3 km
     public static final int taxi_referral_charges = 5; // 3 bucks per km
+    public static final int free_minutes_per_km = 3; // for calculating the waiting charges
 
 
 
@@ -68,5 +67,19 @@ public class GlobalConstants {
     public static final int AVIALABLE = 1;
     public static final int NOT_AVIALABLE = 2;
     public static final int OCCUPIED = 3;
+
+
+
+    // credits and offers
+    public static final int DRIVER_REFERRAL_CREDIT = 200; // credited in the account of the one who refers
+    public static final int END_USER_REFERRAL_CREDIT = 100; // referral credit - credited into the account of the one who refers
+
+    public static final int DRIVER_JOINING_CREDIT = 1000; // credit applied when a driver joins the platform
+    public static final int END_USER_JOINING_CREDIT = 500; // credit applied when a end user joins the platform
+
+
+    // services get suspended if the user current_dues exceed the max current dues
+    public static final int MAX_CURRENT_DUES_FOR_DRIVER = 1000;
+    public static final int MAX_CURRENT_DUES_FOR_END_USER = 1000;
 
 }

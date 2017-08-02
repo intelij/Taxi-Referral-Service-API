@@ -5,6 +5,7 @@ import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.CurrentTrip;
 import org.taxireferral.api.Model.TripHistory;
+import org.taxireferral.api.Model.TripRequest;
 import org.taxireferral.api.Model.Vehicle;
 import org.taxireferral.api.ModelRoles.User;
 import org.taxireferral.api.ModelUtility.LocationCurrentTrip;
@@ -85,8 +86,8 @@ public class DAOCurrentTrip {
 
         Connection connection = null;
 
-        PreparedStatement statementUpdateLocation = null;
-        PreparedStatement statementUpdateDistance = null;
+        PreparedStatement statementLocation = null;
+        PreparedStatement statementDistance = null;
 
         int rowCountUpdateLocation = -1;
         int rowCountUpdateDistance = -1;
@@ -96,27 +97,51 @@ public class DAOCurrentTrip {
 
 
 
-        updateLocation = " UPDATE " + Vehicle.TABLE_NAME +
-
-                        " SET "
-                        + Vehicle.LAT_CURRENT + "=?,"
-                        + Vehicle.LON_CURRENT + "=?,"
-                        + Vehicle.TIMESTAMP_LOCATION_UPDATED + "= now()"
-
-                        + " FROM " + User.TABLE_NAME
-                        + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID
-                        + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
-
 
         updateDistance = " UPDATE " + CurrentTrip.TABLE_NAME +
 
                 " SET "
-                + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + " = " + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + " + ?,"
-                + CurrentTrip.DISTANCE_TRAVELLED_FOR_TRIP + " = " + CurrentTrip.DISTANCE_TRAVELLED_FOR_TRIP + " + ?"
+                + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + " = ?,"
+                + CurrentTrip.DISTANCE_TRAVELLED_FOR_TRIP + " = ?"
 
                 + " FROM " + Vehicle.TABLE_NAME
                 + " WHERE " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID
                 + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ?";
+
+
+
+
+
+//
+//        updateDistance = " UPDATE " + CurrentTrip.TABLE_NAME +
+//
+//                " SET "
+//                + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + " = " + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + " + "
+//                + "6371 * acos( cos( radians("
+//                + locationCurrentTrip.getLatitude() + ")) * cos( radians(" +  Vehicle.LAT_CURRENT +  ") ) * cos(radians(" + Vehicle.LON_CURRENT +  ") - radians("
+//                + locationCurrentTrip.getLongitude() + "))"
+//                + " + sin( radians(" + locationCurrentTrip.getLatitude() + ")) * sin(radians(" + Vehicle.LAT_CURRENT + "))) " + ""
+//
+//                + " FROM " + Vehicle.TABLE_NAME
+//                + " WHERE " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID
+//                + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ?"
+//                + " AND " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_STATUS + " < " + GlobalConstants.START_APPROVED_AND_TRIP_STARTED;
+
+
+
+
+        updateLocation = " UPDATE " + Vehicle.TABLE_NAME +
+
+                " SET "
+                + Vehicle.LAT_CURRENT + "=?,"
+                + Vehicle.LON_CURRENT + "=?,"
+                + Vehicle.TIMESTAMP_LOCATION_UPDATED + "= now()"
+
+                + " FROM " + User.TABLE_NAME
+                + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID
+                + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
+
+
 
 
 
@@ -126,26 +151,29 @@ public class DAOCurrentTrip {
             connection = dataSource.getConnection();
             connection.setAutoCommit(false);
 
-            statementUpdateLocation = connection.prepareStatement(updateLocation);
+
+            statementDistance = connection.prepareStatement(updateDistance);
             int i = 0;
 
-            statementUpdateLocation.setObject(++i,locationCurrentTrip.getLatitude());
-            statementUpdateLocation.setObject(++i,locationCurrentTrip.getLongitude());
-            statementUpdateLocation.setObject(++i,driverID);
+            statementDistance.setObject(++i,locationCurrentTrip.getDistanceTravelledForPickup());
+            statementDistance.setObject(++i,locationCurrentTrip.getDistanceTravelledForTrip());
+            statementDistance.setObject(++i,driverID);
 
-            rowCountUpdateLocation = statementUpdateLocation.executeUpdate();
+            rowCountUpdateDistance = statementDistance.executeUpdate();
 
 
 
-            statementUpdateDistance = connection.prepareStatement(updateDistance);
+            statementLocation = connection.prepareStatement(updateLocation);
             i = 0;
 
-            statementUpdateLocation.setObject(++i,locationCurrentTrip.getDistancePickupIncrement());
-            statementUpdateLocation.setObject(++i,locationCurrentTrip.getDistanceTripIncrement());
-            statementUpdateLocation.setObject(++i,driverID);
+            statementLocation.setObject(++i,locationCurrentTrip.getLatitude());
+            statementLocation.setObject(++i,locationCurrentTrip.getLongitude());
+            statementLocation.setObject(++i,driverID);
 
-            rowCountUpdateLocation = statementUpdateLocation.executeUpdate();
+            rowCountUpdateLocation = statementLocation.executeUpdate();
 
+            System.out.println("Distance Pickup : " + locationCurrentTrip.getDistanceTravelledForPickup()
+            + "\nDistance Trip : " + locationCurrentTrip.getDistanceTravelledForTrip());
 
             connection.commit();
 
@@ -170,9 +198,9 @@ public class DAOCurrentTrip {
         {
 
 
-            if (statementUpdateLocation != null) {
+            if (statementLocation != null) {
                 try {
-                    statementUpdateLocation.close();
+                    statementLocation.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -180,9 +208,9 @@ public class DAOCurrentTrip {
 
 
 
-            if (statementUpdateDistance != null) {
+            if (statementDistance != null) {
                 try {
-                    statementUpdateDistance.close();
+                    statementDistance.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -200,7 +228,7 @@ public class DAOCurrentTrip {
         }
 
 
-        return rowCountUpdateLocation;
+        return (rowCountUpdateLocation + rowCountUpdateDistance);
     }
 
 
@@ -284,7 +312,9 @@ public class DAOCurrentTrip {
                 + tripHistory.getDestinationAddress() + ","
 
                 + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + ","
-                + tripHistory.getDistanceTravelledForTrip() + ","
+//                + tripHistory.getDistanceTravelledForTrip() + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_TRIP + ","
+
 
                 + CurrentTrip.TABLE_NAME + "." + CurrentTrip.FREE_PICKUP_DISTANCE + ","
                 + CurrentTrip.TABLE_NAME + "." + CurrentTrip.REFERRAL_CHARGES + ","
