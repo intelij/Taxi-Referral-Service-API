@@ -27,11 +27,13 @@ public class TripRequestRESTEndpoint {
     private DAOTripRequest daoTripRequest = Globals.tripRequestDAO;
 
 
+//    ,GlobalConstants.ROLE_ADMIN,GlobalConstants.ROLE_STAFF,GlobalConstants.ROLE_DRIVER
+
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({GlobalConstants.ROLE_END_USER,GlobalConstants.ROLE_ADMIN,GlobalConstants.ROLE_STAFF,GlobalConstants.ROLE_DRIVER})
+    @RolesAllowed({GlobalConstants.ROLE_END_USER})
     public Response createTripRequest(TripRequest tripRequest)
     {
 
@@ -105,11 +107,14 @@ public class TripRequestRESTEndpoint {
 
 
 
+    //        GlobalConstants.ROLE_ADMIN,GlobalConstants.ROLE_STAFF,GlobalConstants.ROLE_DRIVER
+
+
 
     @PUT
     @Path("/RequestPickup/{TripRequestID}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({GlobalConstants.ROLE_END_USER,GlobalConstants.ROLE_ADMIN,GlobalConstants.ROLE_STAFF,GlobalConstants.ROLE_DRIVER})
+    @RolesAllowed({GlobalConstants.ROLE_END_USER})
     public Response requestPickUp(@PathParam("TripRequestID")int tripRequestID)
     {
 
@@ -217,11 +222,13 @@ public class TripRequestRESTEndpoint {
     }
 
 
+//    ,GlobalConstants.ROLE_DRIVER,GlobalConstants.ROLE_STAFF,GlobalConstants.ROLE_ADMIN
+
 
     @GET
     @Path("/CheckTripStatus")
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({GlobalConstants.ROLE_END_USER,GlobalConstants.ROLE_DRIVER,GlobalConstants.ROLE_STAFF,GlobalConstants.ROLE_ADMIN})
+    @RolesAllowed({GlobalConstants.ROLE_END_USER})
     public Response checkTripStatus(
             @QueryParam("TripRequestID") int tripRequestID
     )
@@ -312,8 +319,8 @@ public class TripRequestRESTEndpoint {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_END_USER})
     public Response getTripRequestsEndUser(
-            @QueryParam("EndUserID") Integer endUserID,
             @QueryParam("VehicleID") Integer vehicleID,
             @QueryParam("SortBy") String sortBy,
             @QueryParam("Limit")Integer limit, @QueryParam("Offset")Integer offset,
@@ -322,6 +329,7 @@ public class TripRequestRESTEndpoint {
     {
 
 
+//        @QueryParam("EndUserID") Integer endUserID,
 
 
         TripRequestEndPoint endPoint = new TripRequestEndPoint();
@@ -346,11 +354,10 @@ public class TripRequestRESTEndpoint {
 
 
 
-        endPoint = daoTripRequest.getTripRequests(endUserID,vehicleID
-                ,sortBy,limit,offset,
-                getRowCount,getOnlyMetaData
+        endPoint = daoTripRequest.getTripRequests(
+                ((User)Globals.accountApproved).getUserID(),vehicleID,
+                sortBy,limit,offset, getRowCount,getOnlyMetaData
         );
-
 
 
 
@@ -372,13 +379,14 @@ public class TripRequestRESTEndpoint {
 
 
 
+//    @QueryParam("VehicleID") Integer vehicleID,
 
     @GET
     @Path("/TripRequestsForDriver")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_DRIVER})
     public Response getTripRequestsForDriver(
             @QueryParam("EndUserID") Integer endUserID,
-            @QueryParam("VehicleID") Integer vehicleID,
             @QueryParam("SortBy") String sortBy,
             @QueryParam("Limit")Integer limit, @QueryParam("Offset")Integer offset,
             @QueryParam("GetRowCount")boolean getRowCount,
@@ -409,8 +417,9 @@ public class TripRequestRESTEndpoint {
 
 
 
-        endPoint = daoTripRequest.getTripRequestsForDriver(endUserID,vehicleID
-                ,sortBy,limit,offset,
+        endPoint = daoTripRequest.getTripRequestsForDriver(endUserID,
+                ((User)Globals.accountApproved).getUserID(),
+                sortBy,limit,offset,
                 getRowCount,getOnlyMetaData
         );
 
@@ -430,8 +439,5 @@ public class TripRequestRESTEndpoint {
                 .entity(endPoint)
                 .build();
     }
-
-
-
 
 }

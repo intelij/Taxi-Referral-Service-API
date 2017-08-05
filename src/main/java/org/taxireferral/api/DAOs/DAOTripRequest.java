@@ -375,11 +375,12 @@ public class DAOTripRequest {
 
                 + " FROM " + TripRequest.TABLE_NAME
                 + " INNER JOIN " + Vehicle.TABLE_NAME + " ON " + "(" + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
-                + " INNER JOIN " + User.TABLE_NAME + " ON (" + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID  + " )"
                 + " WHERE " + TripRequest.TABLE_NAME + "." + TripRequest.TRIP_REQUEST_ID + " = ? "
                 + " AND " + TripRequest.TABLE_NAME + "." + TripRequest.TRIP_REQUEST_STATUS + " = ? "
-                + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
+                + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ?";
 
+// + " INNER JOIN " + User.TABLE_NAME + " ON (" + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID  + " )"
+//        + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
 
 
         deleteTripRequest =   " DELETE FROM " + TripRequest.TABLE_NAME
@@ -387,10 +388,17 @@ public class DAOTripRequest {
 
 
         updateStatus =  " UPDATE " + Vehicle.TABLE_NAME +
-                        " SET " + Vehicle.VEHICLE_STATUS + " = ? " +
-                        " FROM " + User.TABLE_NAME +
-                        " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID +
-                        " AND " + User.USER_ID + " = ? ";
+                        " SET "    + Vehicle.VEHICLE_STATUS + " = ? " +
+                        " WHERE "  + Vehicle.DRIVER_ID + " = ? ";
+
+
+
+//        updateStatus =  " UPDATE " + Vehicle.TABLE_NAME +
+//                        " SET " + Vehicle.VEHICLE_STATUS + " = ? " +
+//                        " FROM " + User.TABLE_NAME +
+//                        " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID +
+//                        " AND " + User.USER_ID + " = ? ";
+
 
 
 
@@ -1169,9 +1177,12 @@ public class DAOTripRequest {
 
 
 
+
+
+
     public TripRequestEndPoint getTripRequestsForDriver(
             Integer endUserID,
-            Integer vehicleID,
+            Integer driverID,
             String sortBy,
             Integer limit, Integer offset,
             boolean getRowCount,
@@ -1250,9 +1261,9 @@ public class DAOTripRequest {
 
 
 
-        if(vehicleID != null)
+        if(driverID != null)
         {
-            queryJoin = queryJoin + " AND " + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + " = ?";
+            queryJoin = queryJoin + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ?";
         }
 //
 
@@ -1349,9 +1360,9 @@ public class DAOTripRequest {
                     statement.setObject(++i,endUserID);
                 }
 
-                if(vehicleID != null)
+                if(driverID != null)
                 {
-                    statement.setObject(++i,vehicleID);
+                    statement.setObject(++i,driverID);
                 }
 
                 rs = statement.executeQuery();
@@ -1434,9 +1445,9 @@ public class DAOTripRequest {
                     statementCount.setObject(++i,endUserID);
                 }
 
-                if(vehicleID != null)
+                if(driverID != null)
                 {
-                    statementCount.setObject(++i,vehicleID);
+                    statementCount.setObject(++i,driverID);
                 }
 
 

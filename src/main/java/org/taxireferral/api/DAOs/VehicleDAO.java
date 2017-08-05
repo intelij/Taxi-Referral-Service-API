@@ -542,10 +542,16 @@ public class VehicleDAO {
 //                + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.NOT_AVIALABLE;
 
 
+
         update =  " UPDATE " + Vehicle.TABLE_NAME
                 + " SET " + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.AVIALABLE
+                + " FROM " + User.TABLE_NAME
                 + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ?"
+                + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID
+                + " AND " + User.TABLE_NAME + "." + User.CURRENT_DUES + " <= " + User.TABLE_NAME + "." + User.EXTENDED_CREDIT_LIMIT + " + " + GlobalConstants.CREDIT_LIMIT_FOR_DRIVER
                 + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.NOT_AVIALABLE;
+
+
 
 
         try {

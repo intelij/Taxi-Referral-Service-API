@@ -44,14 +44,12 @@ public class Vehicle {
 
 //    public static final String MAX_FREE_PICKUP_DISTANCE = "MAX_FREE_PICKUP_DISTANCE";
 
-    public static final String IP_ADDRESS = "IP_ADDRESS";
-    public static final String PORT = "PORT";
 
     // timestamp at which the vehicle profile was created
     public static final String TIMESTAMP_PROFILE_CREATED = "TIMESTAMP_PROFILE_CREATED";
-    public static final String VEHICLE_REGISTRATION_INFO = "VEHICLE_REGISTRATION_INFO";
-    public static final String VEHICLE_INSURANCE_INFO = "VEHICLE_INSURANCE_INFO";
-    public static final String VEHICLE_PUC_INFO = "VEHICLE_PUC_INFO";
+    public static final String VEHICLE_REGISTRATION_NUMBER = "VEHICLE_REGISTRATION_NUMBER";
+    public static final String VEHICLE_INSURANCE_NUMBER = "VEHICLE_INSURANCE_NUMBER";
+    public static final String VEHICLE_PUC_ID = "VEHICLE_PUC_ID";
 
 //    public static final String DRIVING_LICENSE = "DRIVING_LICENSE";
 
@@ -85,9 +83,13 @@ public class Vehicle {
 
                     + " " + Vehicle.TIMESTAMP_LOCATION_UPDATED + "  timestamp with time zone NOT NULL DEFAULT now(),"
                     + " " + Vehicle.TIMESTAMP_PROFILE_CREATED + "  timestamp with time zone NOT NULL DEFAULT now(),"
+
+                    + " " + Vehicle.VEHICLE_REGISTRATION_NUMBER + " text,"
+                    + " " + Vehicle.VEHICLE_INSURANCE_NUMBER + " text,"
+                    + " " + Vehicle.VEHICLE_PUC_ID + " text,"
+
                     + " FOREIGN KEY(" + Vehicle.DRIVER_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE"
                     + ")";
-
 
 
 
@@ -96,7 +98,8 @@ public class Vehicle {
     private int vehicleID;
     private int driverID;
 
-
+    private String vehicleModelName;
+    private int seatingCapacity;
 
     private String profileImageURL;
 
@@ -112,6 +115,10 @@ public class Vehicle {
     private Timestamp locationUpdated;
     private Timestamp profileCreated;
 
+    private String registrationNumber;
+    private String insuranceID;
+    private String pollutionCertificateID;
+
     private double rt_distance;
     private User rt_driver;
 
@@ -119,13 +126,47 @@ public class Vehicle {
 
 
 
-
-
-
-
-
     // getter and setters
 
+    public String getRegistrationNumber() {
+        return registrationNumber;
+    }
+
+    public void setRegistrationNumber(String registrationNumber) {
+        this.registrationNumber = registrationNumber;
+    }
+
+    public String getInsuranceID() {
+        return insuranceID;
+    }
+
+    public void setInsuranceID(String insuranceID) {
+        this.insuranceID = insuranceID;
+    }
+
+    public String getPollutionCertificateID() {
+        return pollutionCertificateID;
+    }
+
+    public void setPollutionCertificateID(String pollutionCertificateID) {
+        this.pollutionCertificateID = pollutionCertificateID;
+    }
+
+    public String getVehicleModelName() {
+        return vehicleModelName;
+    }
+
+    public void setVehicleModelName(String vehicleModelName) {
+        this.vehicleModelName = vehicleModelName;
+    }
+
+    public int getSeatingCapacity() {
+        return seatingCapacity;
+    }
+
+    public void setSeatingCapacity(int seatingCapacity) {
+        this.seatingCapacity = seatingCapacity;
+    }
 
     public User getRt_driver() {
         return rt_driver;

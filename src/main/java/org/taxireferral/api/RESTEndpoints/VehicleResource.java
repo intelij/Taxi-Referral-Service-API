@@ -358,10 +358,8 @@ public class VehicleResource {
 
     }
 
-
-
-
 //    @QueryParam("Status")Integer status,
+
 
 
     @GET
@@ -377,7 +375,6 @@ public class VehicleResource {
             @QueryParam("GetRowCount")boolean getRowCount,
             @QueryParam("MetadataOnly")boolean getOnlyMetaData)
     {
-
 
 
 
@@ -453,9 +450,6 @@ public class VehicleResource {
                     .build();
         }
     }
-
-
-
 
 
 

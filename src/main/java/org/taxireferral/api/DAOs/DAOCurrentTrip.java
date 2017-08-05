@@ -5,8 +5,8 @@ import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.CurrentTrip;
 import org.taxireferral.api.Model.TripHistory;
-import org.taxireferral.api.Model.TripRequest;
 import org.taxireferral.api.Model.Vehicle;
+import org.taxireferral.api.ModelBilling.TransactionHistory;
 import org.taxireferral.api.ModelRoles.User;
 import org.taxireferral.api.ModelUtility.LocationCurrentTrip;
 
@@ -21,8 +21,6 @@ import java.sql.SQLException;
 public class DAOCurrentTrip {
 
     private HikariDataSource dataSource = Globals.getDataSource();
-
-
 
 
     // finish_trip - copy the current trip into the trip history and then deletes the current trip
@@ -470,6 +468,7 @@ public class DAOCurrentTrip {
 //    int currentTripID,
     public int start_trip_by_driver(int driverID)
     {
+        // deprecated function
 
         Connection connection = null;
         PreparedStatement statementUpdate = null;
@@ -480,7 +479,7 @@ public class DAOCurrentTrip {
 
 
         update =  " UPDATE " + CurrentTrip.TABLE_NAME
-                + " SET "    + CurrentTrip.CURRENT_TRIP_STATUS + " = " + GlobalConstants.START_JOURNEY_REQUESTED_BY_DRIVER
+//                + " SET "    + CurrentTrip.CURRENT_TRIP_STATUS + " = " + GlobalConstants.START_JOURNEY_REQUESTED_BY_DRIVER
                 + " FROM "   + Vehicle.TABLE_NAME
                 + " WHERE "  + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID
                 + " AND "    + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ? "
@@ -621,15 +620,26 @@ public class DAOCurrentTrip {
 
 
 
+
+
     public int approve_start_by_driver(CurrentTrip currentTrip, int driverID)
     {
 
         Connection connection = null;
+
         PreparedStatement statementUpdate = null;
+        PreparedStatement statementUpdateDUES = null;
+        PreparedStatement statementInsert = null;
 
         int rowCountItems = -1;
+        int rowCountDUES = -1;
+        int rowCountTransaction = -1;
+        int idOfInsertedRow = -1;
+
 
         String update = "";
+        String updateDUES = "";
+        String createTransaction = "";
 
 
         update =  " UPDATE " + CurrentTrip.TABLE_NAME
@@ -652,33 +662,111 @@ public class DAOCurrentTrip {
 
 
 
+        // add referral charges to the user bill
+        updateDUES =  " UPDATE " + User.TABLE_NAME
+                    + " SET "
+                    + User.CURRENT_DUES + " = " + User.CURRENT_DUES + " + " + GlobalConstants.taxi_referral_charges + ","
+                    + User.TOTAL_SERVICE_CHARGES + " = " + User.TOTAL_SERVICE_CHARGES + " + " + GlobalConstants.taxi_referral_charges + ""
+                    + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
+
+
+        createTransaction = "INSERT INTO " + TransactionHistory.TABLE_NAME
+                            + "("
+
+                            + TransactionHistory.USER_ID + ","
+
+                            + TransactionHistory.TITLE + ","
+                            + TransactionHistory.DESCRIPTION + ","
+
+                            + TransactionHistory.TRANSACTION_TYPE + ","
+                            + TransactionHistory.TRANSACTION_AMOUNT + ","
+
+                            + TransactionHistory.IS_CREDIT + ","
+
+                            + TransactionHistory.CURRENT_DUES_BEFORE_TRANSACTION + ","
+                            + TransactionHistory.CURRENT_DUES_AFTER_TRANSACTION + ""
+
+                            + ") "
+                            + " SELECT "
+
+                            + User.TABLE_NAME + "." + User.USER_ID + ","
+                            + " '" + TransactionHistory.TITLE_REFERRAL_CHARGE_FOR_TRIP + "',"
+                            + " '" + TransactionHistory.DESCRIPTION_REFERRAL_CHARGE_FOR_TRIP + "',"
+
+                            + TransactionHistory.TRANSACTION_TYPE_TAXI_REFERRAL_CHARGE + ","
+                            + GlobalConstants.taxi_referral_charges + ","
+
+                            + " false " + ","
+
+                            + User.TABLE_NAME + "." + User.CURRENT_DUES + " - " + GlobalConstants.taxi_referral_charges +  ","
+                            + User.TABLE_NAME + "." + User.CURRENT_DUES + ""
+
+                            + " FROM " + User.TABLE_NAME
+                            + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
+
+
+
+
+
         try {
 
             connection = dataSource.getConnection();
-//            connection.setAutoCommit(false);
+            connection.setAutoCommit(false);
 
 
             statementUpdate = connection.prepareStatement(update,PreparedStatement.RETURN_GENERATED_KEYS);
             int i = 0;
-
 
             statementUpdate.setObject(++i,currentTrip.getDistanceTravelledForPickup());
             statementUpdate.setObject(++i,currentTrip.getLatPickUpLocation());
             statementUpdate.setObject(++i,currentTrip.getLonPickUpLocation());
             statementUpdate.setString(++i,currentTrip.getPickUpAddress());
 
-//            statementUpdate.setObject(++i,currentTrip.getCurrentTripID());
             statementUpdate.setObject(++i,driverID);
 
             rowCountItems = statementUpdate.executeUpdate();
 
 
-//            connection.commit();
+            if(rowCountItems == 1)
+            {
+
+                statementUpdateDUES = connection.prepareStatement(updateDUES);
+                i = 0;
+
+                statementUpdateDUES.setObject(++i,driverID);
+                rowCountItems = statementUpdateDUES.executeUpdate();
+
+
+
+                statementInsert = connection.prepareStatement(createTransaction);
+                i = 0;
+
+                statementInsert.setObject(++i,driverID);
+                rowCountItems = statementInsert.executeUpdate();
+            }
+
+
+
+
+            connection.commit();
 
         } catch (SQLException e) {
 
             // TODO Auto-generated catch block
             e.printStackTrace();
+
+
+            if (connection != null) {
+                try {
+
+                    idOfInsertedRow=-1;
+                    rowCountItems = 0;
+
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
 
         }
         finally
@@ -687,6 +775,23 @@ public class DAOCurrentTrip {
             if (statementUpdate != null) {
                 try {
                     statementUpdate.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            if (statementUpdateDUES != null) {
+                try {
+                    statementUpdateDUES.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (statementInsert != null) {
+                try {
+                    statementInsert.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -714,6 +819,9 @@ public class DAOCurrentTrip {
 
     public int approve_start_by_end_user(CurrentTrip currentTrip, int endUserID)
     {
+        // deprecated function
+
+
         // please ensure that if of user making the request is same as id of end user in the current trip
 
         Connection connection = null;
@@ -733,7 +841,7 @@ public class DAOCurrentTrip {
                 + CurrentTrip.LON_PICK_UP_LOCATION + " = ?,"
                 + CurrentTrip.PICK_UP_ADDRESS + " = ?,"
                 + CurrentTrip.TIMESTAMP_STARTED + " = now(),"
-                + " WHERE " + CurrentTrip.CURRENT_TRIP_STATUS + " = " + GlobalConstants.START_JOURNEY_REQUESTED_BY_DRIVER
+//                + " WHERE " + CurrentTrip.CURRENT_TRIP_STATUS + " = " + GlobalConstants.START_JOURNEY_REQUESTED_BY_DRIVER
                 + " AND " + CurrentTrip.END_USER_ID + " = ?";
 
 
@@ -800,7 +908,6 @@ public class DAOCurrentTrip {
 
 
 
-
     public CurrentTrip getCurrentTripForEndUser(int endUserID)
     {
 
@@ -835,6 +942,18 @@ public class DAOCurrentTrip {
 
                 + CurrentTrip.TABLE_NAME + "." + CurrentTrip.MIN_TRIP_CHARGES + ","
                 + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CHARGES_PER_KM + ","
+
+                + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.PROFILE_IMAGE_URL + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + ","
+
+                + Vehicle.TABLE_NAME + "." + Vehicle.MIN_TRIP_CHARGES + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.CHARGES_PER_KM + ","
+
+                + Vehicle.TABLE_NAME + "." + Vehicle.LAT_CURRENT + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.LON_CURRENT + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.TIMESTAMP_LOCATION_UPDATED + ","
 
                 + User.TABLE_NAME + "." + User.PHONE + ","
                 + User.TABLE_NAME + "." + User.NAME + ","
@@ -902,6 +1021,37 @@ public class DAOCurrentTrip {
 
                 currentTrip.setMinTripCharges(rs.getDouble(CurrentTrip.MIN_TRIP_CHARGES));
                 currentTrip.setChargesPerKm(rs.getDouble(CurrentTrip.CHARGES_PER_KM));
+
+
+                Vehicle vehicle = new Vehicle();
+
+//                vehicle.setRt_distance(rs.getFloat("distance"));
+
+                vehicle.setVehicleID(rs.getInt(Vehicle.VEHICLE_ID));
+                vehicle.setDriverID(rs.getInt(Vehicle.DRIVER_ID));
+                vehicle.setProfileImageURL(rs.getString(Vehicle.PROFILE_IMAGE_URL));
+
+                vehicle.setVehicleStatus(rs.getInt(Vehicle.VEHICLE_STATUS));
+
+                vehicle.setMinTripCharges(rs.getInt(Vehicle.MIN_TRIP_CHARGES));
+                vehicle.setChargesPerKM(rs.getInt(Vehicle.CHARGES_PER_KM));
+
+                vehicle.setLatCurrent(rs.getFloat(Vehicle.LAT_CURRENT));
+                vehicle.setLonCurrent(rs.getFloat(Vehicle.LON_CURRENT));
+
+                vehicle.setLocationUpdated(rs.getTimestamp(Vehicle.TIMESTAMP_LOCATION_UPDATED));
+
+
+                User driver = new User();
+
+                driver.setUserID(vehicle.getDriverID());
+                driver.setPhone(rs.getString(User.PHONE));
+                driver.setName(rs.getString(User.NAME));
+                driver.setGender(rs.getBoolean(User.GENDER));
+                driver.setProfileImagePath(rs.getString(User.PROFILE_IMAGE_URL));
+
+                vehicle.setRt_driver(driver);
+                currentTrip.setRt_vehicle(vehicle);
             }
 
 
@@ -943,6 +1093,94 @@ public class DAOCurrentTrip {
         return currentTrip;
     }
 
+
+
+
+    public CurrentTrip getCurrentTripStatusForEndUser(int endUserID)
+    {
+
+        String query =
+                        " SELECT "
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_ID + ","
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_STATUS + ","
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + ","
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_TRIP + ""
+
+                        + " FROM "  + CurrentTrip.TABLE_NAME
+                        + " WHERE " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.END_USER_ID + " = ? ";
+
+
+//        + " INNER JOIN " + Vehicle.TABLE_NAME + " ON (" + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
+
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+
+        CurrentTrip currentTrip = null;
+
+        try {
+
+//            System.out.println(query);
+
+            connection = dataSource.getConnection();
+            statement = connection.prepareStatement(query);
+
+            int i = 0;
+
+            statement.setObject(++i,endUserID);
+
+
+            rs = statement.executeQuery();
+
+            while(rs.next())
+            {
+                currentTrip = new CurrentTrip();
+                currentTrip.setCurrentTripID(rs.getInt(CurrentTrip.CURRENT_TRIP_ID));
+                currentTrip.setCurrentTripStatus(rs.getInt(CurrentTrip.CURRENT_TRIP_STATUS));
+                currentTrip.setDistanceTravelledForPickup(rs.getDouble(CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP));
+                currentTrip.setDistanceTravelledForTrip(rs.getDouble(CurrentTrip.DISTANCE_TRAVELLED_FOR_TRIP));
+            }
+
+
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally
+
+        {
+
+            try {
+                if(rs!=null)
+                {rs.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(statement!=null)
+                {statement.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return currentTrip;
+    }
 
 
 

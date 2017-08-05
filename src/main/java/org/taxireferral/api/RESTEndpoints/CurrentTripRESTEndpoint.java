@@ -14,9 +14,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import static org.taxireferral.api.Globals.GlobalConstants.ROLE_ADMIN;
-import static org.taxireferral.api.Globals.GlobalConstants.ROLE_DRIVER;
-import static org.taxireferral.api.Globals.GlobalConstants.ROLE_STAFF;
+import static org.taxireferral.api.Globals.GlobalConstants.*;
 
 /**
  * Created by sumeet on 27/7/17.
@@ -100,11 +98,12 @@ public class CurrentTripRESTEndpoint {
 
 
 
-    @PUT
-    @Path("/StartTripByDriver")
-    @RolesAllowed({ROLE_DRIVER})
+//    @PUT
+//    @Path("/StartTripByDriver")
+//    @RolesAllowed({ROLE_DRIVER})
     public Response startTripByDriver()
     {
+        /* DEPRECATED FUNCTION */
 
         int rowCount = daoCurrentTrip.start_trip_by_driver(((User) Globals.accountApproved).getUserID());
 
@@ -184,12 +183,13 @@ public class CurrentTripRESTEndpoint {
     }
 
 
-    @PUT
-    @Path("/ApproveStartByEndUser")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({ROLE_DRIVER})
+//    @PUT
+//    @Path("/ApproveStartByEndUser")
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @RolesAllowed({ROLE_DRIVER})
     public Response approveStartByEndUser(CurrentTrip currentTrip)
     {
+        /* CAUTION : DEPRECATED FUNCTION */
 
         int rowCount = daoCurrentTrip.approve_start_by_end_user(currentTrip,((User) Globals.accountApproved).getUserID());
 
@@ -230,11 +230,11 @@ public class CurrentTripRESTEndpoint {
 //        System.out.println(email);
 
 
-        try {
-            Thread.sleep(400);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(400);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
 
         if(result!=null)
@@ -275,11 +275,11 @@ public class CurrentTripRESTEndpoint {
 //        System.out.println(email);
 
 
-        try {
-            Thread.sleep(400);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(400);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
 
         if(result!=null)
@@ -340,6 +340,48 @@ public class CurrentTripRESTEndpoint {
         }
     }
 
+
+
+
+
+    @GET
+    @Path("/GetCurrentTripStatusForEndUser")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ROLE_END_USER})
+    public Response getCurrentTripStatusForEndUser()
+    {
+
+        // Roles allowed not used for this method due to performance and effeciency requirements. Also
+        // this endpoint doesnt required to be secured as it does not expose any confidential information
+
+
+        User user = (User) Globals.accountApproved;
+
+        CurrentTrip result = daoCurrentTrip.getCurrentTripStatusForEndUser(user.getUserID());
+
+//        System.out.println(email);
+
+
+        try {
+            Thread.sleep(400);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        if(result!=null)
+        {
+            return Response.status(Response.Status.OK)
+                    .entity(result)
+                    .build();
+
+        }
+        else
+        {
+            return Response.status(Response.Status.NO_CONTENT)
+                    .build();
+        }
+    }
 
 
 }

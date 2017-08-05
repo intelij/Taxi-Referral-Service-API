@@ -24,6 +24,10 @@ public class TripHistory {
     public static final String FEEDBACK_BY_DRIVER = "FEEDBACK_BY_DRIVER";
     public static final String FEEDBACK_BY_END_USER = "FEEDBACK_BY_END_USER";
 
+    public static final String IS_CANCELLED = "IS_CANCELLED";
+    public static final String IS_CANCELLED_BY_USER = "IS_CANCELLED_BY_USER";
+    public static final String REASON_FOR_CANCELLATION = "REASON_FOR_CANCELLATION";
+
     public static final String TIMESTAMP_CREATED = "TIMESTAMP_CREATED";
     public static final String TIMESTAMP_STARTED = "TIMESTAMP_STARTED";
     public static final String TIMESTAMP_FINISHED = "TIMESTAMP_FINISHED";
@@ -69,6 +73,13 @@ public class TripHistory {
                     + " " + TripHistory.DRIVER_RATING + " int," // can be null
                     + " " + TripHistory.END_USER_RATING + " int," // can be null
 
+                    + " " + TripHistory.FEEDBACK_BY_DRIVER + " text,"
+                    + " " + TripHistory.FEEDBACK_BY_END_USER + " text,"
+
+                    + " " + TripHistory.IS_CANCELLED + " boolean NOT NULL default 'f',"
+                    + " " + TripHistory.IS_CANCELLED_BY_USER + " boolean NOT NULL default 'f',"
+                    + " " + TripHistory.REASON_FOR_CANCELLATION + " text,"
+
                     + " " + TripHistory.TIMESTAMP_CREATED + " timestamp with time zone NOT NULL DEFAULT now(),"
                     + " " + TripHistory.TIMESTAMP_STARTED + " timestamp with time zone,"
                     + " " + TripHistory.TIMESTAMP_FINISHED + " timestamp with time zone,"
@@ -111,6 +122,13 @@ public class TripHistory {
     private int driverRating;
     private int endUserRating;
 
+    private String feedbackByDriver;
+    private String feedbackByEndUser;
+
+    private boolean isCancelled;
+    private boolean isCancelledByUser;
+    private String reasonForCancellation;
+
     private Timestamp timestampCreated;
     private Timestamp timestampStarted;
     private Timestamp timestampFinished;
@@ -139,7 +157,49 @@ public class TripHistory {
 
 
 
+
+
     // getter and setters
+
+    public String getFeedbackByDriver() {
+        return feedbackByDriver;
+    }
+
+    public void setFeedbackByDriver(String feedbackByDriver) {
+        this.feedbackByDriver = feedbackByDriver;
+    }
+
+    public String getFeedbackByEndUser() {
+        return feedbackByEndUser;
+    }
+
+    public void setFeedbackByEndUser(String feedbackByEndUser) {
+        this.feedbackByEndUser = feedbackByEndUser;
+    }
+
+    public boolean isCancelled() {
+        return isCancelled;
+    }
+
+    public void setCancelled(boolean cancelled) {
+        isCancelled = cancelled;
+    }
+
+    public boolean isCancelledByUser() {
+        return isCancelledByUser;
+    }
+
+    public void setCancelledByUser(boolean cancelledByUser) {
+        isCancelledByUser = cancelledByUser;
+    }
+
+    public String getReasonForCancellation() {
+        return reasonForCancellation;
+    }
+
+    public void setReasonForCancellation(String reasonForCancellation) {
+        this.reasonForCancellation = reasonForCancellation;
+    }
 
     public int getTripHistoryID() {
         return tripHistoryID;

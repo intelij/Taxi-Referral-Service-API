@@ -9,8 +9,6 @@ import java.sql.Timestamp;
  */
 public class User {
 
-
-
     // constants
     public static final int REGISTRATION_MODE_EMAIL = 1;
     public static final int REGISTRATION_MODE_PHONE = 2;
@@ -38,6 +36,7 @@ public class User {
     public static final String ABOUT = "ABOUT";
     public static final String ENABLED = "ENABLED";
     public static final String GOOGLE_ID = "GOOGLE_ID";
+    public static final String FIREBASE_ID = "FIREBASE_ID";
 
     public static final String TIMESTAMP_CREATED = "TIMESTAMP_CREATED";
     public static final String TIMESTAMP_UPDATED = "TIMESTAMP_UPDATED";
@@ -46,17 +45,23 @@ public class User {
     public static final String TIMESTAMP_TOKEN_EXPIRES = "TIMESTAMP_TOKEN_EXPIRES";
 
 
-    // current_due = total_billed - total_credits - total_paid
+    // current_due = total_service_charges - total_credits - total_paid
     public static final String CURRENT_DUES = "CURRENT_DUES";
-    public static final String TOTAL_BILLED = "TOTAL_BILLED";
+    public static final String TOTAL_SERVICE_CHARGES = "TOTAL_SERVICE_CHARGES";
     public static final String TOTAL_CREDITS = "TOTAL_CREDITS";
     public static final String TOTAL_PAID = "TOTAL_PAID";
+    public static final String EXTENDED_CREDIT_LIMIT = "EXTENDED_CREDIT_LIMIT";
 
     public static final String REFERRED_BY = "REFERRED_BY";
     public static final String IS_REFERRER_CREDITED = "IS_REFERRER_CREDITED";
 
     // verified accounts are an indication that identity of the user is verified by a staff member
     public static final String IS_VERIFIED = "IS_VERIFIED";
+
+
+    // for communicating with the local server on the client : this can be used to send push notifications
+    public static final String IP_ADDRESS = "IP_ADDRESS";
+    public static final String PORT = "PORT";
 
 
 
@@ -71,36 +76,46 @@ public class User {
 
                     + " " + User.E_MAIL + " text UNIQUE ,"
                     + " " + User.PHONE + " text UNIQUE,"
-                    + " " + User.NAME + " text ,"
+                    + " " + User.NAME + " text,"
 
                     + " " + User.GENDER + " boolean,"
-                    + " " + User.PROFILE_IMAGE_URL + " text ,"
-                    + " " + User.ROLE + " int ,"
+                    + " " + User.PROFILE_IMAGE_URL + " text,"
+                    + " " + User.ROLE + " int,"
 
-                    + " " + User.IS_ACCOUNT_PRIVATE + " boolean,"
+                    + " " + User.IS_ACCOUNT_PRIVATE + " boolean NOT NULL default 't',"
                     + " " + User.ABOUT + " text,"
                     + " " + User.ENABLED + " boolean NOT NULL default 'f',"
                     + " " + User.GOOGLE_ID + " text,"
+                    + " " + User.FIREBASE_ID + " text,"
 
                     + " " + User.TIMESTAMP_CREATED + "  timestamp with time zone NOT NULL DEFAULT now(),"
                     + " " + User.TIMESTAMP_UPDATED + "  timestamp with time zone NOT NULL DEFAULT now(),"
 
                     + " " + User.TOKEN + "  text,"
                     + " " + User.TIMESTAMP_TOKEN_EXPIRES + "  timestamp with time zone,"
+
+                    + " " + User.CURRENT_DUES + " float NOT NULL default 0,"
+                    + " " + User.TOTAL_SERVICE_CHARGES + " float NOT NULL default 0,"
+                    + " " + User.TOTAL_CREDITS + " float NOT NULL default 0,"
+                    + " " + User.TOTAL_PAID + " float NOT NULL default 0,"
+                    + " " + User.EXTENDED_CREDIT_LIMIT + " float NOT NULL default 0,"
+
+                    + " " + User.REFERRED_BY + " int,"
+                    + " " + User.IS_REFERRER_CREDITED + " boolean NOT NULL default 'f',"
+
+                    + " " + User.IS_VERIFIED + " boolean NOT NULL default 'f',"
+
+                    + " " + User.IP_ADDRESS + "  text,"
+                    + " " + User.PORT + "  int,"
+
                     + "CHECK (" + User.USERNAME + " IS NOT NULL OR " + User.E_MAIL + " IS NOT NULL OR " + User.PHONE + " IS NOT NULL " +  ")"
                     + ")";
 
 
 
-
-
-
-//    public static final String upgradeTableSchema =
-//            "ALTER TABLE IF EXISTS " + User.TABLE_NAME
-//                    + " ADD COLUMN IF NOT EXISTS " + User.ENABLED + " boolean NOT NULL default 'f',"
-//                    + " ADD COLUMN IF NOT EXISTS " + User.GOOGLE_ID + " text,"
-//                    + " ADD COLUMN IF NOT EXISTS " + User.EMAIL_VERIFICATION_CODE + " text,"
-//                    + " ADD COLUMN IF NOT EXISTS " + User.EMAIL_VERIFICATION_CODE_TIMESTAMP_EXPIRES + " timestamp with time zone";
+    public static final String upgradeTableSchema =
+                    " ALTER TABLE IF EXISTS " + User.TABLE_NAME +
+                    " ADD COLUMN IF NOT EXISTS " + User.EXTENDED_CREDIT_LIMIT + " float NOT NULL default 0";
 
 
 
@@ -122,12 +137,26 @@ public class User {
     private String about;
     private boolean enabled;
     private String googleID;
+    private String firebaseID;
 
     private Timestamp timestampCreated;
     private Timestamp timestampUpdated;
 
     private String token;
     private Timestamp timestampTokenExpires;
+
+    private double currentDues;
+    private double totalServiceCharges;
+    private double totalCredited;
+    private double totalPaid;
+    private double extendedCreditLimit;
+
+    private int referredBy;
+    private boolean isReferrerCredited;
+    private boolean isVerified;
+
+    private String ipAddress;
+    private int port;
 
 
     private String rt_email_verification_code;
@@ -141,6 +170,94 @@ public class User {
 
     // Getters and Setters
 
+
+    public double getExtendedCreditLimit() {
+        return extendedCreditLimit;
+    }
+
+    public void setExtendedCreditLimit(double extendedCreditLimit) {
+        this.extendedCreditLimit = extendedCreditLimit;
+    }
+
+    public String getFirebaseID() {
+        return firebaseID;
+    }
+
+    public void setFirebaseID(String firebaseID) {
+        this.firebaseID = firebaseID;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public double getCurrentDues() {
+        return currentDues;
+    }
+
+    public void setCurrentDues(double currentDues) {
+        this.currentDues = currentDues;
+    }
+
+    public double getTotalServiceCharges() {
+        return totalServiceCharges;
+    }
+
+    public void setTotalServiceCharges(double totalServiceCharges) {
+        this.totalServiceCharges = totalServiceCharges;
+    }
+
+    public double getTotalCredited() {
+        return totalCredited;
+    }
+
+    public void setTotalCredited(double totalCredited) {
+        this.totalCredited = totalCredited;
+    }
+
+    public double getTotalPaid() {
+        return totalPaid;
+    }
+
+    public void setTotalPaid(double totalPaid) {
+        this.totalPaid = totalPaid;
+    }
+
+    public int getReferredBy() {
+        return referredBy;
+    }
+
+    public void setReferredBy(int referredBy) {
+        this.referredBy = referredBy;
+    }
+
+    public boolean isReferrerCredited() {
+        return isReferrerCredited;
+    }
+
+    public void setReferrerCredited(boolean referrerCredited) {
+        isReferrerCredited = referrerCredited;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
+    }
 
     public boolean isEnabled() {
         return enabled;

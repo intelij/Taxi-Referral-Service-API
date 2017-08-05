@@ -23,23 +23,6 @@ public class GlobalConstants {
 
 
 
-    // constants
-    public static final int TOKEN_DURATION_MINUTES = 1;
-    public static final int EMAIL_VERIFICATION_CODE_EXPIRY_MINUTES = 10;
-    public static final int TRIP_REQUEST_EXPIRY_MINUTES = 10;
-    public static final int TRIP_REQUEST_EXPIRY_EXTENSION_MINUTES = 10;
-
-
-
-    public static final int max_limit = 100;    // 100 items per fetch
-    // constants for restricting taxi charges
-    public static final int max_min_trip_charges = 20;    // 20 bucks
-    public static final int max_charges_per_km = 12;  // 12 bucks per km
-//    public static final int min_free_pickup_distance = 5; // 3 km
-//    public static final int max_free_pickup_distance = 3; // 3 km
-    public static final int free_pickup_distance = 3; // 3 km
-    public static final int taxi_referral_charges = 5; // 3 bucks per km
-    public static final int free_minutes_per_km = 3; // for calculating the waiting charges
 
 
 
@@ -55,10 +38,10 @@ public class GlobalConstants {
 
     // Current Trip Status
     public static final int PICKUP_APPROVED = 1;
-    public static final int START_JOURNEY_REQUESTED_BY_DRIVER = 2;
-    public static final int START_JOURNEY_REQUESTED_BY_END_USER = 3;
-    public static final int START_APPROVED_AND_TRIP_STARTED = 4;
+    public static final int START_JOURNEY_REQUESTED_BY_END_USER = 2;
+    public static final int START_APPROVED_AND_TRIP_STARTED = 3;
 
+//    public static final int START_JOURNEY_REQUESTED_BY_DRIVER = 2;
 
 
 //    public static final int PICKUP_LOCATION_SENT = 3;
@@ -70,16 +53,37 @@ public class GlobalConstants {
 
 
 
+
+
+
     // credits and offers
-    public static final int DRIVER_REFERRAL_CREDIT = 200; // credited in the account of the one who refers
-    public static final int END_USER_REFERRAL_CREDIT = 100; // referral credit - credited into the account of the one who refers
+    public static final int REFERRAL_CREDIT_FOR_DRIVER_REGISTRATION = 200; // credited in the account of the one who refers
+    public static final int REFERRAL_CREDIT_FOR_END_USER_REGISTRATION = 100; // referral credit - credited into the account of the one who refers
 
-    public static final int DRIVER_JOINING_CREDIT = 1000; // credit applied when a driver joins the platform
-    public static final int END_USER_JOINING_CREDIT = 500; // credit applied when a end user joins the platform
-
+    public static final int JOINING_CREDIT_FOR_DRIVER = 1000; // credit applied when a driver joins the platform
+    public static final int JOINING_CREDIT_FOR_END_USER = 500; // credit applied when a end user joins the platform
 
     // services get suspended if the user current_dues exceed the max current dues
-    public static final int MAX_CURRENT_DUES_FOR_DRIVER = 1000;
-    public static final int MAX_CURRENT_DUES_FOR_END_USER = 1000;
+    public static final int CREDIT_LIMIT_FOR_DRIVER = 1000;
+    public static final int CREDIT_LIMIT_FOR_END_USER = 1000;
+
+
+    // constants
+    public static final int TOKEN_DURATION_MINUTES = 1;
+    public static final int EMAIL_VERIFICATION_CODE_EXPIRY_MINUTES = 10;
+    public static final int PHONE_OTP_EXPIRY_MINUTES = 10;
+    public static final int TRIP_REQUEST_EXPIRY_MINUTES = 10;
+    public static final int TRIP_REQUEST_EXPIRY_EXTENSION_MINUTES = 10;
+
+
+    public static final int max_limit = 100;    // 100 items per fetch
+    // constants for restricting taxi charges
+    public static final int max_min_trip_charges = 50;    // 20 bucks
+    public static final int max_charges_per_km = 15;  // 12 bucks per km
+    //    public static final int min_free_pickup_distance = 5; // 3 km
+//    public static final int max_free_pickup_distance = 3; // 3 km
+    public static final int free_pickup_distance = 3; // 3 km
+    public static final int taxi_referral_charges = 5; // 3 bucks per km
+    public static final int free_minutes_per_km = 3; // for calculating the waiting charges
 
 }
