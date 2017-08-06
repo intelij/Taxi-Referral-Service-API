@@ -1,11 +1,13 @@
 package org.taxireferral.api.DAORoles;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.ModelRoles.EmailVerificationCode;
 import org.taxireferral.api.ModelRoles.PhoneVerificationCode;
 import org.taxireferral.api.ModelRoles.User;
 
+import java.math.BigInteger;
 import java.sql.*;
 
 /**
@@ -14,6 +16,9 @@ import java.sql.*;
 public class DAOUserNew {
 
     private HikariDataSource dataSource = Globals.getDataSource();
+
+
+
 
     // insert user : check if email or phone is verified
         // registerUsingEmail
@@ -44,6 +49,12 @@ public class DAOUserNew {
 
     // check google ID | to check whether the person is registered or not
     // save google profile | create google account
+
+
+
+
+
+
 
 
 

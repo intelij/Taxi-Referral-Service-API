@@ -72,8 +72,10 @@ public class GlobalConstants {
     public static final int TOKEN_DURATION_MINUTES = 1;
     public static final int EMAIL_VERIFICATION_CODE_EXPIRY_MINUTES = 10;
     public static final int PHONE_OTP_EXPIRY_MINUTES = 10;
+    public static final int PASSWORD_RESET_CODE_EXPIRY_MINUTES = 10;
     public static final int TRIP_REQUEST_EXPIRY_MINUTES = 10;
     public static final int TRIP_REQUEST_EXPIRY_EXTENSION_MINUTES = 10;
+
 
 
     public static final int max_limit = 100;    // 100 items per fetch

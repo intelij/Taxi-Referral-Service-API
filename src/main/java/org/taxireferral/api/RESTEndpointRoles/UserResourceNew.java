@@ -121,9 +121,20 @@ public class UserResourceNew {
         int idOfInsertedRow =-1;
 
 
+
         if(user.getRt_registration_mode()==User.REGISTRATION_MODE_EMAIL)
         {
             idOfInsertedRow = daoUser.registerUsingEmail(user,false);
+
+
+            System.out.println("Email : " + user.getEmail()
+                    + "\nPassword : " + user.getPassword()
+                    + "\nRegistration Mode : " + user.getRt_registration_mode()
+                    + "\nName : " + user.getName()
+                    + "\nInsert Count : " + idOfInsertedRow
+                    + "\nVerificationCode : " + user.getRt_email_verification_code()
+            );
+
 
             if(idOfInsertedRow>=1)
             {
@@ -133,7 +144,7 @@ public class UserResourceNew {
                         .h1("Registration successful for your account")
                         .p("Your account has been Created.")
                         .h3("Your E-mail : " + user.getEmail())
-                        .p("You can login with your email and password that you have provided. Thanks for registering with Taxi Referral Service (TRS).")
+                        .p("You can login with your email and password that you have provided. Thank you for registering with Taxi Referral Service (TRS).")
                         .mail()
                         .to(user.getEmail())
                         .subject("Taxi Referral Service : Account Registered")
@@ -381,6 +392,157 @@ public class UserResourceNew {
 
 
     @PUT
+    @Path("/ResetPassword")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response resetPassword(User user)
+    {
+
+        int rowCount = Globals.daoResetPassword.resetPassword(user);
+
+        if(rowCount >= 1)
+        {
+
+            return Response.status(Response.Status.OK)
+                    .build();
+        }
+        if(rowCount == 0)
+        {
+
+            return Response.status(Response.Status.NOT_MODIFIED)
+                    .build();
+        }
+
+
+        return null;
+    }
+
+
+
+
+
+
+//    , @PathParam("EmailOrPhone") String emailOrPhone
+//    /{EmailOrPhone}
+
+
+    @PUT
+    @Path("/GenerateResetCode")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response generateResetCode(User user)
+    {
+
+        String resetCode = new BigInteger(30, Globals.random).toString(32);
+
+        Timestamp timestampExpiry
+                = new Timestamp(
+                System.currentTimeMillis()
+                        + GlobalConstants.PASSWORD_RESET_CODE_EXPIRY_MINUTES * 60 * 1000
+        );
+
+
+
+        int rowCount = Globals.daoResetPassword.generateResetCode(user,resetCode,timestampExpiry);
+
+
+
+        if(rowCount==1)
+        {
+            // saved successfully
+
+
+            if(user.getRt_registration_mode()==User.REGISTRATION_MODE_EMAIL)
+            {
+                Mail.using(Globals.configurationMailgun)
+                        .body()
+                        .h1("Your E-mail Verification Code is given below")
+                        .p("You have requested to verify your e-mail. If you did not request the e-mail verification please ignore this e-mail message.")
+                        .h3("The e-mail verification code is : " + resetCode)
+                        .p("This verification code will expire at " + timestampExpiry.toLocaleString() + ". Please use this code before it expires.")
+                        .mail()
+                        .to(user.getEmail())
+                        .subject("E-mail Verification Code for Taxi Referral Service (TRS)")
+                        .from("Taxi Referral Service","noreply@taxireferral.org")
+                        .build()
+                        .send();
+            }
+            else if(user.getRt_registration_mode()==User.REGISTRATION_MODE_PHONE)
+            {
+
+            }
+
+
+        }
+
+
+
+
+
+        if(rowCount >= 1)
+        {
+
+            return Response.status(Response.Status.OK)
+                    .build();
+        }
+        if(rowCount == 0)
+        {
+
+            return Response.status(Response.Status.NOT_MODIFIED)
+                    .build();
+        }
+
+
+        return null;
+    }
+
+
+
+
+
+
+    @GET
+    @Path("/CheckPasswordResetCode/{emailOrPhone}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response checkPasswordResetCode(
+            @PathParam("emailOrPhone")String emailOrPhone,
+            @QueryParam("ResetCode")String resetCode
+    )
+    {
+        // Roles allowed not used for this method due to performance and effeciency requirements. Also
+        // this endpoint doesnt required to be secured as it does not expose any confidential information
+
+        boolean result = Globals.daoResetPassword.checkPasswordResetCode(emailOrPhone,resetCode);
+
+
+
+//        System.out.println(email);
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        if(result)
+        {
+            return Response.status(Response.Status.OK)
+                    .build();
+
+        } else
+        {
+            return Response.status(Response.Status.NO_CONTENT)
+                    .build();
+        }
+
+    }
+
+
+
+
+
+
+
+    @PUT
     @Path("/ChangePassword/{OldPassword}")
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({GlobalConstants.ROLE_DRIVER})
@@ -506,7 +668,6 @@ public class UserResourceNew {
         Timestamp timestampExpiry = new Timestamp(System.currentTimeMillis() + GlobalConstants.TOKEN_DURATION_MINUTES * 60 * 10);
 
         User user = daoUser.getProfile(username,password);
-
 
 
         if(user!=null)

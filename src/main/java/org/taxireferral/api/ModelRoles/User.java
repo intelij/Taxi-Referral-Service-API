@@ -22,6 +22,9 @@ public class User {
     public static final String USERNAME = "USERNAME";
     public static final String PASSWORD = "PASSWORD";
 
+    public static final String PASSWORD_RESET_CODE = "PASSWORD_RESET_CODE";
+    public static final String RESET_CODE_EXPIRES = "RESET_CODE_EXPIRES";
+
     public static final String E_MAIL = "E_MAIL";
 //    public static final String IS_EMAIL_VERIFIED = "IS_EMAIL_VERIFIED";
     public static final String PHONE = "PHONE";
@@ -74,6 +77,9 @@ public class User {
                     + " " + User.USERNAME + " text UNIQUE ,"
                     + " " + User.PASSWORD + " text NOT NULL,"
 
+                    + " " + User.PASSWORD_RESET_CODE + " text NOT NULL ,"
+                    + " " + User.RESET_CODE_EXPIRES + " timestamp with time zone NOT NULL,"
+
                     + " " + User.E_MAIL + " text UNIQUE ,"
                     + " " + User.PHONE + " text UNIQUE,"
                     + " " + User.NAME + " text,"
@@ -115,7 +121,11 @@ public class User {
 
     public static final String upgradeTableSchema =
                     " ALTER TABLE IF EXISTS " + User.TABLE_NAME +
-                    " ADD COLUMN IF NOT EXISTS " + User.EXTENDED_CREDIT_LIMIT + " float NOT NULL default 0";
+                    " ADD COLUMN IF NOT EXISTS " + User.EXTENDED_CREDIT_LIMIT + " float NOT NULL default 0," +
+                    " ADD COLUMN IF NOT EXISTS " + " " + User.PASSWORD_RESET_CODE + " text NOT NULL ," +
+                    " ADD COLUMN IF NOT EXISTS " + " " + User.RESET_CODE_EXPIRES + " timestamp with time zone NOT NULL";
+
+
 
 
 
@@ -124,6 +134,8 @@ public class User {
     private int userID;
     private String username;
     private String password;
+
+    private String passwordResetCode;
 
     private String email;
     private String phone;
@@ -170,6 +182,14 @@ public class User {
 
     // Getters and Setters
 
+
+    public String getPasswordResetCode() {
+        return passwordResetCode;
+    }
+
+    public void setPasswordResetCode(String passwordResetCode) {
+        this.passwordResetCode = passwordResetCode;
+    }
 
     public double getExtendedCreditLimit() {
         return extendedCreditLimit;

@@ -6,6 +6,7 @@ import net.sargue.mailgun.Configuration;
 import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.glassfish.jersey.media.sse.SseBroadcaster;
 import org.taxireferral.api.DAORoles.DAOEmailVerificationCodes;
+import org.taxireferral.api.DAORoles.DAOResetPassword;
 import org.taxireferral.api.DAORoles.DAOUser;
 import org.taxireferral.api.DAORoles.DAOUserNew;
 import org.taxireferral.api.DAOs.*;
@@ -37,6 +38,8 @@ public class Globals {
 
     public static DAOUser daoUser = new DAOUser();
     public static DAOUserNew daoUserNew = new DAOUserNew();
+    public static DAOResetPassword daoResetPassword = new DAOResetPassword();
+
     public static VehicleDAO vehicleDAO = new VehicleDAO();
     public static DAOTripRequest tripRequestDAO = new DAOTripRequest();
     public static DAOCurrentTrip daoCurrentTrip = new DAOCurrentTrip();
