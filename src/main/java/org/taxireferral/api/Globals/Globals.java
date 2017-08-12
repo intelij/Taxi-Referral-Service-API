@@ -5,10 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import net.sargue.mailgun.Configuration;
 import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.glassfish.jersey.media.sse.SseBroadcaster;
-import org.taxireferral.api.DAORoles.DAOEmailVerificationCodes;
-import org.taxireferral.api.DAORoles.DAOResetPassword;
-import org.taxireferral.api.DAORoles.DAOUser;
-import org.taxireferral.api.DAORoles.DAOUserNew;
+import org.taxireferral.api.DAORoles.*;
 import org.taxireferral.api.DAOs.*;
 import org.taxireferral.api.JDBCContract;
 import org.taxireferral.api.Model.TripRequest;
@@ -43,12 +40,15 @@ public class Globals {
     public static VehicleDAO vehicleDAO = new VehicleDAO();
     public static DAOTripRequest tripRequestDAO = new DAOTripRequest();
     public static DAOCurrentTrip daoCurrentTrip = new DAOCurrentTrip();
+    public static DAOTripHistory daoTripHistory = new DAOTripHistory();
 
 
     public static DAOEmailVerificationCodes daoVerificationCodes = new DAOEmailVerificationCodes();
 
     public static VehicleTypeDAONew daoVehicleTypeNew = new VehicleTypeDAONew();
     public static VehicleTypeDAOGet daoVehicleTypeGet = new VehicleTypeDAOGet();
+
+    public static DAOUserNotifications userNotifications = new DAOUserNotifications();
 
     // static reference for holding security accountApproved
 
@@ -89,6 +89,9 @@ public class Globals {
 
         return dataSource;
     }
+
+
+    /* Send Notification throught firebase */
 
 
 

@@ -122,8 +122,8 @@ public class User {
     public static final String upgradeTableSchema =
                     " ALTER TABLE IF EXISTS " + User.TABLE_NAME +
                     " ADD COLUMN IF NOT EXISTS " + User.EXTENDED_CREDIT_LIMIT + " float NOT NULL default 0," +
-                    " ADD COLUMN IF NOT EXISTS " + " " + User.PASSWORD_RESET_CODE + " text NOT NULL ," +
-                    " ADD COLUMN IF NOT EXISTS " + " " + User.RESET_CODE_EXPIRES + " timestamp with time zone NOT NULL";
+                    " ADD COLUMN IF NOT EXISTS " + " " + User.PASSWORD_RESET_CODE + " text," +
+                    " ADD COLUMN IF NOT EXISTS " + " " + User.RESET_CODE_EXPIRES + " timestamp with time zone";
 
 
 
@@ -136,6 +136,7 @@ public class User {
     private String password;
 
     private String passwordResetCode;
+    private Timestamp resetCodeExpires;
 
     private String email;
     private String phone;
@@ -182,6 +183,14 @@ public class User {
 
     // Getters and Setters
 
+
+    public Timestamp getResetCodeExpires() {
+        return resetCodeExpires;
+    }
+
+    public void setResetCodeExpires(Timestamp resetCodeExpires) {
+        this.resetCodeExpires = resetCodeExpires;
+    }
 
     public String getPasswordResetCode() {
         return passwordResetCode;

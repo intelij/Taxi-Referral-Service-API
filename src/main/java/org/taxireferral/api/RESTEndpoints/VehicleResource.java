@@ -137,13 +137,16 @@ public class VehicleResource {
 
 
 //    @RolesAllowed({GlobalConstants.ROLE_DRIVER})
+//        , @PathParam("VehicleID")int vehicleID
+///{VehicleID}
 
     @PUT
-    @Path("/UpdateBySelf/{VehicleID}")
+    @Path("/UpdateBySelf")
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({GlobalConstants.ROLE_DRIVER})
-    public Response updateBySelf(Vehicle vehicle, @PathParam("VehicleID")int vehicleID)
+    public Response updateBySelf(Vehicle vehicle)
     {
+
 
 //        if(Globals.accountApproved instanceof User)
 //        {
@@ -154,7 +157,8 @@ public class VehicleResource {
 //            throw new ForbiddenException();
 //        }
 
-        vehicle.setVehicleID(vehicleID);
+
+        vehicle.setDriverID(((User)Globals.accountApproved).getUserID());
         int rowCount = daoVehicle.update_vehicle(vehicle);
 
         if(rowCount >= 1)
@@ -277,6 +281,15 @@ public class VehicleResource {
 
         int rowCount = daoVehicle.setTaxiAvailable(((User)Globals.accountApproved).getUserID());
 
+
+
+//        try {
+//            Thread.sleep(300);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+
         if(rowCount >= 1)
         {
             return Response.status(Response.Status.OK)
@@ -311,6 +324,17 @@ public class VehicleResource {
 
 
         int rowCount = daoVehicle.setTaxiNotAvailable(((User)Globals.accountApproved).getUserID());
+
+
+
+//
+//        try {
+//            Thread.sleep(300);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+
 
         if(rowCount >= 1)
         {
@@ -370,6 +394,7 @@ public class VehicleResource {
             @QueryParam("AdultMalesCount") Integer adultMalesCount,
             @QueryParam("AdultFemalesCount") Integer adultFemalesCount,
             @QueryParam("ChildrensCount") Integer childrensCount,
+            @QueryParam("ShowFavouritesForUserID") Integer showFavouritesForUserID,
             @QueryParam("SortBy") String sortBy,
             @QueryParam("Limit")Integer limit, @QueryParam("Offset")Integer offset,
             @QueryParam("GetRowCount")boolean getRowCount,
@@ -408,6 +433,7 @@ public class VehicleResource {
 
 
 
+
 //		try {
 //			Thread.sleep(1000);
 //		} catch (InterruptedException e) {
@@ -428,15 +454,20 @@ public class VehicleResource {
 
 
 
+//    @Path("/{DriverID}")
+//@PathParam("DriverID")int driverID,
+
     @GET
-    @Path("/{DriverID}")
+    @Path("/GetProfile")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getVehicle(@PathParam("DriverID")int driverID,
-                               @QueryParam("latCenter")double latCenter,
+    @RolesAllowed({GlobalConstants.ROLE_DRIVER})
+    public Response getVehicle(@QueryParam("latCenter")double latCenter,
                                @QueryParam("lonCenter")double lonCenter)
     {
 
-        Vehicle vehicle = daoVehicle.getVehicle(driverID,latCenter,lonCenter);
+        User user = (User) Globals.accountApproved;
+
+        Vehicle vehicle = daoVehicle.getVehicle(user.getUserID(),latCenter,lonCenter);
 
         if(vehicle!= null)
         {

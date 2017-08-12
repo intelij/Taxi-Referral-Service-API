@@ -304,7 +304,8 @@ public class DAOTripRequest {
 
 
 
-    public int approve_pickup(int tripRequestID, int driverID, boolean getRowCount, Location currentLocation)
+    public int approve_pickup(int tripRequestID, int driverID, boolean getRowCount,
+                              Location currentLocation)
     {
         // note of precaution : please check the end user id is the id of the user who is requesting to create the trip
 
@@ -605,6 +606,7 @@ public class DAOTripRequest {
             }
 
 
+
             connection.commit();
 
         } catch (SQLException e) {
@@ -663,7 +665,7 @@ public class DAOTripRequest {
 
 
 
-    public int set_request_approved(int tripRequestID, int driverID)
+    public int set_request_approved(int tripRequestID, int driverID, int userID)
     {
 
         Connection connection = null;
@@ -715,6 +717,11 @@ public class DAOTripRequest {
             statementUpdate.setObject(++i,tripRequestID);
 
             rowCountItems = statementUpdate.executeUpdate();
+
+            if(rowCountItems==1)
+            {
+                Globals.userNotifications.sendNotificationToUser(userID,1,GlobalConstants.FIREBASE_END_USER_KEY);
+            }
 
 
 //            connection.commit();

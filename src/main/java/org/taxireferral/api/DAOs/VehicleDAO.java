@@ -243,12 +243,13 @@ public class VehicleDAO {
 
 
 
-        update = "UPDATE " + Vehicle.TABLE_NAME
-                + " SET "
-                + Vehicle.PROFILE_IMAGE_URL + "=?,"
-                + Vehicle.MIN_TRIP_CHARGES + "=?,"
-                + Vehicle.CHARGES_PER_KM + "=?"
-                + " WHERE " + Vehicle.VEHICLE_ID + " = ?";
+        update =  " UPDATE " + Vehicle.TABLE_NAME
+                + " SET "   + Vehicle.VEHICLE_MODEL_NAME  + "=?,"
+                            + Vehicle.SEATING_CAPACITY    + "=?,"
+                            + Vehicle.PROFILE_IMAGE_URL   + "=?,"
+                            + Vehicle.MIN_TRIP_CHARGES    + "=?,"
+                            + Vehicle.CHARGES_PER_KM      + "=?"
+                + " WHERE " + Vehicle.DRIVER_ID          + " = ?";
 
 
 
@@ -263,11 +264,13 @@ public class VehicleDAO {
             int i = 0;
 
 
+            statementUpdate.setString(++i,vehicle.getVehicleModelName());
+            statementUpdate.setObject(++i,vehicle.getSeatingCapacity());
             statementUpdate.setString(++i,vehicle.getProfileImageURL());
             statementUpdate.setObject(++i,vehicle.getMinTripCharges());
             statementUpdate.setObject(++i,vehicle.getChargesPerKM());
 
-            statementUpdate.setObject(++i,vehicle.getVehicleID());
+            statementUpdate.setObject(++i,vehicle.getDriverID());
 
             rowCountItems = statementUpdate.executeUpdate();
 
@@ -763,8 +766,6 @@ public class VehicleDAO {
 
 
 
-
-
     public Vehicle getVehicle(int driverID,
                               Double latCenter, Double lonCenter)
     {
@@ -773,6 +774,7 @@ public class VehicleDAO {
 
 
         query = "SELECT "
+
                 + " (6371.01 * acos(cos( radians(" + latCenter + ")) * cos( radians(" + Vehicle.LAT_CURRENT + " )) * cos(radians( "
                 + Vehicle.LON_CURRENT + ") - radians("
                 + lonCenter + "))" + " + sin( radians(" + latCenter + ")) * sin(radians(" + Vehicle.LAT_CURRENT + "))))" + " as distance ,"
@@ -782,25 +784,43 @@ public class VehicleDAO {
                 + Vehicle.TABLE_NAME + "." + Vehicle.PROFILE_IMAGE_URL + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + ","
 
+                + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_MODEL_NAME + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.SEATING_CAPACITY + ","
+
                 + Vehicle.TABLE_NAME + "." + Vehicle.MIN_TRIP_CHARGES + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.CHARGES_PER_KM + ","
 
                 + Vehicle.TABLE_NAME + "." + Vehicle.LAT_CURRENT + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.LON_CURRENT + ","
-                + Vehicle.TABLE_NAME + "." + Vehicle.TIMESTAMP_LOCATION_UPDATED + ""
+                + Vehicle.TABLE_NAME + "." + Vehicle.TIMESTAMP_LOCATION_UPDATED + ","
+
+                + User.TABLE_NAME + "." + User.USER_ID + ","
+                + User.TABLE_NAME + "." + User.E_MAIL + ","
+                + User.TABLE_NAME + "." + User.PHONE + ","
+                + User.TABLE_NAME + "." + User.IS_ACCOUNT_PRIVATE + ","
+                + User.TABLE_NAME + "." + User.ABOUT + ","
+                + User.TABLE_NAME + "." + User.NAME + ","
+                + User.TABLE_NAME + "." + User.GENDER + ","
+                + User.TABLE_NAME + "." + User.PROFILE_IMAGE_URL + " as user_profile_image,"
+
+                + User.TABLE_NAME + "." + User.CURRENT_DUES + ","
+                + User.TABLE_NAME + "." + User.EXTENDED_CREDIT_LIMIT + ""
 
                 + " FROM " + Vehicle.TABLE_NAME
-                + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = " + driverID;
+                + " INNER JOIN " + User.TABLE_NAME + " ON (" + Vehicle.DRIVER_ID + " = " + User.USER_ID + ")"
+                + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ?";
 
 
 //        + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.ENABLED +  "= TRUE "
 
 
-        query = query + " group by " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID ;
+        query = query + " group by "
+                        + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ","
+                        + User.TABLE_NAME + "." + User.USER_ID;
 
 
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         ResultSet rs = null;
 
         Vehicle vehicle = null;
@@ -808,8 +828,12 @@ public class VehicleDAO {
         try {
 
             connection = dataSource.getConnection();
-            statement = connection.createStatement();
-            rs = statement.executeQuery(query);
+            statement = connection.prepareStatement(query);
+
+            int i = 0;
+            statement.setObject(++i,driverID);
+
+            rs = statement.executeQuery();
 
 
             while(rs.next())
@@ -826,6 +850,9 @@ public class VehicleDAO {
 
                 vehicle.setVehicleStatus(rs.getInt(Vehicle.VEHICLE_STATUS));
 
+                vehicle.setVehicleModelName(rs.getString(Vehicle.VEHICLE_MODEL_NAME));
+                vehicle.setSeatingCapacity(rs.getInt(Vehicle.SEATING_CAPACITY));
+
                 vehicle.setMinTripCharges(rs.getInt(Vehicle.MIN_TRIP_CHARGES));
                 vehicle.setChargesPerKM(rs.getInt(Vehicle.CHARGES_PER_KM));
 
@@ -835,6 +862,22 @@ public class VehicleDAO {
                 vehicle.setLocationUpdated(rs.getTimestamp(Vehicle.TIMESTAMP_LOCATION_UPDATED));
 
 
+                User driver = new User();
+
+                driver.setUserID(rs.getInt(User.USER_ID));
+                driver.setEmail(rs.getString(User.E_MAIL));
+                driver.setPhone(rs.getString(User.PHONE));
+                driver.setAccountPrivate(rs.getBoolean(User.IS_ACCOUNT_PRIVATE));
+                driver.setAbout(rs.getString(User.ABOUT));
+                driver.setName(rs.getString(User.NAME));
+                driver.setGender(rs.getBoolean(User.GENDER));
+                driver.setProfileImagePath(rs.getString("user_profile_image"));
+
+                driver.setCurrentDues(rs.getDouble(User.CURRENT_DUES));
+                driver.setExtendedCreditLimit(rs.getDouble(User.EXTENDED_CREDIT_LIMIT));
+
+
+                vehicle.setRt_driver(driver);
 
             }
 

@@ -51,8 +51,17 @@ public class TripRequestRESTEndpoint {
         tripRequest.setTripRequestStatus(GlobalConstants.TAXI_REQUESTED);
 
 
+
         if(idOfInsertedRow >=1)
         {
+
+            Globals.userNotifications.sendNotificationToUser(
+                    tripRequest.getRt_vehicle().getDriverID(),
+                    GlobalConstants.NOTIFICATION_TYPE_TRIP_REQUESTS,
+                    GlobalConstants.FIREBASE_DRIVER_KEY
+            );
+
+
             return Response.status(Response.Status.CREATED)
                     .entity(tripRequest)
                     .build();
@@ -74,19 +83,24 @@ public class TripRequestRESTEndpoint {
 
 
     @PUT
-    @Path("/SetRequestApproved/{TripRequestID}")
+    @Path("/SetRequestApproved/{TripRequestID}/UserID/{UserID}")
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({GlobalConstants.ROLE_DRIVER})
-    public Response setRequestApproved(@PathParam("TripRequestID")int tripRequestID)
+    public Response setRequestApproved(@PathParam("TripRequestID")int tripRequestID,@PathParam("UserID")int userID)
     {
 
 
-        if(! (Globals.accountApproved instanceof User)) {
-            return null;
-        }
+
+//        if(! (Globals.accountApproved instanceof User)) {
+//            return null;
+//        }
 
 
-        int rowCount = daoTripRequest.set_request_approved(tripRequestID,((User) Globals.accountApproved).getUserID());
+        int rowCount = daoTripRequest.set_request_approved(
+                tripRequestID,
+                ((User) Globals.accountApproved).getUserID(),
+                userID
+        );
 
 
         if(rowCount >= 1)
@@ -112,10 +126,11 @@ public class TripRequestRESTEndpoint {
 
 
     @PUT
-    @Path("/RequestPickup/{TripRequestID}")
+    @Path("/RequestPickup/{TripRequestID}/DriverID/{DriverID}")
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({GlobalConstants.ROLE_END_USER})
-    public Response requestPickUp(@PathParam("TripRequestID")int tripRequestID)
+    public Response requestPickUp(@PathParam("TripRequestID")int tripRequestID,
+                                  @PathParam("DriverID")int driverID)
     {
 
         if(Globals.accountApproved instanceof User)
@@ -124,6 +139,14 @@ public class TripRequestRESTEndpoint {
 
             if(rowCount >= 1)
             {
+
+                Globals.userNotifications.sendNotificationToUser(
+                        driverID,
+                        GlobalConstants.NOTIFICATION_TYPE_TRIP_REQUESTS,
+                        GlobalConstants.FIREBASE_DRIVER_KEY
+                );
+
+
 
                 return Response.status(Response.Status.OK)
                         .build();
@@ -147,16 +170,16 @@ public class TripRequestRESTEndpoint {
 
 
     @PUT
-    @Path("/ApprovePickup/{TripRequestID}")
+    @Path("/ApprovePickup/{TripRequestID}/UserID/{UserID}")
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({GlobalConstants.ROLE_DRIVER})
-    public Response approvePickup( Location location,@PathParam("TripRequestID")int tripRequestID)
+    public Response approvePickup( Location location,
+                                   @PathParam("TripRequestID")int tripRequestID,
+                                   @PathParam("UserID")int userID
+    )
+
     {
 
-
-        if(! (Globals.accountApproved instanceof User)) {
-            return null;
-        }
 
 
         int rowCount = daoTripRequest.approve_pickup(
@@ -168,6 +191,8 @@ public class TripRequestRESTEndpoint {
 
         if(rowCount >= 1)
         {
+
+            Globals.userNotifications.sendNotificationToUser(userID,2,GlobalConstants.FIREBASE_END_USER_KEY);
 
             return Response.status(Response.Status.OK)
                     .build();
@@ -381,6 +406,7 @@ public class TripRequestRESTEndpoint {
 
 //    @QueryParam("VehicleID") Integer vehicleID,
 
+
     @GET
     @Path("/TripRequestsForDriver")
     @Produces(MediaType.APPLICATION_JSON)
@@ -395,7 +421,7 @@ public class TripRequestRESTEndpoint {
 
 
 
-        TripRequestEndPoint endPoint = new TripRequestEndPoint();
+//        TripRequestEndPoint endPoint = new TripRequestEndPoint();
 
         if(limit!=null)
         {
@@ -409,18 +435,20 @@ public class TripRequestRESTEndpoint {
                 offset = 0;
             }
 
-            endPoint.setLimit(limit);
-            endPoint.setOffset(offset);
-            endPoint.setMax_limit(GlobalConstants.max_limit);
-
+//            endPoint.setLimit(limit);
+//            endPoint.setOffset(offset);
+//            endPoint.setMax_limit(GlobalConstants.max_limit);
         }
 
 
 
-        endPoint = daoTripRequest.getTripRequestsForDriver(endUserID,
-                ((User)Globals.accountApproved).getUserID(),
-                sortBy,limit,offset,
-                getRowCount,getOnlyMetaData
+
+
+        TripRequestEndPoint endPoint
+                = daoTripRequest.getTripRequestsForDriver(endUserID,
+                            ((User)Globals.accountApproved).getUserID(),
+                            sortBy,limit,offset,
+                            getRowCount,getOnlyMetaData
         );
 
 
@@ -439,5 +467,9 @@ public class TripRequestRESTEndpoint {
                 .entity(endPoint)
                 .build();
     }
+
+
+
+
 
 }

@@ -18,14 +18,14 @@ public class TripHistory {
     public static final String END_USER_ID = "END_USER_ID"; // foreign key
 
             // ratings are the extra fields compared to current trip
-    public static final String DRIVER_RATING = "DRIVER_RATING";
-    public static final String END_USER_RATING = "END_USER_RATING";
+    public static final String RATING_BY_DRIVER = "RATING_BY_DRIVER";
+    public static final String RATING_BY_END_USER = "RATING_BY_END_USER";
 
     public static final String FEEDBACK_BY_DRIVER = "FEEDBACK_BY_DRIVER";
     public static final String FEEDBACK_BY_END_USER = "FEEDBACK_BY_END_USER";
 
     public static final String IS_CANCELLED = "IS_CANCELLED";
-    public static final String IS_CANCELLED_BY_USER = "IS_CANCELLED_BY_USER";
+    public static final String IS_CANCELLED_BY_END_USER = "IS_CANCELLED_BY_USER";
     public static final String REASON_FOR_CANCELLATION = "REASON_FOR_CANCELLATION";
 
     public static final String TIMESTAMP_CREATED = "TIMESTAMP_CREATED";
@@ -70,14 +70,14 @@ public class TripHistory {
                     + " " + TripHistory.VEHICLE_ID + " int NOT NULL,"
                     + " " + TripHistory.END_USER_ID + " int NOT NULL,"
 
-                    + " " + TripHistory.DRIVER_RATING + " int," // can be null
-                    + " " + TripHistory.END_USER_RATING + " int," // can be null
+                    + " " + TripHistory.RATING_BY_DRIVER + " int," // can be null
+                    + " " + TripHistory.RATING_BY_END_USER + " int," // can be null
 
                     + " " + TripHistory.FEEDBACK_BY_DRIVER + " text,"
                     + " " + TripHistory.FEEDBACK_BY_END_USER + " text,"
 
                     + " " + TripHistory.IS_CANCELLED + " boolean NOT NULL default 'f',"
-                    + " " + TripHistory.IS_CANCELLED_BY_USER + " boolean NOT NULL default 'f',"
+                    + " " + TripHistory.IS_CANCELLED_BY_END_USER + " boolean NOT NULL default 'f',"
                     + " " + TripHistory.REASON_FOR_CANCELLATION + " text,"
 
                     + " " + TripHistory.TIMESTAMP_CREATED + " timestamp with time zone NOT NULL DEFAULT now(),"
@@ -111,6 +111,15 @@ public class TripHistory {
 
 
 
+    public static final String upgradeTableSchema =
+            " ALTER TABLE IF EXISTS " + TripHistory.TABLE_NAME +
+                    " ADD COLUMN IF NOT EXISTS " + " " + TripHistory.RATING_BY_DRIVER + " int," +
+                    " ADD COLUMN IF NOT EXISTS " + " " + TripHistory.RATING_BY_END_USER + " int";
+
+
+
+
+
 
 
     // instance variables
@@ -119,8 +128,8 @@ public class TripHistory {
     private int vehicleID;
     private int endUserID;
 
-    private int driverRating;
-    private int endUserRating;
+    private int ratingByDriver;
+    private int ratingByEndUser;
 
     private String feedbackByDriver;
     private String feedbackByEndUser;
@@ -154,12 +163,30 @@ public class TripHistory {
     private double chargesPerKm;
 
 
+    // stores the taxi
+    private Vehicle rt_vehicle;
+    private User rt_end_user;
 
 
 
 
 
     // getter and setters
+    public Vehicle getRt_vehicle() {
+        return rt_vehicle;
+    }
+
+    public void setRt_vehicle(Vehicle rt_vehicle) {
+        this.rt_vehicle = rt_vehicle;
+    }
+
+    public User getRt_end_user() {
+        return rt_end_user;
+    }
+
+    public void setRt_end_user(User rt_end_user) {
+        this.rt_end_user = rt_end_user;
+    }
 
     public String getFeedbackByDriver() {
         return feedbackByDriver;
@@ -225,20 +252,20 @@ public class TripHistory {
         this.endUserID = endUserID;
     }
 
-    public int getDriverRating() {
-        return driverRating;
+    public int getRatingByDriver() {
+        return ratingByDriver;
     }
 
-    public void setDriverRating(int driverRating) {
-        this.driverRating = driverRating;
+    public void setRatingByDriver(int ratingByDriver) {
+        this.ratingByDriver = ratingByDriver;
     }
 
-    public int getEndUserRating() {
-        return endUserRating;
+    public int getRatingByEndUser() {
+        return ratingByEndUser;
     }
 
-    public void setEndUserRating(int endUserRating) {
-        this.endUserRating = endUserRating;
+    public void setRatingByEndUser(int ratingByEndUser) {
+        this.ratingByEndUser = ratingByEndUser;
     }
 
     public Timestamp getTimestampCreated() {

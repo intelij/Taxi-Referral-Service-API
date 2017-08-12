@@ -102,12 +102,22 @@ public class TripRequest {
 
 
     // stores the taxi
+    private int rt_driver_id;
     private Vehicle rt_vehicle;
     private User rt_end_user;
 
 
 
     // getter and setters
+
+
+    public int getRt_driver_id() {
+        return rt_driver_id;
+    }
+
+    public void setRt_driver_id(int rt_driver_id) {
+        this.rt_driver_id = rt_driver_id;
+    }
 
     public User getRt_end_user() {
         return rt_end_user;

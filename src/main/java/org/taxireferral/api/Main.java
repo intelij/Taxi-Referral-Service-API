@@ -260,6 +260,7 @@ public class Main {
             statement = connection.createStatement();
 
             statement.executeUpdate(User.upgradeTableSchema);
+            statement.executeUpdate(TripHistory.upgradeTableSchema);
 
 
         } catch (SQLException e) {

@@ -3,8 +3,10 @@ package org.taxireferral.api.DAOs;
 import com.zaxxer.hikari.HikariDataSource;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
+import org.taxireferral.api.Model.TripHistory;
 import org.taxireferral.api.Model.TripRequest;
 import org.taxireferral.api.Model.Vehicle;
+import org.taxireferral.api.ModelEndpoints.TripHistoryEndPoint;
 import org.taxireferral.api.ModelEndpoints.TripRequestEndPoint;
 import org.taxireferral.api.ModelRoles.User;
 
@@ -22,18 +24,20 @@ public class DAOTripHistory {
 
     private HikariDataSource dataSource = Globals.getDataSource();
 
+    /* Function and Methods */
 
     // getTripHistoryForEndUser()
     // getTripHistoryForDriver()
     // rateAndReviewForDriver()
     // rateAndReviewForEndUser()
 
+    
 
-
-
-    public TripRequestEndPoint getTripHistoryForEndUser(
+    public TripHistoryEndPoint getTripHistoryForEndUser(
             Integer endUserID,
             Integer vehicleID,
+            Boolean isCancelled,
+            Boolean isCancelledByEndUser,
             String sortBy,
             Integer limit, Integer offset,
             boolean getRowCount,
@@ -48,67 +52,75 @@ public class DAOTripHistory {
 //		String queryNormal = "SELECT * FROM " + Item.TABLE_NAME;
 
 
+//        + "6371 * acos( cos( radians("
+//                + TripRequest.LAT_PICK_UP + ")) * cos( radians(" +  Vehicle.LAT_CURRENT +  ") ) * cos(radians(" + Vehicle.LON_CURRENT +  ") - radians("
+//                + TripRequest.LON_PICK_UP + "))"
+//                + " + sin( radians(" + TripRequest.LAT_PICK_UP + ")) * sin(radians(" + Vehicle.LAT_CURRENT + "))) as distance" + ","
+
+
         String queryJoin = "SELECT DISTINCT "
 
-                + "6371 * acos( cos( radians("
-                + TripRequest.LAT_PICK_UP + ")) * cos( radians(" +  Vehicle.LAT_CURRENT +  ") ) * cos(radians(" + Vehicle.LON_CURRENT +  ") - radians("
-                + TripRequest.LON_PICK_UP + "))"
-                + " + sin( radians(" + TripRequest.LAT_PICK_UP + ")) * sin(radians(" + Vehicle.LAT_CURRENT + "))) as distance" + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.TRIP_HISTORY_ID + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.VEHICLE_ID + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.END_USER_ID + ","
 
+                + TripHistory.TABLE_NAME + "." + TripHistory.RATING_BY_DRIVER + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.RATING_BY_END_USER + ","
 
-                + TripRequest.TABLE_NAME + "." + TripRequest.TRIP_REQUEST_ID + ","
-                + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + ","
-                + TripRequest.TABLE_NAME + "." + TripRequest.END_USER_ID + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.FEEDBACK_BY_DRIVER + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.FEEDBACK_BY_END_USER + ","
 
-                + TripRequest.TABLE_NAME + "." + TripRequest.TIMESTAMP_CREATED + ","
-                + TripRequest.TABLE_NAME + "." + TripRequest.TIMESTAMP_EXPIRES + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.IS_CANCELLED + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.IS_CANCELLED_BY_END_USER + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.REASON_FOR_CANCELLATION + ","
 
-                + TripRequest.TABLE_NAME + "." + TripRequest.TRIP_REQUEST_STATUS + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.TIMESTAMP_CREATED + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.TIMESTAMP_STARTED + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.TIMESTAMP_FINISHED + ","
 
-                + TripRequest.TABLE_NAME + "." + TripRequest.LAT_PICK_UP + ","
-                + TripRequest.TABLE_NAME + "." + TripRequest.LON_PICK_UP + ","
-                + TripRequest.TABLE_NAME + "." + TripRequest.PICK_UP_ADDRESS + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.LAT_START_LOCATION + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.LON_START_LOCATION + ","
 
-                + TripRequest.TABLE_NAME + "." + TripRequest.LAT_DESTINATION + ","
-                + TripRequest.TABLE_NAME + "." + TripRequest.LON_DESTINATION + ","
-                + TripRequest.TABLE_NAME + "." + TripRequest.DESTINATION_ADDRESS + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.LAT_PICK_UP_LOCATION + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.LON_PICK_UP_LOCATION + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.PICK_UP_ADDRESS + ","
 
-                + TripRequest.TABLE_NAME + "." + TripRequest.ADULTS_MALES_COUNT + ","
-                + TripRequest.TABLE_NAME + "." + TripRequest.ADULTS_FEMALES_COUNT + ","
-                + TripRequest.TABLE_NAME + "." + TripRequest.CHILDREN_COUNT + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.LAT_DESTINATION + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.LON_DESTINATION + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.DESTINATION_ADDRESS + ","
 
+                + TripHistory.TABLE_NAME + "." + TripHistory.DISTANCE_TRAVELLED_FOR_PICKUP + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.DISTANCE_TRAVELLED_FOR_TRIP + ","
+
+                + TripHistory.TABLE_NAME + "." + TripHistory.FREE_PICKUP_DISTANCE + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.REFERRAL_CHARGES + ","
+
+                + TripHistory.TABLE_NAME + "." + TripHistory.MIN_TRIP_CHARGES + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.CHARGES_PER_KM + ","
 
                 + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.PROFILE_IMAGE_URL + ","
-                + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + ","
-
-                + Vehicle.TABLE_NAME + "." + Vehicle.MIN_TRIP_CHARGES + ","
-                + Vehicle.TABLE_NAME + "." + Vehicle.CHARGES_PER_KM + ","
-
-                + Vehicle.TABLE_NAME + "." + Vehicle.LAT_CURRENT + ","
-                + Vehicle.TABLE_NAME + "." + Vehicle.LON_CURRENT + ","
-                + Vehicle.TABLE_NAME + "." + Vehicle.TIMESTAMP_LOCATION_UPDATED + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_MODEL_NAME + ","
 
                 + User.TABLE_NAME + "." + User.PHONE + ","
                 + User.TABLE_NAME + "." + User.NAME + ","
                 + User.TABLE_NAME + "." + User.GENDER + ","
                 + User.TABLE_NAME + "." + User.PROFILE_IMAGE_URL + ""
 
-                + " FROM " + TripRequest.TABLE_NAME
-                + " INNER JOIN " + Vehicle.TABLE_NAME + " ON (" + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
+                + " FROM " + TripHistory.TABLE_NAME
+                + " INNER JOIN " + Vehicle.TABLE_NAME + " ON (" + TripHistory.TABLE_NAME + "." + TripHistory.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
                 + " INNER JOIN " + User.TABLE_NAME + " ON (" + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID + ")"
-                + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.ENABLED + " = TRUE "
-                + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.AVIALABLE
-                + " AND " + TripRequest.TABLE_NAME + "." + TripRequest.TIMESTAMP_EXPIRES + " > now()";
+                + " WHERE " + TripHistory.TABLE_NAME + "." + TripHistory.END_USER_ID + " = ? ";
 
 
 
 
-        if(endUserID != null)
-        {
-            queryJoin = queryJoin + " AND " + TripRequest.TABLE_NAME + "." + TripRequest.END_USER_ID + " = ?";
-        }
+//
+//        if(endUserID != null)
+//        {
+//            queryJoin = queryJoin + " AND " + TripHistory.TABLE_NAME + "." + TripHistory.END_USER_ID + " = ?";
+//        }
 
 
 
@@ -118,13 +130,27 @@ public class DAOTripHistory {
         }
 //
 
+        if(isCancelled != null)
+        {
+            queryJoin = queryJoin + " AND " + TripHistory.TABLE_NAME + "." + TripHistory.IS_CANCELLED + " = ?";
+        }
+
+
+        if(isCancelledByEndUser != null)
+        {
+            queryJoin = queryJoin + " AND " + TripHistory.TABLE_NAME + "." + TripHistory.IS_CANCELLED_BY_END_USER + " = ?";
+        }
+
+
+
+
 
 
         // all the non-aggregate columns which are present in select must be present in group by also.
         queryJoin = queryJoin
 
                 + " group by "
-                + TripRequest.TABLE_NAME + "." + TripRequest.TRIP_REQUEST_ID + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.TRIP_HISTORY_ID + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ","
                 + User.TABLE_NAME + "." + User.USER_ID;
 
@@ -184,9 +210,9 @@ public class DAOTripHistory {
         queryCount = "SELECT COUNT(*) as item_count FROM (" + queryCount + ") AS temp";
 
 
-        TripRequestEndPoint endPoint = new TripRequestEndPoint();
+        TripHistoryEndPoint endPoint = new TripHistoryEndPoint();
 
-        ArrayList<TripRequest> itemList = new ArrayList<>();
+        ArrayList<TripHistory> itemList = new ArrayList<>();
         Connection connection = null;
 
         PreparedStatement statement = null;
@@ -206,62 +232,87 @@ public class DAOTripHistory {
             {
                 statement = connection.prepareStatement(queryJoin);
 
-                if(endUserID != null)
-                {
-                    statement.setObject(++i,endUserID);
-                }
+                statement.setObject(++i,endUserID);
+
+//                if(endUserID != null)
+//                {
+//
+//                }
 
                 if(vehicleID != null)
                 {
                     statement.setObject(++i,vehicleID);
                 }
 
+                if(isCancelled!=null)
+                {
+                    statement.setObject(++i,isCancelled);
+                }
+
+
+                if(isCancelledByEndUser!=null)
+                {
+                    statement.setObject(++i,isCancelledByEndUser);
+                }
+
+
+
                 rs = statement.executeQuery();
 
                 while(rs.next())
                 {
 
-                    TripRequest tripRequest = new TripRequest();
+                    TripHistory tripHistory = new TripHistory();
 
-                    tripRequest.setTripRequestID(rs.getInt(TripRequest.TRIP_REQUEST_ID));
-                    tripRequest.setVehicleID(rs.getInt(TripRequest.VEHICLE_ID));
-                    tripRequest.setEndUserID(rs.getInt(TripRequest.END_USER_ID));
+                    tripHistory.setTripHistoryID(rs.getInt(TripHistory.TRIP_HISTORY_ID));
+                    tripHistory.setVehicleID(rs.getInt(TripHistory.VEHICLE_ID));
+                    tripHistory.setEndUserID(rs.getInt(TripHistory.END_USER_ID));
 
-                    tripRequest.setTimestampCreated(rs.getTimestamp(TripRequest.TIMESTAMP_CREATED));
-                    tripRequest.setTimestampExpires(rs.getTimestamp(TripRequest.TIMESTAMP_EXPIRES));
+                    tripHistory.setRatingByDriver(rs.getInt(TripHistory.RATING_BY_DRIVER));
+                    tripHistory.setRatingByEndUser(rs.getInt(TripHistory.RATING_BY_END_USER));
 
-                    tripRequest.setTripRequestStatus(rs.getInt(TripRequest.TRIP_REQUEST_STATUS));
+                    tripHistory.setFeedbackByDriver(rs.getString(TripHistory.FEEDBACK_BY_DRIVER));
+                    tripHistory.setFeedbackByEndUser(rs.getString(TripHistory.FEEDBACK_BY_END_USER));
 
-                    tripRequest.setLatPickUp(rs.getFloat(TripRequest.LAT_PICK_UP));
-                    tripRequest.setLonPickUp(rs.getFloat(TripRequest.LON_PICK_UP));
-                    tripRequest.setPickUpAddress(rs.getString(TripRequest.PICK_UP_ADDRESS));
+                    tripHistory.setCancelled(rs.getBoolean(TripHistory.IS_CANCELLED));
+                    tripHistory.setCancelledByUser(rs.getBoolean(TripHistory.IS_CANCELLED_BY_END_USER));
+                    tripHistory.setReasonForCancellation(rs.getString(TripHistory.REASON_FOR_CANCELLATION));
 
-                    tripRequest.setLatDestination(rs.getFloat(TripRequest.LAT_DESTINATION));
-                    tripRequest.setLonDestination(rs.getFloat(TripRequest.LON_DESTINATION));
-                    tripRequest.setDestinationAddress(rs.getString(TripRequest.DESTINATION_ADDRESS));
+                    tripHistory.setTimestampCreated(rs.getTimestamp(TripHistory.TIMESTAMP_CREATED));
+                    tripHistory.setTimestampStarted(rs.getTimestamp(TripHistory.TIMESTAMP_STARTED));
+                    tripHistory.setTimestampFinished(rs.getTimestamp(TripHistory.TIMESTAMP_FINISHED));
 
-                    tripRequest.setAdultMalesCount(rs.getInt(TripRequest.ADULTS_MALES_COUNT));
-                    tripRequest.setAdultFemalesCount(rs.getInt(TripRequest.ADULTS_FEMALES_COUNT));
-                    tripRequest.setChildrenCount(rs.getInt(TripRequest.CHILDREN_COUNT));
+                    tripHistory.setLatStartLocation(rs.getDouble(TripHistory.LAT_START_LOCATION));
+                    tripHistory.setLonStartLocation(rs.getDouble(TripHistory.LON_START_LOCATION));
+
+                    tripHistory.setLatPickUpLocation(rs.getDouble(TripHistory.LAT_PICK_UP_LOCATION));
+                    tripHistory.setLonPickUpLocation(rs.getDouble(TripHistory.LON_PICK_UP_LOCATION));
+                    tripHistory.setPickUpAddress(rs.getString(TripHistory.PICK_UP_ADDRESS));
+
+                    tripHistory.setLatDestination(rs.getDouble(TripHistory.LAT_DESTINATION));
+                    tripHistory.setLonDestination(rs.getDouble(TripHistory.LON_DESTINATION));
+                    tripHistory.setDestinationAddress(rs.getString(TripHistory.DESTINATION_ADDRESS));
+
+                    tripHistory.setDistanceTravelledForPickup(rs.getDouble(TripHistory.DISTANCE_TRAVELLED_FOR_PICKUP));
+                    tripHistory.setDistanceTravelledForTrip(rs.getDouble(TripHistory.DISTANCE_TRAVELLED_FOR_TRIP));
+
+                    tripHistory.setFreePickUpDistance(rs.getDouble(TripHistory.FREE_PICKUP_DISTANCE));
+                    tripHistory.setReferralCharges(rs.getDouble(TripHistory.REFERRAL_CHARGES));
+
+                    tripHistory.setMinTripCharges(rs.getDouble(TripHistory.MIN_TRIP_CHARGES));
+                    tripHistory.setChargesPerKm(rs.getDouble(TripHistory.CHARGES_PER_KM));
+
+
 
 
                     Vehicle vehicle = new Vehicle();
-
-                    vehicle.setRt_distance(rs.getFloat("distance"));
+//                    vehicle.setRt_distance(rs.getFloat("distance"));
 
                     vehicle.setVehicleID(rs.getInt(Vehicle.VEHICLE_ID));
                     vehicle.setDriverID(rs.getInt(Vehicle.DRIVER_ID));
                     vehicle.setProfileImageURL(rs.getString(Vehicle.PROFILE_IMAGE_URL));
+                    vehicle.setVehicleModelName(rs.getString(Vehicle.VEHICLE_MODEL_NAME));
 
-                    vehicle.setVehicleStatus(rs.getInt(Vehicle.VEHICLE_STATUS));
-
-                    vehicle.setMinTripCharges(rs.getInt(Vehicle.MIN_TRIP_CHARGES));
-                    vehicle.setChargesPerKM(rs.getInt(Vehicle.CHARGES_PER_KM));
-
-                    vehicle.setLatCurrent(rs.getFloat(Vehicle.LAT_CURRENT));
-                    vehicle.setLonCurrent(rs.getFloat(Vehicle.LON_CURRENT));
-
-                    vehicle.setLocationUpdated(rs.getTimestamp(Vehicle.TIMESTAMP_LOCATION_UPDATED));
 
                     User driver = new User();
 
@@ -273,8 +324,8 @@ public class DAOTripHistory {
 
                     vehicle.setRt_driver(driver);
 
-                    tripRequest.setRt_vehicle(vehicle);
-                    itemList.add(tripRequest);
+                    tripHistory.setRt_vehicle(vehicle);
+                    itemList.add(tripHistory);
                 }
 
                 endPoint.setResults(itemList);
@@ -288,17 +339,31 @@ public class DAOTripHistory {
 
                 i = 0;
 
+//                if(endUserID != null)
+//                {
+//
+//                }
 
-
-                if(endUserID != null)
-                {
-                    statementCount.setObject(++i,endUserID);
-                }
+                statementCount.setObject(++i,endUserID);
 
                 if(vehicleID != null)
                 {
                     statementCount.setObject(++i,vehicleID);
                 }
+
+
+
+                if(isCancelled!=null)
+                {
+                    statementCount.setObject(++i,isCancelled);
+                }
+
+
+                if(isCancelledByEndUser!=null)
+                {
+                    statementCount.setObject(++i,isCancelledByEndUser);
+                }
+
 
 
                 resultSetCount = statementCount.executeQuery();
@@ -373,9 +438,30 @@ public class DAOTripHistory {
 
 
 
-    public TripRequestEndPoint getTripHistoryForDriver(
+
+
+
+
+//
+//                + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ","
+//            + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + ","
+//            + Vehicle.TABLE_NAME + "." + Vehicle.PROFILE_IMAGE_URL + ","
+//            + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + ","
+//
+//            + Vehicle.TABLE_NAME + "." + Vehicle.MIN_TRIP_CHARGES + ","
+//            + Vehicle.TABLE_NAME + "." + Vehicle.CHARGES_PER_KM + ","
+//
+//            + Vehicle.TABLE_NAME + "." + Vehicle.LAT_CURRENT + ","
+//            + Vehicle.TABLE_NAME + "." + Vehicle.LON_CURRENT + ","
+//            + Vehicle.TABLE_NAME + "." + Vehicle.TIMESTAMP_LOCATION_UPDATED + ","
+
+
+
+    public TripHistoryEndPoint getTripHistoryForDriver(
             Integer endUserID,
             Integer driverID,
+            Boolean isCancelled,
+            Boolean isCancelledByEndUser,
             String sortBy,
             Integer limit, Integer offset,
             boolean getRowCount,
@@ -392,73 +478,86 @@ public class DAOTripHistory {
 
         String queryJoin = "SELECT DISTINCT "
 
-                + "6371 * acos( cos( radians("
-                + TripRequest.LAT_PICK_UP + ")) * cos( radians(" +  Vehicle.LAT_CURRENT +  ") ) * cos(radians(" + Vehicle.LON_CURRENT +  ") - radians("
-                + TripRequest.LON_PICK_UP + "))"
-                + " + sin( radians(" + TripRequest.LAT_PICK_UP + ")) * sin(radians(" + Vehicle.LAT_CURRENT + "))) as distance" + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.TRIP_HISTORY_ID + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.VEHICLE_ID + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.END_USER_ID + ","
 
+                + TripHistory.TABLE_NAME + "." + TripHistory.RATING_BY_DRIVER + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.RATING_BY_END_USER + ","
 
-                + TripRequest.TABLE_NAME + "." + TripRequest.TRIP_REQUEST_ID + ","
-                + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + ","
-                + TripRequest.TABLE_NAME + "." + TripRequest.END_USER_ID + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.FEEDBACK_BY_DRIVER + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.FEEDBACK_BY_END_USER + ","
 
-                + TripRequest.TABLE_NAME + "." + TripRequest.TIMESTAMP_CREATED + ","
-                + TripRequest.TABLE_NAME + "." + TripRequest.TIMESTAMP_EXPIRES + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.IS_CANCELLED + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.IS_CANCELLED_BY_END_USER + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.REASON_FOR_CANCELLATION + ","
 
-                + TripRequest.TABLE_NAME + "." + TripRequest.TRIP_REQUEST_STATUS + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.TIMESTAMP_CREATED + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.TIMESTAMP_STARTED + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.TIMESTAMP_FINISHED + ","
 
-                + TripRequest.TABLE_NAME + "." + TripRequest.LAT_PICK_UP + ","
-                + TripRequest.TABLE_NAME + "." + TripRequest.LON_PICK_UP + ","
-                + TripRequest.TABLE_NAME + "." + TripRequest.PICK_UP_ADDRESS + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.LAT_START_LOCATION + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.LON_START_LOCATION + ","
 
-                + TripRequest.TABLE_NAME + "." + TripRequest.LAT_DESTINATION + ","
-                + TripRequest.TABLE_NAME + "." + TripRequest.LON_DESTINATION + ","
-                + TripRequest.TABLE_NAME + "." + TripRequest.DESTINATION_ADDRESS + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.LAT_PICK_UP_LOCATION + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.LON_PICK_UP_LOCATION + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.PICK_UP_ADDRESS + ","
 
-                + TripRequest.TABLE_NAME + "." + TripRequest.ADULTS_MALES_COUNT + ","
-                + TripRequest.TABLE_NAME + "." + TripRequest.ADULTS_FEMALES_COUNT + ","
-                + TripRequest.TABLE_NAME + "." + TripRequest.CHILDREN_COUNT + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.LAT_DESTINATION + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.LON_DESTINATION + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.DESTINATION_ADDRESS + ","
 
+                + TripHistory.TABLE_NAME + "." + TripHistory.DISTANCE_TRAVELLED_FOR_PICKUP + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.DISTANCE_TRAVELLED_FOR_TRIP + ","
 
-                + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ","
-                + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + ","
-                + Vehicle.TABLE_NAME + "." + Vehicle.PROFILE_IMAGE_URL + ","
-                + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.FREE_PICKUP_DISTANCE + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.REFERRAL_CHARGES + ","
 
-                + Vehicle.TABLE_NAME + "." + Vehicle.MIN_TRIP_CHARGES + ","
-                + Vehicle.TABLE_NAME + "." + Vehicle.CHARGES_PER_KM + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.MIN_TRIP_CHARGES + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.CHARGES_PER_KM + ","
 
-                + Vehicle.TABLE_NAME + "." + Vehicle.LAT_CURRENT + ","
-                + Vehicle.TABLE_NAME + "." + Vehicle.LON_CURRENT + ","
-                + Vehicle.TABLE_NAME + "." + Vehicle.TIMESTAMP_LOCATION_UPDATED + ","
-
+                + User.TABLE_NAME + "." + User.USER_ID + ","
                 + User.TABLE_NAME + "." + User.PHONE + ","
                 + User.TABLE_NAME + "." + User.NAME + ","
                 + User.TABLE_NAME + "." + User.GENDER + ","
                 + User.TABLE_NAME + "." + User.PROFILE_IMAGE_URL + " as user_profile_image"
 
-                + " FROM " + TripRequest.TABLE_NAME
-                + " INNER JOIN " + Vehicle.TABLE_NAME + " ON (" + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
-                + " INNER JOIN " + User.TABLE_NAME + " ON (" + TripRequest.TABLE_NAME + "." + TripRequest.END_USER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID + ")"
-                + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.ENABLED + " = TRUE "
-                + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.AVIALABLE
-                + " AND " + TripRequest.TABLE_NAME + "." + TripRequest.TIMESTAMP_EXPIRES + " > now()";
+                + " FROM " + TripHistory.TABLE_NAME
+                + " INNER JOIN " + Vehicle.TABLE_NAME + " ON (" + TripHistory.TABLE_NAME + "." + TripHistory.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
+                + " INNER JOIN " + User.TABLE_NAME + " ON (" + TripHistory.TABLE_NAME + "." + TripHistory.END_USER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID + ")"
+                + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ?";
 
 
-
+//        + Vehicle.TABLE_NAME + "." + Vehicle.ENABLED + " = TRUE "
 
         if(endUserID != null)
         {
-            queryJoin = queryJoin + " AND " + TripRequest.TABLE_NAME + "." + TripRequest.END_USER_ID + " = ?";
+            queryJoin = queryJoin + " AND " + TripHistory.TABLE_NAME + "." + TripHistory.END_USER_ID + " = ?";
         }
 
 
-
-        if(driverID != null)
+        if(isCancelled != null)
         {
-            queryJoin = queryJoin + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ?";
+            queryJoin = queryJoin + " AND " + TripHistory.TABLE_NAME + "." + TripHistory.IS_CANCELLED + " = ?";
         }
+
+
+        if(isCancelledByEndUser != null)
+        {
+            queryJoin = queryJoin + " AND " + TripHistory.TABLE_NAME + "." + TripHistory.IS_CANCELLED_BY_END_USER + " = ?";
+        }
+
+
+
+
+
+
 //
+//        if(driverID != null)
+//        {
+//            queryJoin = queryJoin + " AND " ;
+//        }
+////
 
 
 
@@ -466,7 +565,7 @@ public class DAOTripHistory {
         queryJoin = queryJoin
 
                 + " group by "
-                + TripRequest.TABLE_NAME + "." + TripRequest.TRIP_REQUEST_ID + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.TRIP_HISTORY_ID + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ","
                 + User.TABLE_NAME + "." + User.USER_ID;
 
@@ -526,9 +625,9 @@ public class DAOTripHistory {
         queryCount = "SELECT COUNT(*) as item_count FROM (" + queryCount + ") AS temp";
 
 
-        TripRequestEndPoint endPoint = new TripRequestEndPoint();
+        TripHistoryEndPoint endPoint = new TripHistoryEndPoint();
 
-        ArrayList<TripRequest> itemList = new ArrayList<>();
+        ArrayList<TripHistory> itemList = new ArrayList<>();
         Connection connection = null;
 
         PreparedStatement statement = null;
@@ -548,76 +647,86 @@ public class DAOTripHistory {
             {
                 statement = connection.prepareStatement(queryJoin);
 
-                if(endUserID != null)
-                {
-                    statement.setObject(++i,endUserID);
-                }
 
                 if(driverID != null)
                 {
                     statement.setObject(++i,driverID);
                 }
 
+                if(endUserID != null)
+                {
+                    statement.setObject(++i,endUserID);
+                }
+
+                if(isCancelled!=null)
+                {
+                    statement.setObject(++i,isCancelled);
+                }
+
+
+                if(isCancelledByEndUser!=null)
+                {
+                    statement.setObject(++i,isCancelledByEndUser);
+                }
+
+
+
+
                 rs = statement.executeQuery();
 
                 while(rs.next())
                 {
 
-                    TripRequest tripRequest = new TripRequest();
+                    TripHistory tripHistory = new TripHistory();
 
-                    tripRequest.setTripRequestID(rs.getInt(TripRequest.TRIP_REQUEST_ID));
-                    tripRequest.setVehicleID(rs.getInt(TripRequest.VEHICLE_ID));
-                    tripRequest.setEndUserID(rs.getInt(TripRequest.END_USER_ID));
+                    tripHistory.setTripHistoryID(rs.getInt(TripHistory.TRIP_HISTORY_ID));
+                    tripHistory.setVehicleID(rs.getInt(TripHistory.VEHICLE_ID));
+                    tripHistory.setEndUserID(rs.getInt(TripHistory.END_USER_ID));
 
-                    tripRequest.setTimestampCreated(rs.getTimestamp(TripRequest.TIMESTAMP_CREATED));
-                    tripRequest.setTimestampExpires(rs.getTimestamp(TripRequest.TIMESTAMP_EXPIRES));
+                    tripHistory.setRatingByDriver(rs.getInt(TripHistory.RATING_BY_DRIVER));
+                    tripHistory.setRatingByEndUser(rs.getInt(TripHistory.RATING_BY_END_USER));
 
-                    tripRequest.setTripRequestStatus(rs.getInt(TripRequest.TRIP_REQUEST_STATUS));
+                    tripHistory.setFeedbackByDriver(rs.getString(TripHistory.FEEDBACK_BY_DRIVER));
+                    tripHistory.setFeedbackByEndUser(rs.getString(TripHistory.FEEDBACK_BY_END_USER));
 
-                    tripRequest.setLatPickUp(rs.getFloat(TripRequest.LAT_PICK_UP));
-                    tripRequest.setLonPickUp(rs.getFloat(TripRequest.LON_PICK_UP));
-                    tripRequest.setPickUpAddress(rs.getString(TripRequest.PICK_UP_ADDRESS));
+                    tripHistory.setCancelled(rs.getBoolean(TripHistory.IS_CANCELLED));
+                    tripHistory.setCancelledByUser(rs.getBoolean(TripHistory.IS_CANCELLED_BY_END_USER));
+                    tripHistory.setReasonForCancellation(rs.getString(TripHistory.REASON_FOR_CANCELLATION));
 
-                    tripRequest.setLatDestination(rs.getFloat(TripRequest.LAT_DESTINATION));
-                    tripRequest.setLonDestination(rs.getFloat(TripRequest.LON_DESTINATION));
-                    tripRequest.setDestinationAddress(rs.getString(TripRequest.DESTINATION_ADDRESS));
+                    tripHistory.setTimestampCreated(rs.getTimestamp(TripHistory.TIMESTAMP_CREATED));
+                    tripHistory.setTimestampStarted(rs.getTimestamp(TripHistory.TIMESTAMP_STARTED));
+                    tripHistory.setTimestampFinished(rs.getTimestamp(TripHistory.TIMESTAMP_FINISHED));
 
-                    tripRequest.setAdultMalesCount(rs.getInt(TripRequest.ADULTS_MALES_COUNT));
-                    tripRequest.setAdultFemalesCount(rs.getInt(TripRequest.ADULTS_FEMALES_COUNT));
-                    tripRequest.setChildrenCount(rs.getInt(TripRequest.CHILDREN_COUNT));
+                    tripHistory.setLatStartLocation(rs.getDouble(TripHistory.LAT_START_LOCATION));
+                    tripHistory.setLonStartLocation(rs.getDouble(TripHistory.LON_START_LOCATION));
 
+                    tripHistory.setLatPickUpLocation(rs.getDouble(TripHistory.LAT_PICK_UP_LOCATION));
+                    tripHistory.setLonPickUpLocation(rs.getDouble(TripHistory.LON_PICK_UP_LOCATION));
+                    tripHistory.setPickUpAddress(rs.getString(TripHistory.PICK_UP_ADDRESS));
 
-                    Vehicle vehicle = new Vehicle();
+                    tripHistory.setLatDestination(rs.getDouble(TripHistory.LAT_DESTINATION));
+                    tripHistory.setLonDestination(rs.getDouble(TripHistory.LON_DESTINATION));
+                    tripHistory.setDestinationAddress(rs.getString(TripHistory.DESTINATION_ADDRESS));
 
-                    vehicle.setRt_distance(rs.getFloat("distance"));
+                    tripHistory.setDistanceTravelledForPickup(rs.getDouble(TripHistory.DISTANCE_TRAVELLED_FOR_PICKUP));
+                    tripHistory.setDistanceTravelledForTrip(rs.getDouble(TripHistory.DISTANCE_TRAVELLED_FOR_TRIP));
 
-                    vehicle.setVehicleID(rs.getInt(Vehicle.VEHICLE_ID));
-                    vehicle.setDriverID(rs.getInt(Vehicle.DRIVER_ID));
-                    vehicle.setProfileImageURL(rs.getString(Vehicle.PROFILE_IMAGE_URL));
+                    tripHistory.setFreePickUpDistance(rs.getDouble(TripHistory.FREE_PICKUP_DISTANCE));
+                    tripHistory.setReferralCharges(rs.getDouble(TripHistory.REFERRAL_CHARGES));
 
-                    vehicle.setVehicleStatus(rs.getInt(Vehicle.VEHICLE_STATUS));
-
-                    vehicle.setMinTripCharges(rs.getInt(Vehicle.MIN_TRIP_CHARGES));
-                    vehicle.setChargesPerKM(rs.getInt(Vehicle.CHARGES_PER_KM));
-
-                    vehicle.setLatCurrent(rs.getFloat(Vehicle.LAT_CURRENT));
-                    vehicle.setLonCurrent(rs.getFloat(Vehicle.LON_CURRENT));
-
-                    vehicle.setLocationUpdated(rs.getTimestamp(Vehicle.TIMESTAMP_LOCATION_UPDATED));
+                    tripHistory.setMinTripCharges(rs.getDouble(TripHistory.MIN_TRIP_CHARGES));
+                    tripHistory.setChargesPerKm(rs.getDouble(TripHistory.CHARGES_PER_KM));
 
                     User endUser = new User();
 
-                    endUser.setUserID(vehicle.getDriverID());
+                    endUser.setUserID(rs.getInt(User.USER_ID));
                     endUser.setPhone(rs.getString(User.PHONE));
                     endUser.setName(rs.getString(User.NAME));
                     endUser.setGender(rs.getBoolean(User.GENDER));
                     endUser.setProfileImagePath(rs.getString("user_profile_image"));
 
-
-                    tripRequest.setRt_end_user(endUser);
-
-                    tripRequest.setRt_vehicle(vehicle);
-                    itemList.add(tripRequest);
+                    tripHistory.setRt_end_user(endUser);
+                    itemList.add(tripHistory);
                 }
 
                 endPoint.setResults(itemList);
@@ -632,16 +741,32 @@ public class DAOTripHistory {
                 i = 0;
 
 
+                if(driverID != null)
+                {
+                    statementCount.setObject(++i,driverID);
+                }
+
 
                 if(endUserID != null)
                 {
                     statementCount.setObject(++i,endUserID);
                 }
 
-                if(driverID != null)
+
+
+
+                if(isCancelled!=null)
                 {
-                    statementCount.setObject(++i,driverID);
+                    statementCount.setObject(++i,isCancelled);
                 }
+
+
+                if(isCancelledByEndUser!=null)
+                {
+                    statementCount.setObject(++i,isCancelledByEndUser);
+                }
+
+
 
 
                 resultSetCount = statementCount.executeQuery();
@@ -713,7 +838,6 @@ public class DAOTripHistory {
 
         return endPoint;
     }
-
 
 
 }

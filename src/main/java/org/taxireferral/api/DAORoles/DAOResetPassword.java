@@ -3,6 +3,7 @@ package org.taxireferral.api.DAORoles;
 import com.zaxxer.hikari.HikariDataSource;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
+import org.taxireferral.api.ModelRoles.EmailVerificationCode;
 import org.taxireferral.api.ModelRoles.User;
 
 import java.math.BigInteger;
@@ -16,12 +17,95 @@ public class DAOResetPassword {
 
     private HikariDataSource dataSource = Globals.getDataSource();
 
-
     /* Functions for password reset code */
 
+    // getResetCode
     // resetPassword
-    // generateResetCode
+    // updateResetCode
     // checkPasswordResetCode
+    // checkPasswordResetCodeExpired
+
+
+    public User getResetCode(User user_credentials)
+    {
+
+        String query = "SELECT " + User.USER_ID + ","
+                                 + User.PASSWORD_RESET_CODE + ","
+                                 + User.RESET_CODE_EXPIRES + ""
+                    + " FROM "   + User.TABLE_NAME
+                    + " WHERE "  + " ( " + User.E_MAIL + " = ? " + " OR " + User.PHONE + " = ? ) ";
+
+
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+
+        //Distributor distributor = null;
+        User user = null;
+
+        try {
+
+            connection = dataSource.getConnection();
+            statement = connection.prepareStatement(query);
+
+            int i = 0;
+
+
+            statement.setObject(++i,user_credentials.getEmail()); // email
+            statement.setObject(++i,user_credentials.getPhone()); // email
+
+            rs = statement.executeQuery();
+
+            while(rs.next())
+            {
+                user = new User();
+
+                user.setUserID(rs.getInt(User.USER_ID));
+                user.setPasswordResetCode(rs.getString(User.PASSWORD_RESET_CODE));
+                user.setResetCodeExpires(rs.getTimestamp(User.RESET_CODE_EXPIRES));
+            }
+
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally
+
+        {
+
+            try {
+                if(rs!=null)
+                {rs.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(statement!=null)
+                {statement.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return user;
+    }
+
+
 
 
 
@@ -94,7 +178,7 @@ public class DAOResetPassword {
 
 
 
-    public int generateResetCode(User user,String resetCode, Timestamp timestampExpiry)
+    public int updateResetCode(User user, String resetCode, Timestamp timestampExpiry)
     {
 //        String emailOrPhone
 
@@ -168,13 +252,15 @@ public class DAOResetPassword {
     public boolean checkPasswordResetCode(String emailOrPhone, String resetCode)
     {
 
+
         String query = "SELECT " + User.USER_ID + ""
-                + " FROM "   + User.TABLE_NAME
-                + " WHERE "  + " ( " + User.E_MAIL + " = ? " + " OR " + User.PHONE + " = ? )"
-                + " AND "    + User.PASSWORD_RESET_CODE + " = ? "
-                + " AND "    + User.TIMESTAMP_TOKEN_EXPIRES + " > now()";
+                    + " FROM "   + User.TABLE_NAME
+                    + " WHERE " + " ( " + User.E_MAIL + " = ? " + " OR " + User.PHONE + " = ? ) "
+                    + " AND "    + User.PASSWORD_RESET_CODE + " = ? "
+                    + " AND "    + User.RESET_CODE_EXPIRES + " > now()";
 
 
+//        + " OR " + User.PHONE + " = ?
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -194,6 +280,86 @@ public class DAOResetPassword {
             statement.setString(++i,emailOrPhone);
             statement.setString(++i,emailOrPhone);
             statement.setString(++i,resetCode);
+
+
+            rs = statement.executeQuery();
+
+            while(rs.next())
+            {
+                return true;
+            }
+
+
+
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally
+
+        {
+
+            try {
+                if(rs!=null)
+                {rs.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(statement!=null)
+                {statement.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return false;
+    }
+
+
+
+
+
+    public boolean checkPasswordResetCodeExpired(User user)
+    {
+
+
+        String query = "SELECT " + User.USER_ID + ""
+                    + " FROM "   + User.TABLE_NAME
+                    + " WHERE " + " ( " + User.E_MAIL + " = ? " + " OR " + User.PHONE + " = ? ) "
+                    + " AND "    + User.RESET_CODE_EXPIRES + " > now()";
+
+
+//        + " OR " + User.PHONE + " = ?
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+
+
+        try {
+
+//            System.out.println(query);
+
+            connection = dataSource.getConnection();
+            statement = connection.prepareStatement(query);
+
+            int i = 0;
+            statement.setString(++i,user.getEmail());
+            statement.setString(++i,user.getPhone());
 
 
             rs = statement.executeQuery();
