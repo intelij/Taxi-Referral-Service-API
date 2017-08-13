@@ -6,7 +6,7 @@ import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.*;
-import org.taxireferral.api.ModelBilling.TransactionHistory;
+import org.taxireferral.api.ModelBilling.Transaction;
 import org.taxireferral.api.ModelRoles.EmailVerificationCode;
 import org.taxireferral.api.ModelRoles.User;
 import org.taxireferral.api.WebSocket.SimpleServer;
@@ -336,7 +336,7 @@ public class Main {
 //            statement.executeUpdate(VehicleType.createTablePostgres);
 //            statement.executeUpdate(VehicleTypeVersion.createTablePostgres);
 
-            statement.executeUpdate(TransactionHistory.createTablePostgres);
+            statement.executeUpdate(Transaction.createTablePostgres);
 
             System.out.println("Tables Created ... !");
 

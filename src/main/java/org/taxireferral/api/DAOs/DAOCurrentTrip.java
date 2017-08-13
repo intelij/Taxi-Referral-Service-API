@@ -6,7 +6,7 @@ import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.CurrentTrip;
 import org.taxireferral.api.Model.TripHistory;
 import org.taxireferral.api.Model.Vehicle;
-import org.taxireferral.api.ModelBilling.TransactionHistory;
+import org.taxireferral.api.ModelBilling.Transaction;
 import org.taxireferral.api.ModelRoles.User;
 import org.taxireferral.api.ModelUtility.LocationCurrentTrip;
 
@@ -670,30 +670,30 @@ public class DAOCurrentTrip {
                     + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
 
 
-        createTransaction = "INSERT INTO " + TransactionHistory.TABLE_NAME
+        createTransaction = "INSERT INTO " + Transaction.TABLE_NAME
                             + "("
 
-                            + TransactionHistory.USER_ID + ","
+                            + Transaction.USER_ID + ","
 
-                            + TransactionHistory.TITLE + ","
-                            + TransactionHistory.DESCRIPTION + ","
+                            + Transaction.TITLE + ","
+                            + Transaction.DESCRIPTION + ","
 
-                            + TransactionHistory.TRANSACTION_TYPE + ","
-                            + TransactionHistory.TRANSACTION_AMOUNT + ","
+                            + Transaction.TRANSACTION_TYPE + ","
+                            + Transaction.TRANSACTION_AMOUNT + ","
 
-                            + TransactionHistory.IS_CREDIT + ","
+                            + Transaction.IS_CREDIT + ","
 
-                            + TransactionHistory.CURRENT_DUES_BEFORE_TRANSACTION + ","
-                            + TransactionHistory.CURRENT_DUES_AFTER_TRANSACTION + ""
+                            + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
+                            + Transaction.CURRENT_DUES_AFTER_TRANSACTION + ""
 
                             + ") "
                             + " SELECT "
 
                             + User.TABLE_NAME + "." + User.USER_ID + ","
-                            + " '" + TransactionHistory.TITLE_REFERRAL_CHARGE_FOR_TRIP + "',"
-                            + " '" + TransactionHistory.DESCRIPTION_REFERRAL_CHARGE_FOR_TRIP + "',"
+                            + " '" + Transaction.TITLE_REFERRAL_CHARGE_FOR_TRIP + "',"
+                            + " '" + Transaction.DESCRIPTION_REFERRAL_CHARGE_FOR_TRIP + "',"
 
-                            + TransactionHistory.TRANSACTION_TYPE_TAXI_REFERRAL_CHARGE + ","
+                            + Transaction.TRANSACTION_TYPE_TAXI_REFERRAL_CHARGE + ","
                             + GlobalConstants.taxi_referral_charges + ","
 
                             + " false " + ","

@@ -42,6 +42,8 @@ public class Globals {
     public static DAOCurrentTrip daoCurrentTrip = new DAOCurrentTrip();
     public static DAOTripHistory daoTripHistory = new DAOTripHistory();
 
+    public static DAOTransaction daoTransaction = new DAOTransaction();
+
 
     public static DAOEmailVerificationCodes daoVerificationCodes = new DAOEmailVerificationCodes();
 

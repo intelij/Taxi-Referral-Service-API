@@ -248,6 +248,36 @@ public class UserResourceNew {
 
 
 
+    @PUT
+    @Path("/UpdateEmail")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_DRIVER,GlobalConstants.ROLE_END_USER,GlobalConstants.ROLE_STAFF})
+    public Response updateEmail(User user)
+    {
+
+        user.setUserID(((User)Globals.accountApproved).getUserID());
+        int rowCount = daoUser.updateEmail(user);
+
+
+        if(rowCount >= 1)
+        {
+
+            return Response.status(Response.Status.OK)
+                    .build();
+        }
+        if(rowCount == 0)
+        {
+
+            return Response.status(Response.Status.NOT_MODIFIED)
+                    .build();
+        }
+
+        return null;
+    }
+
+
+
+
     @POST
     @Path("/DriverRegistrationGoogle/{IDToken}")
     @Produces(MediaType.APPLICATION_JSON)

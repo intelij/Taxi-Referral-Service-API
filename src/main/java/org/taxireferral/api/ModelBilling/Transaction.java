@@ -1,6 +1,5 @@
 package org.taxireferral.api.ModelBilling;
 
-import org.taxireferral.api.Model.Vehicle;
 import org.taxireferral.api.ModelRoles.User;
 
 import java.sql.Timestamp;
@@ -8,7 +7,7 @@ import java.sql.Timestamp;
 /**
  * Created by sumeet on 4/8/17.
  */
-public class TransactionHistory {
+public class Transaction {
 
 
     // constants
@@ -51,24 +50,24 @@ public class TransactionHistory {
     public static final String createTablePostgres =
 
             "CREATE TABLE IF NOT EXISTS "
-                    + TransactionHistory.TABLE_NAME + "("
-                    + " " + TransactionHistory.TRANSACTION_ID + " SERIAL PRIMARY KEY,"
-                    + " " + TransactionHistory.USER_ID + " int,"
+                    + Transaction.TABLE_NAME + "("
+                    + " " + Transaction.TRANSACTION_ID + " SERIAL PRIMARY KEY,"
+                    + " " + Transaction.USER_ID + " int,"
 
-                    + " " + TransactionHistory.TITLE + " text,"
-                    + " " + TransactionHistory.DESCRIPTION + " text,"
+                    + " " + Transaction.TITLE + " text,"
+                    + " " + Transaction.DESCRIPTION + " text,"
 
-                    + " " + TransactionHistory.TRANSACTION_TYPE + " int,"
-                    + " " + TransactionHistory.TRANSACTION_AMOUNT + " float NOT NULL,"
+                    + " " + Transaction.TRANSACTION_TYPE + " int,"
+                    + " " + Transaction.TRANSACTION_AMOUNT + " float NOT NULL,"
 
-                    + " " + TransactionHistory.IS_CREDIT + " boolean NOT NULL,"
+                    + " " + Transaction.IS_CREDIT + " boolean NOT NULL,"
 
-                    + " " + TransactionHistory.TIMESTAMP_OCCURRED + " timestamp with time zone NOT NULL default now(),"
+                    + " " + Transaction.TIMESTAMP_OCCURRED + " timestamp with time zone NOT NULL default now(),"
 
-                    + " " + TransactionHistory.CURRENT_DUES_BEFORE_TRANSACTION + " float NOT NULL,"
-                    + " " + TransactionHistory.CURRENT_DUES_AFTER_TRANSACTION + " float NOT NULL,"
+                    + " " + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + " float NOT NULL,"
+                    + " " + Transaction.CURRENT_DUES_AFTER_TRANSACTION + " float NOT NULL,"
 
-                    + " FOREIGN KEY(" + TransactionHistory.USER_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE"
+                    + " FOREIGN KEY(" + Transaction.USER_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE"
                     + ")";
 
 
