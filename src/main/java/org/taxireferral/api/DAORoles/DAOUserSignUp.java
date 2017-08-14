@@ -171,11 +171,9 @@ public class DAOUserSignUp {
                 + User.TABLE_NAME
                 + "("
 
-                + User.USERNAME + ","
                 + User.PASSWORD + ","
-//                + User.E_MAIL + ","
-
                 + User.PHONE + ","
+
                 + User.NAME + ","
                 + User.GENDER + ","
 
@@ -185,7 +183,7 @@ public class DAOUserSignUp {
                 + User.ABOUT + ""
                 + ") "
                 + " Select "
-                + " ?,?,? ,?,?,? ,?,?,?,? "
+                + " ?,? ,?,? ,?,?,?,? "
                 + " from " + PhoneVerificationCode.TABLE_NAME
                 + " WHERE "
                 + "("
@@ -206,11 +204,11 @@ public class DAOUserSignUp {
             statement = connection.prepareStatement(insertItemSubmission,PreparedStatement.RETURN_GENERATED_KEYS);
             int i = 0;
 
-            statement.setString(++i,user.getUsername());
-            statement.setString(++i,user.getPassword());
-//            statement.setString(++i,user.getEmail());
+//            statement.setString(++i,user.getUsername());
 
+            statement.setString(++i,user.getPassword());
             statement.setString(++i,user.getPhone());
+
             statement.setString(++i,user.getName());
             statement.setObject(++i,user.getGender());
 

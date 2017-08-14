@@ -46,6 +46,7 @@ public class Globals {
 
 
     public static DAOEmailVerificationCodes daoEmailVerificationCodes = new DAOEmailVerificationCodes();
+    public static DAOPhoneVerificationCodes daoPhoneVerificationCodes = new DAOPhoneVerificationCodes();
 
     public static VehicleTypeDAONew daoVehicleTypeNew = new VehicleTypeDAONew();
     public static VehicleTypeDAOGet daoVehicleTypeGet = new VehicleTypeDAOGet();

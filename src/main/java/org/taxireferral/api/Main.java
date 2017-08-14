@@ -8,6 +8,7 @@ import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.*;
 import org.taxireferral.api.ModelBilling.Transaction;
 import org.taxireferral.api.ModelRoles.EmailVerificationCode;
+import org.taxireferral.api.ModelRoles.PhoneVerificationCode;
 import org.taxireferral.api.ModelRoles.User;
 import org.taxireferral.api.WebSocket.SimpleServer;
 
@@ -332,6 +333,7 @@ public class Main {
             statement.executeUpdate(TripHistory.createTablePostgres);
 
             statement.executeUpdate(EmailVerificationCode.createTablePostgres);
+            statement.executeUpdate(PhoneVerificationCode.createTablePostgres);
 
 //            statement.executeUpdate(VehicleType.createTablePostgres);
 //            statement.executeUpdate(VehicleTypeVersion.createTablePostgres);

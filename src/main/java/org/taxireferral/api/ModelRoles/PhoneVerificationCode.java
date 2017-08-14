@@ -25,7 +25,7 @@ public class PhoneVerificationCode {
                     + " " + PhoneVerificationCode.PHONE_CODE_ID + " SERIAL PRIMARY KEY,"
                     + " " + PhoneVerificationCode.PHONE + " text UNIQUE NOT NULL ,"
                     + " " + PhoneVerificationCode.VERIFICATION_CODE + " text NOT NULL ,"
-                    + " " + PhoneVerificationCode.TIMESTAMP_EXPIRES + " timestamp with time zone NOT NULL,"
+                    + " " + PhoneVerificationCode.TIMESTAMP_EXPIRES + " timestamp with time zone NOT NULL"
                     + ")";
 
 
