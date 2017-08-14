@@ -16,6 +16,90 @@ public class DAOEmailVerificationCodes {
 
 
 
+    public boolean checkEmailVerificationCode(String email, String verificationCode)
+    {
+
+
+        String query = "SELECT " + EmailVerificationCode.EMAIL + ""
+                + " FROM "   + EmailVerificationCode.TABLE_NAME
+                + " WHERE "  + EmailVerificationCode.EMAIL + " = ? "
+                + " AND "    + EmailVerificationCode.VERIFICATION_CODE + " = ? "
+                + " AND "    + EmailVerificationCode.TIMESTAMP_EXPIRES + " > now()";
+
+
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+
+        //Distributor distributor = null;
+        User user = null;
+
+        try {
+
+//            System.out.println(query);
+
+            connection = dataSource.getConnection();
+            statement = connection.prepareStatement(query);
+
+            int i = 0;
+            statement.setString(++i,email);
+            statement.setString(++i,verificationCode);
+
+
+            rs = statement.executeQuery();
+
+            while(rs.next())
+            {
+                return true;
+            }
+
+
+
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally
+
+        {
+
+            try {
+                if(rs!=null)
+                {rs.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(statement!=null)
+                {statement.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return false;
+    }
+
+
+
+
+
+
     public EmailVerificationCode checkEmailVerificationCode(String email)
     {
 
@@ -27,8 +111,8 @@ public class DAOEmailVerificationCodes {
                 + EmailVerificationCode.TIMESTAMP_EXPIRES + ""
 
                 + " FROM " + EmailVerificationCode.TABLE_NAME
-                + " WHERE "
-                + EmailVerificationCode.EMAIL + " = ?";
+                + " WHERE " + EmailVerificationCode.EMAIL + " = ?"
+                + " AND "    + EmailVerificationCode.TIMESTAMP_EXPIRES + " > now()";
 
 
 
@@ -105,76 +189,76 @@ public class DAOEmailVerificationCodes {
 
 
 
-    public int updateEmailVerificationCode(String email, String verificationCode, Timestamp expires)
-    {
-
-
-
-        String updateStatement = "UPDATE " + EmailVerificationCode.TABLE_NAME
-
-                + " SET "
-                + EmailVerificationCode.VERIFICATION_CODE + "=?,"
-                + EmailVerificationCode.TIMESTAMP_EXPIRES + "=?"
-
-                + " WHERE "
-                + "( "
-                + "(" + EmailVerificationCode.EMAIL + " = ?)"
-                + " AND "
-                + "( " + EmailVerificationCode.TIMESTAMP_EXPIRES + " < now() )"
-                + ")";
-
-
-        Connection connection = null;
-        PreparedStatement statement = null;
-
-        int rowCountUpdated = 0;
-
-        try {
-
-            connection = dataSource.getConnection();
-            statement = connection.prepareStatement(updateStatement);
-
-            int i = 0;
-
-            statement.setString(++i,verificationCode);
-            statement.setTimestamp(++i,expires);
-            statement.setString(++i,email);
-
-
-            rowCountUpdated = statement.executeUpdate();
-
-            System.out.println("Total rows updated: " + rowCountUpdated);
-
-
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        finally
-
-        {
-
-            try {
-
-                if(statement!=null)
-                {statement.close();}
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-            try {
-
-                if(connection!=null)
-                {connection.close();}
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        return rowCountUpdated;
-    }
+//    public int updateEmailVerificationCode(String email, String verificationCode, Timestamp expires)
+//    {
+//
+//
+//
+//        String updateStatement = "UPDATE " + EmailVerificationCode.TABLE_NAME
+//
+//                + " SET "
+//                + EmailVerificationCode.VERIFICATION_CODE + "=?,"
+//                + EmailVerificationCode.TIMESTAMP_EXPIRES + "=?"
+//
+//                + " WHERE "
+//                + "( "
+//                + "(" + EmailVerificationCode.EMAIL + " = ?)"
+//                + " AND "
+//                + "( " + EmailVerificationCode.TIMESTAMP_EXPIRES + " < now() )"
+//                + ")";
+//
+//
+//        Connection connection = null;
+//        PreparedStatement statement = null;
+//
+//        int rowCountUpdated = 0;
+//
+//        try {
+//
+//            connection = dataSource.getConnection();
+//            statement = connection.prepareStatement(updateStatement);
+//
+//            int i = 0;
+//
+//            statement.setString(++i,verificationCode);
+//            statement.setTimestamp(++i,expires);
+//            statement.setString(++i,email);
+//
+//
+//            rowCountUpdated = statement.executeUpdate();
+//
+//            System.out.println("Total rows updated: " + rowCountUpdated);
+//
+//
+//        } catch (SQLException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//        finally
+//
+//        {
+//
+//            try {
+//
+//                if(statement!=null)
+//                {statement.close();}
+//            } catch (SQLException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//
+//            try {
+//
+//                if(connection!=null)
+//                {connection.close();}
+//            } catch (SQLException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        return rowCountUpdated;
+//    }
 
 
 
@@ -192,14 +276,17 @@ public class DAOEmailVerificationCodes {
 
         String insertItemSubmission =
 
-                "INSERT INTO " + EmailVerificationCode.TABLE_NAME + "("
-                        + EmailVerificationCode.EMAIL + ","
-                        + EmailVerificationCode.VERIFICATION_CODE + ","
-                        + EmailVerificationCode.TIMESTAMP_EXPIRES + ""
+                "INSERT INTO " + EmailVerificationCode.TABLE_NAME
+                        + "(" + EmailVerificationCode.EMAIL + ","
+                                + EmailVerificationCode.VERIFICATION_CODE + ","
+                                + EmailVerificationCode.TIMESTAMP_EXPIRES + ""
                 + ") values(?,?,?)"
                 + " ON CONFLICT (" + EmailVerificationCode.EMAIL + ")"
-                + " DO NOTHING ";
+                + " DO UPDATE "
+                + " SET " + EmailVerificationCode.VERIFICATION_CODE + "= excluded." + EmailVerificationCode.VERIFICATION_CODE + " , "
+                          + EmailVerificationCode.TIMESTAMP_EXPIRES + "= excluded." + EmailVerificationCode.TIMESTAMP_EXPIRES;
 
+//        + EmailVerificationCode.TABLE_NAME
 
 
         try {

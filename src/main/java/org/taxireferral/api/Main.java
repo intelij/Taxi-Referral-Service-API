@@ -357,7 +357,7 @@ public class Main {
 
             try
             {
-                int rowCount = Globals.daoUserNew.registerUsingUsername(admin,true);
+                int rowCount = Globals.daoUserSignUp.registerUsingUsername(admin,true);
 
                 if(rowCount==1)
                 {

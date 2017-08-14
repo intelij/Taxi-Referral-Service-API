@@ -6,10 +6,9 @@ import net.sargue.mailgun.Configuration;
 import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.glassfish.jersey.media.sse.SseBroadcaster;
 import org.taxireferral.api.DAORoles.*;
+import org.taxireferral.api.DAORoles.deprecated.DAOUser;
 import org.taxireferral.api.DAOs.*;
 import org.taxireferral.api.JDBCContract;
-import org.taxireferral.api.Model.TripRequest;
-import org.taxireferral.api.ModelRoles.EmailVerificationCode;
 
 import javax.ws.rs.core.MediaType;
 import java.io.BufferedReader;
@@ -36,6 +35,7 @@ public class Globals {
     public static DAOUser daoUser = new DAOUser();
     public static DAOUserNew daoUserNew = new DAOUserNew();
     public static DAOResetPassword daoResetPassword = new DAOResetPassword();
+    public static DAOUserSignUp daoUserSignUp = new DAOUserSignUp();
 
     public static VehicleDAO vehicleDAO = new VehicleDAO();
     public static DAOTripRequest tripRequestDAO = new DAOTripRequest();
@@ -45,7 +45,7 @@ public class Globals {
     public static DAOTransaction daoTransaction = new DAOTransaction();
 
 
-    public static DAOEmailVerificationCodes daoVerificationCodes = new DAOEmailVerificationCodes();
+    public static DAOEmailVerificationCodes daoEmailVerificationCodes = new DAOEmailVerificationCodes();
 
     public static VehicleTypeDAONew daoVehicleTypeNew = new VehicleTypeDAONew();
     public static VehicleTypeDAOGet daoVehicleTypeGet = new VehicleTypeDAOGet();

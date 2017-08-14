@@ -1,4 +1,4 @@
-package org.taxireferral.api.DAORoles;
+package org.taxireferral.api.DAORoles.deprecated;
 
 import com.zaxxer.hikari.HikariDataSource;
 import org.taxireferral.api.Globals.Globals;

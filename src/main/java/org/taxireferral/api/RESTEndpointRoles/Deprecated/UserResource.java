@@ -1,38 +1,14 @@
-package org.taxireferral.api.RESTEndpointRoles;
+package org.taxireferral.api.RESTEndpointRoles.Deprecated;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import net.coobird.thumbnailator.Thumbnails;
-import net.sargue.mailgun.Mail;
-import org.taxireferral.api.DAORoles.DAOUser;
+import org.taxireferral.api.DAORoles.deprecated.DAOUser;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
-import org.taxireferral.api.ModelImages.Image;
 import org.taxireferral.api.ModelRoles.User;
-import org.taxireferral.api.WebSocket.SimpleServer;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.security.GeneralSecurityException;
-import java.security.SecureRandom;
-import java.sql.Timestamp;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.StringTokenizer;
 
 /**
  * Created by sumeet on 2/4/17.
