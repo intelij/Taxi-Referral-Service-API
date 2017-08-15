@@ -3,6 +3,7 @@ package org.taxireferral.api.RESTEndpointRoles;
 import net.sargue.mailgun.Mail;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
+import org.taxireferral.api.Globals.SendSMS;
 import org.taxireferral.api.ModelRoles.User;
 
 import javax.ws.rs.*;
@@ -144,7 +145,11 @@ public class ResetPasswordRESTEndpoint {
         {
             // code is expired
 
-            resetCode = new BigInteger(30, Globals.random).toString(32);
+//            resetCode = new BigInteger(30, Globals.random).toString(32);
+            BigInteger phoneCode = new BigInteger(15, Globals.random);
+            int phoneOTP = phoneCode.intValue();
+            resetCode = String.valueOf(phoneOTP);
+
 
             timestampExpiry
                     = new Timestamp(
@@ -178,7 +183,7 @@ public class ResetPasswordRESTEndpoint {
                 }
                 else if(user.getRt_registration_mode()==User.REGISTRATION_MODE_PHONE)
                 {
-
+                    SendSMS.sendOTP(resetCode,user.getPhone());
                 }
 
 
@@ -212,8 +217,9 @@ public class ResetPasswordRESTEndpoint {
             }
             else if(user.getRt_registration_mode()==User.REGISTRATION_MODE_PHONE)
             {
-
+                SendSMS.sendOTP(user_credentials.getPasswordResetCode(),user.getPhone());
             }
+
 
 
             rowCount=1;

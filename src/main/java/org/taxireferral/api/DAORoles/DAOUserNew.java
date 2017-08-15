@@ -53,8 +53,6 @@ public class DAOUserNew {
 
 
 
-
-
     public int updateEmail(User user)
     {
 
@@ -87,6 +85,91 @@ public class DAOUserNew {
             // check email is verification code to ensure email belongs to user
             statement.setString(++i,user.getEmail());
             statement.setString(++i,user.getRt_email_verification_code());
+            statement.setObject(++i,user.getUserID());
+            statement.setString(++i,user.getPassword());
+
+
+            rowCountItems = statement.executeUpdate();
+
+            connection.commit();
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+            if (connection != null) {
+                try {
+
+//                    idOfInsertedRow=-1;
+                    rowCountItems = 0;
+
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        finally
+        {
+
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+
+
+        return rowCountItems;
+    }
+
+
+
+    public int updatePhone(User user)
+    {
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+//        int idOfInsertedRow = -1;
+        int rowCountItems = -1;
+
+        String insertItemSubmission = " UPDATE " + User.TABLE_NAME
+                + " SET "    + User.PHONE + " = " + PhoneVerificationCode.TABLE_NAME + "." + PhoneVerificationCode.PHONE
+                + " FROM "   + PhoneVerificationCode.TABLE_NAME
+                + " WHERE "  + PhoneVerificationCode.TABLE_NAME + "." + PhoneVerificationCode.PHONE + " = ? "
+                + " AND "    + PhoneVerificationCode.TABLE_NAME + "." + PhoneVerificationCode.VERIFICATION_CODE + " = ?"
+                + " AND "    + PhoneVerificationCode.TABLE_NAME + "." + PhoneVerificationCode.TIMESTAMP_EXPIRES + " > now()"
+                + " AND "    + User.TABLE_NAME + "." + User.USER_ID + " = ?"
+                + " AND "    + User.TABLE_NAME + "." + User.PASSWORD + " = ?";
+
+
+        try {
+
+            connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
+
+
+            statement = connection.prepareStatement(insertItemSubmission,PreparedStatement.RETURN_GENERATED_KEYS);
+            int i = 0;
+
+
+            // check email is verification code to ensure email belongs to user
+            statement.setString(++i,user.getPhone());
+            statement.setString(++i,user.getRt_phone_verification_code());
             statement.setObject(++i,user.getUserID());
             statement.setString(++i,user.getPassword());
 

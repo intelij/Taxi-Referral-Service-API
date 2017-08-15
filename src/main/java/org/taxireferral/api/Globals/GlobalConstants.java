@@ -6,6 +6,15 @@ package org.taxireferral.api.Globals;
 public class GlobalConstants {
 
 
+    /* API Keys : Begin */
+
+
+    public static final String MSG91_SMS_SERVICE_API_KEY = "169752ACa9EZW5gjr59903723";
+
+
+
+    /* API Keys : End */
+
     // firebase server keys
     public static final String FIREBASE_DRIVER_KEY = "Key=" + "AIzaSyCujFExkfJ5bYwDYpMfbSWLr4NVemwD0KY";
     public static final String FIREBASE_END_USER_KEY = "Key=" + "AIzaSyC4eRU7FEf-DiRheyaQZrde-vI6W32taLU";

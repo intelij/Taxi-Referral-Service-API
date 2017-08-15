@@ -1,14 +1,11 @@
 package org.taxireferral.api.RESTEndpointRoles;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import net.sargue.mailgun.Mail;
 import okhttp3.*;
 import org.taxireferral.api.DAORoles.DAOUserSignUp;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
-import org.taxireferral.api.ModelNotifications.FirebaseNotification;
-import org.taxireferral.api.ModelNotifications.NotificationData;
+import org.taxireferral.api.Globals.SendSMS;
 import org.taxireferral.api.ModelRoles.EmailVerificationCode;
 import org.taxireferral.api.ModelRoles.PhoneVerificationCode;
 import org.taxireferral.api.ModelRoles.User;
@@ -143,7 +140,7 @@ public class UserSignUpRESTEndpoint {
 
             if(idOfInsertedRow>=1)
             {
-                sendSMS("Congratulations your account has been registered with Taxi Referral Service.",
+                SendSMS.sendSMS("Congratulations your account has been registered with Taxi Referral Service.",
                         user.getPhone());
 
             }
@@ -514,7 +511,7 @@ public class UserSignUpRESTEndpoint {
 //                        .send();
 
 
-                sendOTP(String.valueOf(phoneOTP),phone);
+                SendSMS.sendOTP(String.valueOf(phoneOTP),phone);
 
             }
 
@@ -542,7 +539,7 @@ public class UserSignUpRESTEndpoint {
 
 
 
-            sendOTP(verificationCode.getVerificationCode(),phone);
+            SendSMS.sendOTP(verificationCode.getVerificationCode(),phone);
 
 
             rowCount = 1;
@@ -573,135 +570,6 @@ public class UserSignUpRESTEndpoint {
 
 
 
-
-
-
-    public void sendOTP(String otp, String phone)
-    {
-
-
-
-
-//        GsonBuilder gsonBuilder = new GsonBuilder();
-//        Gson gson = gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
-//        String json = gson.toJson(firebaseNotification);
-
-
-
-
-        String urlOTP = "https://control.msg91.com/api/sendotp.php?authkey=" +
-                "169752ACa9EZW5gjr59903723" +
-                "&mobile=91" +
-                phone +
-                "&message=Your%20one time password (OTP) for Taxi Referral is " +
-                otp +
-                "&sender=TRSAPP&otp=" +
-                otp;
-
-
-        final Request request = new Request.Builder()
-                .url(urlOTP)
-                .get()
-                .build();
-
-
-
-//        System.out.print(json + "\n");
-
-
-        OkHttpClient client = new OkHttpClient();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-
-                System.out.print("Sending notification failed !");
-            }
-
-            @Override
-            public void onResponse(Call call, okhttp3.Response response) throws IOException {
-
-
-                if(response.isSuccessful())
-                {
-                    System.out.print(response.body().string() + "\n");
-//                    FirebaseResponse firebaseResponse = gson.fromJson(response.body().string(),FirebaseResponse.class);
-                }
-                else
-                {
-                    System.out.print(response.toString()+ "\n");
-                }
-
-            }
-        });
-    }
-
-
-
-
-
-
-
-    public void sendSMS(String message, String phone)
-    {
-
-
-
-
-//        GsonBuilder gsonBuilder = new GsonBuilder();
-//        Gson gson = gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
-//        String json = gson.toJson(firebaseNotification);
-
-
-
-        String urlMessage = "http://api.msg91.com/api/sendhttp.php?authkey=" +
-                "169752ACa9EZW5gjr59903723" +
-                "&mobiles=" +
-                "91" +
-                phone +
-                "&message=" +
-                message +
-                "&sender=TRSAPP&route=4&country=91";
-
-
-        final Request request = new Request.Builder()
-                .url(urlMessage)
-                .get()
-                .build();
-
-
-
-//        System.out.print(json + "\n");
-
-
-        OkHttpClient client = new OkHttpClient();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-
-                System.out.print("Sending notification failed !");
-            }
-
-            @Override
-            public void onResponse(Call call, okhttp3.Response response) throws IOException {
-
-
-                if(response.isSuccessful())
-                {
-                    System.out.print(response.body().string() + "\n");
-//                    FirebaseResponse firebaseResponse = gson.fromJson(response.body().string(),FirebaseResponse.class);
-                }
-                else
-                {
-                    System.out.print(response.toString()+ "\n");
-                }
-
-            }
-        });
-    }
 
 
 }
