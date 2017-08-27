@@ -19,6 +19,12 @@ public class Transaction {
     public static final String TITLE_REFERRAL_CHARGE_FOR_TRIP = "Referral Charge";
     public static final String DESCRIPTION_REFERRAL_CHARGE_FOR_TRIP = "Referral Charges for Trip";
 
+    public static final String TITLE_JOINING_CREDIT_FOR_DRIVER = "Joining Credit";
+    public static final String DESCRIPTION_JOINING_CREDIT_FOR_DRIVEr = "Joining credit applied for ";
+
+    public static final String TITLE_REFERRAL_CREDIT_APPLIED = "Referral Credit";
+    public static final String DESCRIPTION_REFERRAL_CREDIT_APPLIED = "Referral credit applied";
+
 
     // Table Name for User
     public static final String TABLE_NAME = "TRANSACTION_HISTORY";

@@ -95,6 +95,9 @@ public class GlobalConstants {
     public static final int TRIP_REQUEST_EXPIRY_MINUTES = 10;
     public static final int TRIP_REQUEST_EXPIRY_EXTENSION_MINUTES = 10;
 
+    public static final int MONTHS_TO_EXTEND_TAXI_REGISTRATION_MIN = 0;
+    public static final int MONTHS_TO_EXTEND_TAXI_REGISTRATION_MAX = 12;
+
 
 
     public static final int max_limit = 100;    // 100 items per fetch
@@ -106,5 +109,8 @@ public class GlobalConstants {
     public static final int free_pickup_distance = 3; // 3 km
     public static final int taxi_referral_charges = 5; // 3 bucks per km
     public static final int free_minutes_per_km = 3; // for calculating the waiting charges
+
+
+
 
 }

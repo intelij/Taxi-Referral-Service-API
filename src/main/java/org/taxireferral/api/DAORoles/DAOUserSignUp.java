@@ -1,7 +1,9 @@
 package org.taxireferral.api.DAORoles;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
+import org.taxireferral.api.ModelBilling.Transaction;
 import org.taxireferral.api.ModelRoles.EmailVerificationCode;
 import org.taxireferral.api.ModelRoles.PhoneVerificationCode;
 import org.taxireferral.api.ModelRoles.User;
@@ -26,10 +28,28 @@ public class DAOUserSignUp {
         Connection connection = null;
         PreparedStatement statement = null;
 
+        PreparedStatement statementUpdateDUES = null;
+        PreparedStatement statementCreateTransaction = null;
+
+        PreparedStatement statementUpdateDUESReferral = null;
+        PreparedStatement statementTransactionReferral = null;
+
+
         int idOfInsertedRow = -1;
         int rowCountItems = -1;
 
-        String insertItemSubmission = "INSERT INTO "
+
+        String insertItemSubmission = "";
+
+        String updateDUES = "";
+        String createTransaction = "";
+
+        String updateDUESReferral = "";
+        String createTransactionReferral = "";
+
+
+
+        insertItemSubmission = "INSERT INTO "
                 + User.TABLE_NAME
                 + "("
 
@@ -42,10 +62,12 @@ public class DAOUserSignUp {
                 + User.PROFILE_IMAGE_URL + ","
                 + User.ROLE + ","
                 + User.IS_ACCOUNT_PRIVATE + ","
+                + User.REFERRED_BY + ","
+                + User.IS_REFERRER_CREDITED + ","
                 + User.ABOUT + ""
                 + ") "
                 + " Select "
-                + " ?,? ,?,? ,?,?,?,? "
+                + " ?,? ,?,? ,?,?,?,?,?,? "
                 + " from " + EmailVerificationCode.TABLE_NAME
                 + " WHERE "
                 + "("
@@ -55,6 +77,115 @@ public class DAOUserSignUp {
                 + " and "
                 + "(" + EmailVerificationCode.TIMESTAMP_EXPIRES + " > now()" + ")"
                 + ")";
+
+
+
+        // add referral charges to the user bill
+        updateDUES =  " UPDATE " + User.TABLE_NAME
+                    + " SET "
+                    + User.CURRENT_DUES + " = " + User.CURRENT_DUES + " - ?,"
+                    + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " + ?"
+                    + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
+
+
+        createTransaction = "INSERT INTO " + Transaction.TABLE_NAME
+                            + "("
+
+                            + Transaction.USER_ID + ","
+
+                            + Transaction.TITLE + ","
+                            + Transaction.DESCRIPTION + ","
+
+                            + Transaction.TRANSACTION_TYPE + ","
+                            + Transaction.TRANSACTION_AMOUNT + ","
+
+                            + Transaction.IS_CREDIT + ","
+
+                            + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
+                            + Transaction.CURRENT_DUES_AFTER_TRANSACTION + ""
+
+                            + ") "
+                            + " SELECT "
+
+                            + User.TABLE_NAME + "." + User.USER_ID + ","
+                            + " '" + Transaction.TITLE_JOINING_CREDIT_FOR_DRIVER + "',"
+                            + " '" + Transaction.DESCRIPTION_JOINING_CREDIT_FOR_DRIVEr + "',"
+
+                            + Transaction.TRANSACTION_TYPE_JOINING_CREDIT + ","
+                            + " ? ,"
+
+                            + " true " + ","
+
+                            + User.TABLE_NAME + "." + User.CURRENT_DUES + " - ?,"
+                            + User.TABLE_NAME + "." + User.CURRENT_DUES + ""
+
+                            + " FROM " + User.TABLE_NAME
+                            + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
+
+
+
+
+//
+//        // add referral charges to the user bill
+//        updateDUESReferral =  " UPDATE " + User.TABLE_NAME
+//                        + " SET "
+//                        + User.CURRENT_DUES + " = " + User.CURRENT_DUES + " - ?,"
+//                        + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " - ?"
+//                        + " FROM " + User.TABLE_NAME + " as registered_user"
+//                        + " WHERE " + "registered_user." + User.REFERRED_BY + " = " + User.TABLE_NAME + "." + User.USER_ID
+//                        + " AND " + "registered_user." + User.USER_ID + " = ? ";
+
+
+
+
+
+
+        // add referral charges to the user bill
+        updateDUESReferral =  " UPDATE " + User.TABLE_NAME
+                + " SET "
+                + User.CURRENT_DUES + " = " + User.CURRENT_DUES + " - ?,"
+                + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " + ?"
+                + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
+
+
+
+
+        createTransactionReferral = "INSERT INTO " + Transaction.TABLE_NAME
+                + "("
+
+                + Transaction.USER_ID + ","
+
+                + Transaction.TITLE + ","
+                + Transaction.DESCRIPTION + ","
+
+                + Transaction.TRANSACTION_TYPE + ","
+                + Transaction.TRANSACTION_AMOUNT + ","
+
+                + Transaction.IS_CREDIT + ","
+
+                + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
+                + Transaction.CURRENT_DUES_AFTER_TRANSACTION + ""
+
+                + ") "
+                + " SELECT "
+
+                + User.TABLE_NAME + "." + User.USER_ID + ","
+                + " '" + Transaction.TITLE_REFERRAL_CREDIT_APPLIED + "',"
+                + " '" + Transaction.DESCRIPTION_REFERRAL_CREDIT_APPLIED + "',"
+
+                + Transaction.TRANSACTION_TYPE_USER_REFERRAL_CREDIT + ","
+                + " ? ,"
+
+                + " true " + ","
+
+                + User.TABLE_NAME + "." + User.CURRENT_DUES + " - ?,"
+                + User.TABLE_NAME + "." + User.CURRENT_DUES + ""
+
+                + " FROM " + User.TABLE_NAME
+                + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
+
+
+
 
 
         try {
@@ -77,6 +208,17 @@ public class DAOUserSignUp {
             statement.setString(++i,user.getProfileImagePath());
             statement.setObject(++i,user.getRole());
             statement.setObject(++i,user.isAccountPrivate());
+            statement.setObject(++i,user.getReferredBy());
+
+            if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
+            {
+                statement.setObject(++i,true);
+            }
+            else
+            {
+                statement.setObject(++i,false);
+            }
+
             statement.setString(++i,user.getAbout());
 
 
@@ -104,6 +246,116 @@ public class DAOUserSignUp {
 
 
 
+            if(rowCountItems == 1)
+            {
+
+                statementUpdateDUES = connection.prepareStatement(updateDUES);
+                i = 0;
+
+                if(user.getRole()==GlobalConstants.ROLE_DRIVER_CODE)
+                {
+                    statementUpdateDUES.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_DRIVER);
+                    statementUpdateDUES.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_DRIVER);
+                }
+                else if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
+                {
+                    statementUpdateDUES.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_END_USER);
+                    statementUpdateDUES.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_END_USER);
+                }
+                else
+                {
+                    statementUpdateDUES.setObject(++i,0);
+                    statementUpdateDUES.setObject(++i,0);
+                }
+
+
+                statementUpdateDUES.setObject(++i,idOfInsertedRow);
+
+                rowCountItems = statementUpdateDUES.executeUpdate();
+
+
+
+
+                statementCreateTransaction = connection.prepareStatement(createTransaction);
+                i = 0;
+
+
+                if(user.getRole()==GlobalConstants.ROLE_DRIVER_CODE)
+                {
+                    statementCreateTransaction.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_DRIVER);
+                    statementCreateTransaction.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_DRIVER);
+                }
+                else if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
+                {
+                    statementCreateTransaction.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_END_USER);
+                    statementCreateTransaction.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_END_USER);
+                }
+                else
+                {
+                    statementCreateTransaction.setObject(++i,0);
+                    statementCreateTransaction.setObject(++i,0);
+                }
+
+                statementCreateTransaction.setObject(++i,idOfInsertedRow);
+                rowCountItems = statementCreateTransaction.executeUpdate();
+
+
+
+
+
+
+                if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
+                {
+                    // apply referral credit
+
+                    statementUpdateDUESReferral = connection.prepareStatement(updateDUESReferral);
+                    i = 0;
+
+
+                    if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
+                    {
+                        statementUpdateDUESReferral.setObject(++i,GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION);
+                        statementUpdateDUESReferral.setObject(++i,GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION);
+                    }
+                    else
+                    {
+                        statementUpdateDUESReferral.setObject(++i,0);
+                        statementUpdateDUESReferral.setObject(++i,0);
+                    }
+
+
+
+                    statementUpdateDUESReferral.setObject(++i,user.getReferredBy());
+                    rowCountItems = statementUpdateDUESReferral.executeUpdate();
+
+
+
+
+                    statementTransactionReferral = connection.prepareStatement(createTransactionReferral);
+                    i = 0;
+
+
+                    if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
+                    {
+                        statementTransactionReferral.setObject(++i,GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION);
+                        statementTransactionReferral.setObject(++i,GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION);
+                    }
+                    else
+                    {
+                        statementTransactionReferral.setObject(++i,0);
+                        statementTransactionReferral.setObject(++i,0);
+                    }
+
+                    statementTransactionReferral.setObject(++i,user.getReferredBy());
+                    rowCountItems = statementTransactionReferral.executeUpdate();
+
+                }
+
+            }
+
+
+
+
             connection.commit();
 
         } catch (SQLException e) {
@@ -134,6 +386,44 @@ public class DAOUserSignUp {
             }
 
 
+            if (statementUpdateDUES != null) {
+                try {
+                    statementUpdateDUES.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            if (statementCreateTransaction != null) {
+                try {
+                    statementCreateTransaction.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+
+
+            if (statementUpdateDUESReferral != null) {
+                try {
+                    statementUpdateDUESReferral.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            if (statementTransactionReferral != null) {
+                try {
+                    statementTransactionReferral.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
             try {
 
                 if(connection!=null)
@@ -158,14 +448,32 @@ public class DAOUserSignUp {
 
 
 
+
     public int registerUsingPhone(User user, boolean getRowCount)
     {
 
         Connection connection = null;
         PreparedStatement statement = null;
 
+        PreparedStatement statementUpdateDUES = null;
+        PreparedStatement statementCreateTransaction = null;
+
+        PreparedStatement statementUpdateDUESReferral = null;
+        PreparedStatement statementTransactionReferral = null;
+
+
         int idOfInsertedRow = -1;
         int rowCountItems = -1;
+
+
+        String updateDUES = "";
+        String createTransaction = "";
+
+        String updateDUESReferral = "";
+        String createTransactionReferral = "";
+
+
+
 
         String insertItemSubmission = "INSERT INTO "
                 + User.TABLE_NAME
@@ -180,10 +488,12 @@ public class DAOUserSignUp {
                 + User.PROFILE_IMAGE_URL + ","
                 + User.ROLE + ","
                 + User.IS_ACCOUNT_PRIVATE + ","
+                + User.REFERRED_BY + ","
+                + User.IS_REFERRER_CREDITED + ","
                 + User.ABOUT + ""
                 + ") "
                 + " Select "
-                + " ?,? ,?,? ,?,?,?,? "
+                + " ?,? ,?,? ,?,?,?,?,?,? "
                 + " from " + PhoneVerificationCode.TABLE_NAME
                 + " WHERE "
                 + "("
@@ -193,6 +503,114 @@ public class DAOUserSignUp {
                 + " and "
                 + "(" + PhoneVerificationCode.TIMESTAMP_EXPIRES + " > now()" + ")"
                 + ")";
+
+
+
+
+
+        // add referral charges to the user bill
+        updateDUES =  " UPDATE " + User.TABLE_NAME
+                + " SET "
+                + User.CURRENT_DUES + " = " + User.CURRENT_DUES + " - ?,"
+                + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " + ?"
+                + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
+
+
+        createTransaction = "INSERT INTO " + Transaction.TABLE_NAME
+                + "("
+
+                + Transaction.USER_ID + ","
+
+                + Transaction.TITLE + ","
+                + Transaction.DESCRIPTION + ","
+
+                + Transaction.TRANSACTION_TYPE + ","
+                + Transaction.TRANSACTION_AMOUNT + ","
+
+                + Transaction.IS_CREDIT + ","
+
+                + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
+                + Transaction.CURRENT_DUES_AFTER_TRANSACTION + ""
+
+                + ") "
+                + " SELECT "
+
+                + User.TABLE_NAME + "." + User.USER_ID + ","
+                + " '" + Transaction.TITLE_JOINING_CREDIT_FOR_DRIVER + "',"
+                + " '" + Transaction.DESCRIPTION_JOINING_CREDIT_FOR_DRIVEr + "',"
+
+                + Transaction.TRANSACTION_TYPE_JOINING_CREDIT + ","
+                + " ? ,"
+
+                + " true " + ","
+
+                + User.TABLE_NAME + "." + User.CURRENT_DUES + " - ?,"
+                + User.TABLE_NAME + "." + User.CURRENT_DUES + ""
+
+                + " FROM " + User.TABLE_NAME
+                + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
+
+
+
+
+//
+//        // add referral charges to the user bill
+//        updateDUESReferral =  " UPDATE " + User.TABLE_NAME
+//                        + " SET "
+//                        + User.CURRENT_DUES + " = " + User.CURRENT_DUES + " - ?,"
+//                        + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " - ?"
+//                        + " FROM " + User.TABLE_NAME + " as registered_user"
+//                        + " WHERE " + "registered_user." + User.REFERRED_BY + " = " + User.TABLE_NAME + "." + User.USER_ID
+//                        + " AND " + "registered_user." + User.USER_ID + " = ? ";
+
+
+
+
+
+
+        // add referral charges to the user bill
+        updateDUESReferral =  " UPDATE " + User.TABLE_NAME
+                + " SET "
+                + User.CURRENT_DUES + " = " + User.CURRENT_DUES + " - ?,"
+                + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " + ?"
+                + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
+
+
+
+
+        createTransactionReferral = "INSERT INTO " + Transaction.TABLE_NAME
+                + "("
+
+                + Transaction.USER_ID + ","
+
+                + Transaction.TITLE + ","
+                + Transaction.DESCRIPTION + ","
+
+                + Transaction.TRANSACTION_TYPE + ","
+                + Transaction.TRANSACTION_AMOUNT + ","
+
+                + Transaction.IS_CREDIT + ","
+
+                + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
+                + Transaction.CURRENT_DUES_AFTER_TRANSACTION + ""
+
+                + ") "
+                + " SELECT "
+
+                + User.TABLE_NAME + "." + User.USER_ID + ","
+                + " '" + Transaction.TITLE_REFERRAL_CREDIT_APPLIED + "',"
+                + " '" + Transaction.DESCRIPTION_REFERRAL_CREDIT_APPLIED + "',"
+
+                + Transaction.TRANSACTION_TYPE_USER_REFERRAL_CREDIT + ","
+                + " ? ,"
+
+                + " true " + ","
+
+                + User.TABLE_NAME + "." + User.CURRENT_DUES + " - ?,"
+                + User.TABLE_NAME + "." + User.CURRENT_DUES + ""
+
+                + " FROM " + User.TABLE_NAME
+                + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
 
 
         try {
@@ -215,6 +633,16 @@ public class DAOUserSignUp {
             statement.setString(++i,user.getProfileImagePath());
             statement.setObject(++i,user.getRole());
             statement.setObject(++i,user.isAccountPrivate());
+            statement.setObject(++i,user.getReferredBy());
+
+            if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
+            {
+                statement.setObject(++i,true);
+            }
+            else
+            {
+                statement.setObject(++i,false);
+            }
             statement.setString(++i,user.getAbout());
 
 
@@ -232,6 +660,114 @@ public class DAOUserSignUp {
                 idOfInsertedRow = rs.getInt(1);
             }
 
+
+
+            if(rowCountItems == 1)
+            {
+
+                statementUpdateDUES = connection.prepareStatement(updateDUES);
+                i = 0;
+
+                if(user.getRole()==GlobalConstants.ROLE_DRIVER_CODE)
+                {
+                    statementUpdateDUES.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_DRIVER);
+                    statementUpdateDUES.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_DRIVER);
+                }
+                else if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
+                {
+                    statementUpdateDUES.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_END_USER);
+                    statementUpdateDUES.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_END_USER);
+                }
+                else
+                {
+                    statementUpdateDUES.setObject(++i,0);
+                    statementUpdateDUES.setObject(++i,0);
+                }
+
+
+                statementUpdateDUES.setObject(++i,idOfInsertedRow);
+
+                rowCountItems = statementUpdateDUES.executeUpdate();
+
+
+
+
+                statementCreateTransaction = connection.prepareStatement(createTransaction);
+                i = 0;
+
+
+                if(user.getRole()==GlobalConstants.ROLE_DRIVER_CODE)
+                {
+                    statementCreateTransaction.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_DRIVER);
+                    statementCreateTransaction.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_DRIVER);
+                }
+                else if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
+                {
+                    statementCreateTransaction.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_END_USER);
+                    statementCreateTransaction.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_END_USER);
+                }
+                else
+                {
+                    statementCreateTransaction.setObject(++i,0);
+                    statementCreateTransaction.setObject(++i,0);
+                }
+
+                statementCreateTransaction.setObject(++i,idOfInsertedRow);
+                rowCountItems = statementCreateTransaction.executeUpdate();
+
+
+
+
+
+
+                if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
+                {
+                    // apply referral credit
+
+                    statementUpdateDUESReferral = connection.prepareStatement(updateDUESReferral);
+                    i = 0;
+
+
+                    if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
+                    {
+                        statementUpdateDUESReferral.setObject(++i,GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION);
+                        statementUpdateDUESReferral.setObject(++i,GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION);
+                    }
+                    else
+                    {
+                        statementUpdateDUESReferral.setObject(++i,0);
+                        statementUpdateDUESReferral.setObject(++i,0);
+                    }
+
+
+
+                    statementUpdateDUESReferral.setObject(++i,user.getReferredBy());
+                    rowCountItems = statementUpdateDUESReferral.executeUpdate();
+
+
+
+
+                    statementTransactionReferral = connection.prepareStatement(createTransactionReferral);
+                    i = 0;
+
+
+                    if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
+                    {
+                        statementTransactionReferral.setObject(++i,GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION);
+                        statementTransactionReferral.setObject(++i,GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION);
+                    }
+                    else
+                    {
+                        statementTransactionReferral.setObject(++i,0);
+                        statementTransactionReferral.setObject(++i,0);
+                    }
+
+                    statementTransactionReferral.setObject(++i,user.getReferredBy());
+                    rowCountItems = statementTransactionReferral.executeUpdate();
+
+                }
+
+            }
 
 
             connection.commit();
@@ -264,6 +800,45 @@ public class DAOUserSignUp {
             }
 
 
+
+            if (statementUpdateDUES != null) {
+                try {
+                    statementUpdateDUES.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            if (statementCreateTransaction != null) {
+                try {
+                    statementCreateTransaction.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+
+
+            if (statementUpdateDUESReferral != null) {
+                try {
+                    statementUpdateDUESReferral.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            if (statementTransactionReferral != null) {
+                try {
+                    statementTransactionReferral.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
             try {
 
                 if(connection!=null)
@@ -283,6 +858,11 @@ public class DAOUserSignUp {
             return idOfInsertedRow;
         }
     }
+
+
+
+
+
 
 
 

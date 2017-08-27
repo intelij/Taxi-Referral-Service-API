@@ -1,7 +1,6 @@
 package org.taxireferral.api.RESTEndpoints;
 
 import net.coobird.thumbnailator.Thumbnails;
-import org.taxireferral.api.DAORoles.DAOUserNew;
 import org.taxireferral.api.DAOs.VehicleDAO;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
@@ -26,8 +25,6 @@ import java.nio.file.StandardCopyOption;
 /**
  * Created by sumeet on 7/6/17.
  */
-
-
 
 
 
@@ -90,12 +87,18 @@ public class VehicleResource {
 
 
 
+
+
+
+
 //    @RolesAllowed({GlobalConstants.ROLE_ADMIN,GlobalConstants.ROLE_STAFF})
 
     @PUT
-    @Path("/UpdateByAdmin/{VehicleID}")
+    @Path("/EnableTaxi/{VehicleID}/{Enabled}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateVehicle(Vehicle vehicle, @PathParam("VehicleID")int vehicleID)
+    @RolesAllowed({GlobalConstants.ROLE_ADMIN,GlobalConstants.ROLE_STAFF})
+    public Response updateVehicle(@PathParam("VehicleID")int vehicleID,
+                                  @PathParam("Enabled")boolean enabled)
     {
 
 
@@ -110,10 +113,19 @@ public class VehicleResource {
 //            }
 //        }
 
+        System.out.println("Update By Admin");
 
-        vehicle.setVehicleID(vehicleID);
+//        vehicle.setVehicleID(vehicleID);
 
-        int rowCount = daoVehicle.update_vehicle_by_admin(vehicle);
+        int rowCount = daoVehicle.update_vehicle_by_admin(enabled,vehicleID);
+
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
 
         if(rowCount >= 1)
         {
@@ -131,6 +143,58 @@ public class VehicleResource {
         return null;
     }
 
+
+
+
+    @PUT
+    @Path("/ExtendRegistration/{VehicleID}/{MonthsToExtend}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_ADMIN,GlobalConstants.ROLE_STAFF})
+    public Response extendRegistration(@PathParam("VehicleID")int vehicleID,
+                                  @PathParam("MonthsToExtend")int monthsToExtend)
+    {
+
+
+//        if(Globals.accountApproved instanceof User) {
+
+        // checking permission
+//            Staff staff = (Staff) Globals.accountApproved;
+//            if (!staff.isApproveShops())
+//            {
+//                 the staff member doesnt have persmission to post Item Category
+//                throw new ForbiddenException("Not Permitted");
+//            }
+//        }
+
+        System.out.println("Extend Registration : Months " + monthsToExtend);
+
+//        vehicle.setVehicleID(vehicleID);
+
+        int rowCount = daoVehicle.extend_registration(vehicleID,monthsToExtend);
+
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        if(rowCount >= 1)
+        {
+
+            return Response.status(Response.Status.OK)
+                    .build();
+        }
+        else if(rowCount <= 0)
+        {
+
+            return Response.status(Response.Status.NOT_MODIFIED)
+                    .build();
+        }
+
+        return null;
+    }
 
 
 
@@ -451,6 +515,65 @@ public class VehicleResource {
 
 
 
+    @GET
+    @Path("/GetTaxiProfileForAdmin")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getTaxisForAdmin(
+            @QueryParam("LatPickup") Double latPickUp, @QueryParam("LonPickup") Double lonPickUp,
+            @QueryParam("DriversGender") Boolean driversGender,
+            @QueryParam("IsEnabled") Boolean isEnabled,
+            @QueryParam("RegistrationExpired") Boolean registrationExpired,
+            @QueryParam("Status") Integer status,
+            @QueryParam("SortBy") String sortBy,
+            @QueryParam("Limit")Integer limit, @QueryParam("Offset")Integer offset,
+            @QueryParam("GetRowCount")boolean getRowCount,
+            @QueryParam("MetadataOnly")boolean getOnlyMetaData)
+    {
+
+
+        if(limit!=null)
+        {
+            if(limit >= GlobalConstants.max_limit)
+            {
+                limit = GlobalConstants.max_limit;
+            }
+
+            if(offset==null)
+            {
+                offset = 0;
+            }
+        }
+
+
+
+        VehicleEndPoint endPoint = daoVehicle.getTaxiProfileForAdmin(
+                latPickUp,lonPickUp,
+                driversGender,isEnabled,
+                registrationExpired,
+                status,
+                sortBy,limit,offset,
+                getRowCount,getOnlyMetaData
+        );
+
+
+        if(limit!=null)
+        {
+            endPoint.setLimit(limit);
+            endPoint.setOffset(offset);
+            endPoint.setMax_limit(GlobalConstants.max_limit);
+        }
+
+
+
+
+        //Marker
+        return Response.status(Response.Status.OK)
+                .entity(endPoint)
+                .build();
+    }
+
+
+
 
 
 
@@ -464,6 +587,8 @@ public class VehicleResource {
     public Response getVehicle(@QueryParam("latCenter")double latCenter,
                                @QueryParam("lonCenter")double lonCenter)
     {
+
+        System.out.println("Vehicle Get Taxi Profile !");
 
         User user = (User) Globals.accountApproved;
 

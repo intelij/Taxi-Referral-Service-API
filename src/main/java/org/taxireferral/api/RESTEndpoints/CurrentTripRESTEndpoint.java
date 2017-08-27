@@ -72,6 +72,7 @@ public class CurrentTripRESTEndpoint {
     public Response finishTrip(TripHistory tripHistory)
     {
 
+        tripHistory.setCancelled(false);
 
         int rowCount = daoCurrentTrip.finish_trip(
                 ((User) Globals.accountApproved).getUserID(),
@@ -98,7 +99,79 @@ public class CurrentTripRESTEndpoint {
 
 
 
-//    @PUT
+    @PUT
+    @Path("/CancelTripByDriver")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_DRIVER})
+    public Response CancelTrip(TripHistory tripHistory)
+    {
+
+        tripHistory.setCancelled(true);
+        tripHistory.setCancelledByUser(false);
+
+        int rowCount = daoCurrentTrip.cancel_trip(
+                ((User) Globals.accountApproved).getUserID(),
+                true,tripHistory
+        );
+
+
+
+        if(rowCount >= 1)
+        {
+
+            return Response.status(Response.Status.OK)
+                    .build();
+        }
+        else if(rowCount <= 0)
+        {
+
+            return Response.status(Response.Status.NOT_MODIFIED)
+                    .build();
+        }
+
+        return null;
+    }
+
+
+
+    @PUT
+    @Path("/CancelTripByEndUser")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_END_USER})
+    public Response CancelTripByEndUser(TripHistory tripHistory)
+    {
+
+        tripHistory.setCancelled(true);
+        tripHistory.setCancelledByUser(true);
+
+        int rowCount = daoCurrentTrip.cancel_trip(
+                ((User) Globals.accountApproved).getUserID(),
+                true,tripHistory
+        );
+
+
+
+        if(rowCount >= 1)
+        {
+
+            return Response.status(Response.Status.OK)
+                    .build();
+        }
+        else if(rowCount <= 0)
+        {
+
+            return Response.status(Response.Status.NOT_MODIFIED)
+                    .build();
+        }
+
+        return null;
+    }
+
+
+
+
+
+    //    @PUT
 //    @Path("/StartTripByDriver")
 //    @RolesAllowed({ROLE_DRIVER})
     public Response startTripByDriver()

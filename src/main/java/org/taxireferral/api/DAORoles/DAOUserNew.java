@@ -228,6 +228,108 @@ public class DAOUserNew {
 
 
 
+    public User getProfile(int userID)
+    {
+
+        boolean isFirst = true;
+
+        String query = "SELECT "
+
+                + User.USER_ID + ","
+                + User.USERNAME + ","
+                + User.E_MAIL + ","
+                + User.PHONE + ","
+                + User.NAME + ","
+                + User.GENDER + ","
+                + User.PROFILE_IMAGE_URL + ","
+                + User.ROLE + ","
+                + User.IS_ACCOUNT_PRIVATE + ","
+                + User.ABOUT + ""
+
+                + " FROM " + User.TABLE_NAME
+                + " WHERE " + User.USER_ID  + " = ? ";
+
+
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+
+        //Distributor distributor = null;
+        User user = null;
+
+        try {
+
+            connection = dataSource.getConnection();
+            statement = connection.prepareStatement(query);
+
+            int i = 0;
+
+
+            statement.setObject(++i,userID); // username
+
+
+            rs = statement.executeQuery();
+
+            while(rs.next())
+            {
+                user = new User();
+
+                user.setUserID(rs.getInt(User.USER_ID));
+                user.setUsername(rs.getString(User.USERNAME));
+                user.setEmail(rs.getString(User.E_MAIL));
+                user.setPhone(rs.getString(User.PHONE));
+                user.setName(rs.getString(User.NAME));
+                user.setGender(rs.getBoolean(User.GENDER));
+                user.setProfileImagePath(rs.getString(User.PROFILE_IMAGE_URL));
+                user.setRole(rs.getInt(User.ROLE));
+                user.setAccountPrivate(rs.getBoolean(User.IS_ACCOUNT_PRIVATE));
+                user.setAbout(rs.getString(User.ABOUT));
+            }
+
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally
+
+        {
+
+            try {
+                if(rs!=null)
+                {rs.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(statement!=null)
+                {statement.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return user;
+    }
+
+
+
+
+
     public User getProfile(String username, String password)
     {
 
@@ -246,7 +348,9 @@ public class DAOUserNew {
                 + User.PROFILE_IMAGE_URL + ","
                 + User.ROLE + ","
                 + User.IS_ACCOUNT_PRIVATE + ","
-                + User.ABOUT + ""
+                + User.ABOUT + ","
+                + User.CURRENT_DUES + ","
+                + User.IS_ACCOUNT_PRIVATE + ""
 //                + User.TOKEN + ","
 //                + User.TIMESTAMP_TOKEN_EXPIRES + ""
 
@@ -312,6 +416,7 @@ public class DAOUserNew {
                 user.setProfileImagePath(rs.getString(User.PROFILE_IMAGE_URL));
                 user.setRole(rs.getInt(User.ROLE));
                 user.setAccountPrivate(rs.getBoolean(User.IS_ACCOUNT_PRIVATE));
+                user.setCurrentDues(rs.getDouble(User.CURRENT_DUES));
                 user.setAbout(rs.getString(User.ABOUT));
 
 //                user.setToken(rs.getString(User.TOKEN));

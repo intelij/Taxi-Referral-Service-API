@@ -77,8 +77,8 @@ public class User {
                     + " " + User.USERNAME + " text UNIQUE ,"
                     + " " + User.PASSWORD + " text NOT NULL,"
 
-                    + " " + User.PASSWORD_RESET_CODE + " text NOT NULL ,"
-                    + " " + User.RESET_CODE_EXPIRES + " timestamp with time zone NOT NULL,"
+                    + " " + User.PASSWORD_RESET_CODE + " text ,"
+                    + " " + User.RESET_CODE_EXPIRES + " timestamp with time zone NOT NULL default now(),"
 
                     + " " + User.E_MAIL + " text UNIQUE ,"
                     + " " + User.PHONE + " text UNIQUE,"

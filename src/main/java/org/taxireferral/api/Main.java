@@ -335,8 +335,8 @@ public class Main {
             statement.executeUpdate(EmailVerificationCode.createTablePostgres);
             statement.executeUpdate(PhoneVerificationCode.createTablePostgres);
 
-//            statement.executeUpdate(VehicleType.createTablePostgres);
-//            statement.executeUpdate(VehicleTypeVersion.createTablePostgres);
+            statement.executeUpdate(VehicleType.createTablePostgres);
+            statement.executeUpdate(VehicleTypeVersion.createTablePostgres);
 
             statement.executeUpdate(Transaction.createTablePostgres);
 

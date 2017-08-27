@@ -54,6 +54,7 @@ public class UserLoginRESTEndpoint {
 /* Update and Login */
 //    updateUser(User user, @PathParam("UserID")int userID)
 //    updateEmail(User user)
+//    updatePhone(User user)
 //    public Response changePassword(User user, @PathParam("OldPassword")String oldPassword)
 //    public Response getProfile(@HeaderParam("Authorization")String headerParam)
 //    public Response getToken(@HeaderParam("Authorization")String headerParam)
@@ -251,14 +252,45 @@ public class UserLoginRESTEndpoint {
 
 
 
+    @GET
+    @Path("/GetProfile")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_END_USER,GlobalConstants.ROLE_DRIVER,GlobalConstants.ROLE_STAFF,GlobalConstants.ROLE_ADMIN})
+    public Response getProfile()
+    {
+
+
+        User profileValidated = (User) Globals.accountApproved;
+        User user = daoUser.getProfile(profileValidated.getUserID());
+
+
+        if(user!=null)
+        {
+
+            return Response.status(Response.Status.OK)
+                    .entity(user)
+                    .build();
+
+        }
+        else
+        {
+            return Response.status(Response.Status.NOT_MODIFIED)
+                    .build();
+        }
+
+    }
+
+
+
+
 
 
 
 
     @GET
-    @Path("/GetProfile")
+    @Path("/GetProfileWithLogin")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getProfile(@HeaderParam("Authorization")String headerParam)
+    public Response getProfileWithLogin(@HeaderParam("Authorization")String headerParam)
     {
 
 

@@ -10,6 +10,8 @@ import java.sql.Timestamp;
 
 public class Vehicle {
 
+
+
     // Table Name
     public static final String TABLE_NAME = "VEHICLE";
 
@@ -25,6 +27,7 @@ public class Vehicle {
 
     public static final String ENABLED = "ENABLED";
     public static final String ENABLED_UPTO = "ENABLED_UPTO";
+    public static final String RENEWED_BY = "RENEWED_BY";
 
     public static final String VEHICLE_STATUS = "VEHICLE_STATUS";
 
@@ -56,6 +59,8 @@ public class Vehicle {
 
 
 
+
+
     // Create Table Statement
     public static final String createTableVehiclePostgres =
 
@@ -71,6 +76,7 @@ public class Vehicle {
 
                     + " " + Vehicle.ENABLED + " boolean NOT NULL default 'f',"
                     + " " + Vehicle.ENABLED_UPTO + " timestamp with time zone NOT NULL DEFAULT now(),"
+                    + " " + Vehicle.RENEWED_BY + " int,"
 
                     + " " + Vehicle.VEHICLE_STATUS + " int NOT NULL default 2,"
                     // 2 stands for status not-available. Refer GlobalConstants for the values
@@ -94,6 +100,9 @@ public class Vehicle {
 
 
 
+
+
+
     // instance variables
     private int vehicleID;
     private int driverID;
@@ -104,6 +113,9 @@ public class Vehicle {
     private String profileImageURL;
 
     private boolean enabled;
+    private Timestamp enabledUpto;
+    private int renewedBy;
+
     private int vehicleStatus;
 
     private int minTripCharges;
@@ -127,6 +139,23 @@ public class Vehicle {
 
 
     // getter and setters
+
+
+    public Timestamp getEnabledUpto() {
+        return enabledUpto;
+    }
+
+    public void setEnabledUpto(Timestamp enabledUpto) {
+        this.enabledUpto = enabledUpto;
+    }
+
+    public int getRenewedBy() {
+        return renewedBy;
+    }
+
+    public void setRenewedBy(int renewedBy) {
+        this.renewedBy = renewedBy;
+    }
 
     public String getRegistrationNumber() {
         return registrationNumber;

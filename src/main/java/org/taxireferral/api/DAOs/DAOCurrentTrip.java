@@ -233,6 +233,238 @@ public class DAOCurrentTrip {
 
 
 
+    public int cancel_trip(int driverID, boolean getRowCount, TripHistory tripHistory)
+    {
+
+        // note of precaution : please check the end user id is the id of the user who is requesting to create the trip
+
+        Connection connection = null;
+        PreparedStatement statementInsert = null;
+        PreparedStatement statementDelete = null;
+        PreparedStatement statementUpdate = null;
+
+        int idOfInsertedRow = -1;
+        int rowCountItems = -1;
+
+        int rowCountDelete = -1;
+        int rowCountUpdateStatus = -1;
+
+
+        String deleteTripRequest = "";
+        String updateStatus = "";
+
+
+        String insert = "";
+
+        insert = "INSERT INTO " + TripHistory.TABLE_NAME
+                + "("
+
+                + TripHistory.VEHICLE_ID + ","
+                + TripHistory.END_USER_ID + ","
+
+                + TripHistory.IS_CANCELLED + ","
+                + TripHistory.IS_CANCELLED_BY_END_USER + ","
+                + TripHistory.REASON_FOR_CANCELLATION + ","
+
+                + TripHistory.TIMESTAMP_CREATED + ","
+                + TripHistory.TIMESTAMP_STARTED + ","
+                + TripHistory.TIMESTAMP_FINISHED + ","
+
+                + TripHistory.LAT_START_LOCATION + ","
+                + TripHistory.LON_START_LOCATION + ","
+
+                + TripHistory.LAT_PICK_UP_LOCATION + ","
+                + TripHistory.LON_PICK_UP_LOCATION + ","
+                + TripHistory.PICK_UP_ADDRESS + ","
+
+                + TripHistory.LAT_DESTINATION + ","
+                + TripHistory.LON_DESTINATION + ","
+                + TripHistory.DESTINATION_ADDRESS + ","
+
+                + TripHistory.DISTANCE_TRAVELLED_FOR_PICKUP + ","
+                + TripHistory.DISTANCE_TRAVELLED_FOR_TRIP + ","
+
+                + TripHistory.FREE_PICKUP_DISTANCE + ","
+                + TripHistory.REFERRAL_CHARGES + ","
+
+                + TripHistory.MIN_TRIP_CHARGES + ","
+                + TripHistory.CHARGES_PER_KM + ""
+
+                + ") "
+                + " SELECT "
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.END_USER_ID + ","
+
+                + tripHistory.isCancelled() + ","
+                + tripHistory.isCancelledByUser() + ","
+                + "'" + tripHistory.getReasonForCancellation() + "',"
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TIMESTAMP_CREATED + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TIMESTAMP_STARTED + ","
+                + " now(),"
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LAT_START_LOCATION + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LON_START_LOCATION + ","
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LAT_PICK_UP_LOCATION + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LON_PICK_UP_LOCATION + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.PICK_UP_ADDRESS + ","
+
+                + tripHistory.getLatDestination() + ","
+                + tripHistory.getLonDestination() + ","
+                + "'" + tripHistory.getDestinationAddress() + "',"
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + ","
+//                + tripHistory.getDistanceTravelledForTrip() + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_TRIP + ","
+
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.FREE_PICKUP_DISTANCE + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.REFERRAL_CHARGES + ","
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.MIN_TRIP_CHARGES + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CHARGES_PER_KM + ""
+
+                + " FROM " + CurrentTrip.TABLE_NAME
+                + " INNER JOIN " + Vehicle.TABLE_NAME + " ON " + "(" + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
+                + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ?"
+                + " AND " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_STATUS + " < " + GlobalConstants.START_APPROVED_AND_TRIP_STARTED;
+
+
+//        + " WHERE " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_ID + " = ? "
+
+        deleteTripRequest =   " DELETE FROM " + CurrentTrip.TABLE_NAME
+                + " USING " + Vehicle.TABLE_NAME
+                + " WHERE " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID
+                + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ?";
+
+//                            + CurrentTrip.TABLE_NAME
+//                            + " WHERE " + CurrentTrip.CURRENT_TRIP_ID + " = ?";
+
+
+        updateStatus =  " UPDATE " + Vehicle.TABLE_NAME +
+                " SET " + Vehicle.VEHICLE_STATUS + " = ? " +
+                " WHERE " + Vehicle.DRIVER_ID + " = ? ";
+
+
+
+        try {
+
+            connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
+
+            statementInsert = connection.prepareStatement(insert,PreparedStatement.RETURN_GENERATED_KEYS);
+            int i = 0;
+
+//            statementInsert.setObject(++i,currentTripID);
+            statementInsert.setObject(++i,driverID);
+
+            rowCountItems = statementInsert.executeUpdate();
+            ResultSet rs = statementInsert.getGeneratedKeys();
+            if(rs.next())
+            {
+                idOfInsertedRow = rs.getInt(1);
+            }
+
+
+            if(idOfInsertedRow > 0)
+            {
+                // execute the following statements only if the insert is successful
+
+
+                statementDelete = connection.prepareStatement(deleteTripRequest);
+                i = 0;
+
+                statementDelete.setObject(++i,driverID);
+                rowCountDelete = statementDelete.executeUpdate();
+
+
+
+                statementUpdate = connection.prepareStatement(updateStatus);
+                i = 0;
+
+                statementUpdate.setObject(++i,GlobalConstants.AVIALABLE);
+                statementUpdate.setObject(++i,driverID);
+
+                rowCountUpdateStatus = statementUpdate.executeUpdate();
+            }
+
+
+
+
+            connection.commit();
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+            if (connection != null) {
+                try {
+
+                    idOfInsertedRow=-1;
+                    rowCountItems = 0;
+
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        finally
+        {
+
+
+            if (statementInsert != null) {
+                try {
+                    statementInsert.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+
+            if (statementDelete != null) {
+                try {
+                    statementDelete.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            if (statementUpdate != null) {
+                try {
+                    statementUpdate.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        if(getRowCount)
+        {
+            return rowCountItems;
+        }
+        else
+        {
+            return idOfInsertedRow;
+        }
+    }
+
+
+
 
 
     public int finish_trip(int driverID, boolean getRowCount, TripHistory tripHistory)
@@ -307,7 +539,7 @@ public class DAOCurrentTrip {
 
                 + tripHistory.getLatDestination() + ","
                 + tripHistory.getLonDestination() + ","
-                + tripHistory.getDestinationAddress() + ","
+                + "'" + tripHistory.getDestinationAddress() + "',"
 
                 + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + ","
 //                + tripHistory.getDistanceTravelledForTrip() + ","
