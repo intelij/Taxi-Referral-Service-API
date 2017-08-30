@@ -455,9 +455,11 @@ public class DAOUserSignUp {
         Connection connection = null;
         PreparedStatement statement = null;
 
+        // for applying joining credit
         PreparedStatement statementUpdateDUES = null;
         PreparedStatement statementCreateTransaction = null;
 
+        // for applying referral credit
         PreparedStatement statementUpdateDUESReferral = null;
         PreparedStatement statementTransactionReferral = null;
 
@@ -716,10 +718,6 @@ public class DAOUserSignUp {
                 rowCountItems = statementCreateTransaction.executeUpdate();
 
 
-
-
-
-
                 if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
                 {
                     // apply referral credit
@@ -861,6 +859,160 @@ public class DAOUserSignUp {
 
 
 
+
+
+
+
+    public int registerUsingPhoneNoCredits(User user, boolean getRowCount)
+    {
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+
+        int idOfInsertedRow = -1;
+        int rowCountItems = -1;
+
+
+
+
+        String insertItemSubmission = "INSERT INTO "
+                + User.TABLE_NAME
+                + "("
+
+                + User.PASSWORD + ","
+                + User.PHONE + ","
+
+                + User.NAME + ","
+                + User.GENDER + ","
+
+                + User.PROFILE_IMAGE_URL + ","
+                + User.ROLE + ","
+                + User.IS_ACCOUNT_PRIVATE + ","
+                + User.ABOUT + ""
+                + ") "
+                + " Select "
+                + " ?,? ,?,? ,?,?,?,? "
+                + " from " + PhoneVerificationCode.TABLE_NAME
+                + " WHERE "
+                + "("
+                + "(" + PhoneVerificationCode.TABLE_NAME + "." + PhoneVerificationCode.PHONE + " = ? " + ")"
+                + " and "
+                + "(" + PhoneVerificationCode.VERIFICATION_CODE + " = ?" + ")"
+                + " and "
+                + "(" + PhoneVerificationCode.TIMESTAMP_EXPIRES + " > now()" + ")"
+                + ")";
+
+
+
+
+
+        // add referral charges to the user bill
+
+
+        try {
+
+            connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
+
+
+            statement = connection.prepareStatement(insertItemSubmission,PreparedStatement.RETURN_GENERATED_KEYS);
+            int i = 0;
+
+//            statement.setString(++i,user.getUsername());
+
+            statement.setString(++i,user.getPassword());
+            statement.setString(++i,user.getPhone());
+
+            statement.setString(++i,user.getName());
+            statement.setObject(++i,user.getGender());
+
+            statement.setString(++i,user.getProfileImagePath());
+            statement.setObject(++i,user.getRole());
+            statement.setObject(++i,user.isAccountPrivate());
+
+//            statement.setObject(++i,user.getReferredBy());
+//
+//            if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
+//            {
+//                statement.setObject(++i,true);
+//            }
+//            else
+//            {
+//                statement.setObject(++i,false);
+//            }
+
+
+            statement.setString(++i,user.getAbout());
+
+
+            // check phone is verified or not to ensure phone belongs to user
+            statement.setString(++i,user.getPhone());
+            statement.setString(++i,user.getRt_phone_verification_code());
+
+            rowCountItems = statement.executeUpdate();
+
+
+            ResultSet rs = statement.getGeneratedKeys();
+
+            if(rs.next())
+            {
+                idOfInsertedRow = rs.getInt(1);
+            }
+
+
+
+
+
+            connection.commit();
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+            if (connection != null) {
+                try {
+
+                    idOfInsertedRow=-1;
+                    rowCountItems = 0;
+
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        finally
+        {
+
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        if(getRowCount)
+        {
+            return rowCountItems;
+        }
+        else
+        {
+            return idOfInsertedRow;
+        }
+    }
 
 
 

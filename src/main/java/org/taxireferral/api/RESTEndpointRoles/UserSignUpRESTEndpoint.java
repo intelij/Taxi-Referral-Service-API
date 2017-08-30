@@ -10,6 +10,7 @@ import org.taxireferral.api.ModelRoles.EmailVerificationCode;
 import org.taxireferral.api.ModelRoles.PhoneVerificationCode;
 import org.taxireferral.api.ModelRoles.User;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -62,10 +63,12 @@ public class UserSignUpRESTEndpoint {
     }
 
 
+
     @POST
     @Path("/StaffRegistration")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_ADMIN})
     public Response insertStaff(User user)
     {
         return userRegistration(user,GlobalConstants.ROLE_STAFF_CODE);
@@ -124,7 +127,17 @@ public class UserSignUpRESTEndpoint {
         }
         else if(user.getRt_registration_mode()==User.REGISTRATION_MODE_PHONE)
         {
-            idOfInsertedRow = daoUser.registerUsingPhone(user,false);
+
+            if(user.getRole()==GlobalConstants.ROLE_STAFF_CODE)
+            {
+                idOfInsertedRow = daoUser.registerUsingPhoneNoCredits(user,false);
+            }
+            else
+            {
+                idOfInsertedRow = daoUser.registerUsingPhone(user,false);
+            }
+
+
 
 
             System.out.println("Phone : " + user.getPhone()

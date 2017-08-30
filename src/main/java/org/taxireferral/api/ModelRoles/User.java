@@ -176,6 +176,7 @@ public class User {
     private String rt_phone_verification_code;
     private int rt_registration_mode; // 1 for registration by email 2 for registration by phone
     private Vehicle rt_vehicle;
+    private StaffPermissions rt_staff_permissions;
 
 
 
@@ -183,6 +184,14 @@ public class User {
 
     // Getters and Setters
 
+
+    public StaffPermissions getRt_staff_permissions() {
+        return rt_staff_permissions;
+    }
+
+    public void setRt_staff_permissions(StaffPermissions rt_staff_permissions) {
+        this.rt_staff_permissions = rt_staff_permissions;
+    }
 
     public Timestamp getResetCodeExpires() {
         return resetCodeExpires;

@@ -313,7 +313,8 @@ public class DAOCurrentTrip {
 
                 + tripHistory.getLatDestination() + ","
                 + tripHistory.getLonDestination() + ","
-                + "'" + tripHistory.getDestinationAddress() + "',"
+//                + "'" + tripHistory.getDestinationAddress() + "',"
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DESTINATION_ADDRESS + ","
 
                 + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + ","
 //                + tripHistory.getDistanceTravelledForTrip() + ","
@@ -539,7 +540,9 @@ public class DAOCurrentTrip {
 
                 + tripHistory.getLatDestination() + ","
                 + tripHistory.getLonDestination() + ","
-                + "'" + tripHistory.getDestinationAddress() + "',"
+//                + "'" + tripHistory.getDestinationAddress() + "',"
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DESTINATION_ADDRESS + ","
+
 
                 + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + ","
 //                + tripHistory.getDistanceTravelledForTrip() + ","

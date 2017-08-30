@@ -532,6 +532,17 @@ public class VehicleDAO {
     public int update_vehicle(Vehicle vehicle)
     {
 
+        if(vehicle.getMinTripCharges()> GlobalConstants.max_min_trip_charges)
+        {
+            vehicle.setMinTripCharges(GlobalConstants.max_min_trip_charges);
+        }
+
+        if(vehicle.getChargesPerKM()>GlobalConstants.max_charges_per_km)
+        {
+            vehicle.setChargesPerKM(GlobalConstants.max_charges_per_km);
+        }
+
+
         Connection connection = null;
         PreparedStatement statementUpdate = null;
 

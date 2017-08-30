@@ -267,6 +267,8 @@ public class VehicleResource {
 //        }
 
 
+
+
         int rowCount = daoVehicle.update_location(location,((User)Globals.accountApproved).getUserID());
 
         if(rowCount >= 1)

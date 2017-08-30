@@ -33,7 +33,7 @@ public class SendSMS {
                 GlobalConstants.MSG91_SMS_SERVICE_API_KEY +
                 "&mobile=91" +
                 phone +
-                "&message=Your%20one time password (OTP) for Taxi Referral is " +
+                "&message=Your%20one time password (OTP) for Taxi Referral Service is " +
                 otp +
                 "&sender=TRSAPP&otp=" +
                 otp;

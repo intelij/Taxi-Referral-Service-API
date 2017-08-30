@@ -36,6 +36,7 @@ public class Globals {
     public static DAOUserNew daoUserNew = new DAOUserNew();
     public static DAOResetPassword daoResetPassword = new DAOResetPassword();
     public static DAOUserSignUp daoUserSignUp = new DAOUserSignUp();
+    public static DAOStaff daoStaff = new DAOStaff();
 
     public static VehicleDAO vehicleDAO = new VehicleDAO();
     public static DAOTripRequest tripRequestDAO = new DAOTripRequest();
