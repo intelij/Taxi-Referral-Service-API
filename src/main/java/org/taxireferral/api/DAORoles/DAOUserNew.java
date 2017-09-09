@@ -1,5 +1,6 @@
 package org.taxireferral.api.DAORoles;
 
+import com.google.gson.Gson;
 import com.zaxxer.hikari.HikariDataSource;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
@@ -746,6 +747,8 @@ public class DAOUserNew {
 
 
             rowCountUpdated = statement.executeUpdate();
+
+
             System.out.println("Total rows updated: " + rowCountUpdated);
 
 
@@ -785,12 +788,24 @@ public class DAOUserNew {
     public int updatePassword(User user, String oldPassword)
     {
 
+//        + User.USERNAME + " = ?"
+
+
+        Gson gson = new Gson();
+        System.out.println(gson.toJson(user) + "\nOldPassword : " + oldPassword);
+
+
         String updateStatement = "UPDATE " + User.TABLE_NAME
 
                 + " SET "
                 + User.PASSWORD + "=?"
 
-                + " WHERE " + User.USERNAME + " = ?"
+                + " WHERE "
+                + " ( " + User.USERNAME + " = ? "
+                + " OR " +  User.USER_ID + " = ? "
+                + " OR " + " ( " + User.E_MAIL + " = ?" + ")"
+                + " OR " + " ( " + User.PHONE + " = ?" + ")"
+                + ")"
                 + " AND " + User.PASSWORD + " = ?";
 
 
@@ -811,7 +826,12 @@ public class DAOUserNew {
 
             statement.setString(++i,user.getPassword());
 
+
             statement.setString(++i,user.getUsername());
+            statement.setObject(++i,user.getUserID());
+            statement.setString(++i,user.getEmail());
+            statement.setString(++i,user.getPhone());
+
             statement.setString(++i,oldPassword);
 
 

@@ -97,8 +97,8 @@ public class VehicleResource {
     @Path("/EnableTaxi/{VehicleID}/{Enabled}")
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({GlobalConstants.ROLE_ADMIN,GlobalConstants.ROLE_STAFF})
-    public Response updateVehicle(@PathParam("VehicleID")int vehicleID,
-                                  @PathParam("Enabled")boolean enabled)
+    public Response enableTaxi(@PathParam("VehicleID")int vehicleID,
+                               @PathParam("Enabled")boolean enabled)
     {
 
 
@@ -117,7 +117,7 @@ public class VehicleResource {
 
 //        vehicle.setVehicleID(vehicleID);
 
-        int rowCount = daoVehicle.update_vehicle_by_admin(enabled,vehicleID);
+        int rowCount = daoVehicle.enableVehicleByAdmin(enabled,vehicleID);
 
 
         try {
@@ -223,7 +223,7 @@ public class VehicleResource {
 
 
         vehicle.setDriverID(((User)Globals.accountApproved).getUserID());
-        int rowCount = daoVehicle.update_vehicle(vehicle);
+        int rowCount = daoVehicle.updateVehicle(vehicle);
 
         if(rowCount >= 1)
         {
@@ -240,6 +240,35 @@ public class VehicleResource {
 
         return null;
     }
+
+
+
+
+    @PUT
+    @Path("/UpdateByAdmin")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_STAFF,GlobalConstants.ROLE_ADMIN})
+    public Response updateByAdmin(Vehicle vehicle)
+    {
+
+        int rowCount = daoVehicle.updateVehicleByAdmin(vehicle);
+
+        if(rowCount >= 1)
+        {
+
+            return Response.status(Response.Status.OK)
+                    .build();
+        }
+        else if(rowCount <= 0)
+        {
+
+            return Response.status(Response.Status.NOT_MODIFIED)
+                    .build();
+        }
+
+        return null;
+    }
+
 
 
 
@@ -526,6 +555,7 @@ public class VehicleResource {
             @QueryParam("IsEnabled") Boolean isEnabled,
             @QueryParam("RegistrationExpired") Boolean registrationExpired,
             @QueryParam("Status") Integer status,
+            @QueryParam("SearchString")String searchString,
             @QueryParam("SortBy") String sortBy,
             @QueryParam("Limit")Integer limit, @QueryParam("Offset")Integer offset,
             @QueryParam("GetRowCount")boolean getRowCount,
@@ -553,6 +583,7 @@ public class VehicleResource {
                 driversGender,isEnabled,
                 registrationExpired,
                 status,
+                searchString,
                 sortBy,limit,offset,
                 getRowCount,getOnlyMetaData
         );
@@ -779,8 +810,6 @@ public class VehicleResource {
 
         return response;
     }
-
-
 
 
 

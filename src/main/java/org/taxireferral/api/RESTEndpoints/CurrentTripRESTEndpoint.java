@@ -144,7 +144,7 @@ public class CurrentTripRESTEndpoint {
         tripHistory.setCancelled(true);
         tripHistory.setCancelledByUser(true);
 
-        int rowCount = daoCurrentTrip.cancel_trip(
+        int rowCount = daoCurrentTrip.cancel_trip_by_end_user(
                 ((User) Globals.accountApproved).getUserID(),
                 true,tripHistory
         );

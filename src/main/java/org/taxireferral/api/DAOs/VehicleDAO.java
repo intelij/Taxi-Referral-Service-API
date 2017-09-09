@@ -263,7 +263,7 @@ public class VehicleDAO {
 
 
 
-    public int update_vehicle_by_admin(boolean enabled, int vehicleID)
+    public int enableVehicleByAdmin(boolean enabled, int vehicleID)
     {
 
         Connection connection = null;
@@ -528,8 +528,165 @@ public class VehicleDAO {
 
 
 
+    public int updateVehicleByAdmin(Vehicle vehicle)
+    {
 
-    public int update_vehicle(Vehicle vehicle)
+        if(vehicle.getMinTripCharges()> GlobalConstants.max_min_trip_charges)
+        {
+            vehicle.setMinTripCharges(GlobalConstants.max_min_trip_charges);
+        }
+
+        if(vehicle.getChargesPerKM()>GlobalConstants.max_charges_per_km)
+        {
+            vehicle.setChargesPerKM(GlobalConstants.max_charges_per_km);
+        }
+
+
+
+
+        Connection connection = null;
+        PreparedStatement statementUpdate = null;
+        PreparedStatement statementUpdateUser = null;
+
+
+        int rowCountItems = -1;
+        int rowCountUpdateUser = -1;
+
+        String updateVehicle = "";
+        String updateUser = "";
+
+
+        updateVehicle =  " UPDATE " + Vehicle.TABLE_NAME
+                        + " SET "   + Vehicle.VEHICLE_MODEL_NAME  + "=?,"
+                                    + Vehicle.SEATING_CAPACITY    + "=?,"
+                                    + Vehicle.PROFILE_IMAGE_URL   + "=?,"
+                                    + Vehicle.MIN_TRIP_CHARGES    + "=?,"
+                                    + Vehicle.CHARGES_PER_KM      + "=?"
+                        + " WHERE " + Vehicle.DRIVER_ID          + " = ?";
+
+
+
+
+        updateUser = "UPDATE " + User.TABLE_NAME
+                    + " SET "
+
+                    + User.NAME + "=?,"
+                    + User.GENDER + "=?"
+//                    + User.PROFILE_IMAGE_URL + "=?"
+
+                    + " WHERE " + User.USER_ID + " = ?";
+
+
+
+
+        try {
+
+            connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
+
+
+            statementUpdate = connection.prepareStatement(updateVehicle);
+            int i = 0;
+
+
+            statementUpdate.setString(++i,vehicle.getVehicleModelName());
+            statementUpdate.setObject(++i,vehicle.getSeatingCapacity());
+            statementUpdate.setString(++i,vehicle.getProfileImageURL());
+            statementUpdate.setObject(++i,vehicle.getMinTripCharges());
+            statementUpdate.setObject(++i,vehicle.getChargesPerKM());
+
+            statementUpdate.setObject(++i,vehicle.getDriverID());
+
+            rowCountItems = statementUpdate.executeUpdate();
+
+
+
+            statementUpdateUser = connection.prepareStatement(updateUser);
+
+            User user = vehicle.getRt_driver();
+
+            i = 0;
+
+            statementUpdateUser.setString(++i,user.getName());
+            statementUpdateUser.setObject(++i,user.getGender());
+//            statementUpdateUser.setString(++i,user.getProfileImagePath());
+
+            statementUpdateUser.setObject(++i,vehicle.getDriverID());
+
+
+            rowCountUpdateUser = statementUpdateUser.executeUpdate();
+
+
+            System.out.println("UpdateVehicleByAdmin : Total rows updated : " + rowCountUpdateUser);
+
+
+
+
+
+            connection.commit();
+
+        } catch (SQLException e) {
+
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+            if (connection != null) {
+                try {
+
+                    rowCountItems = 0;
+
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        finally
+        {
+
+            if (statementUpdate != null) {
+                try {
+                    statementUpdate.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+
+            if (statementUpdateUser != null) {
+                try {
+                    statementUpdateUser.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+
+
+        return rowCountItems + rowCountUpdateUser;
+    }
+
+
+
+
+
+
+
+
+    public int updateVehicle(Vehicle vehicle)
     {
 
         if(vehicle.getMinTripCharges()> GlobalConstants.max_min_trip_charges)
@@ -550,15 +707,23 @@ public class VehicleDAO {
 
         String update = "";
 
+//
+//
+//        update =  " UPDATE " + Vehicle.TABLE_NAME
+//                + " SET "   + Vehicle.VEHICLE_MODEL_NAME  + "=?,"
+//                            + Vehicle.SEATING_CAPACITY    + "=?,"
+//                            + Vehicle.PROFILE_IMAGE_URL   + "=?,"
+//                            + Vehicle.MIN_TRIP_CHARGES    + "=?,"
+//                            + Vehicle.CHARGES_PER_KM      + "=?"
+//                + " WHERE " + Vehicle.DRIVER_ID          + " = ?";
+//
 
 
         update =  " UPDATE " + Vehicle.TABLE_NAME
-                + " SET "   + Vehicle.VEHICLE_MODEL_NAME  + "=?,"
-                            + Vehicle.SEATING_CAPACITY    + "=?,"
-                            + Vehicle.PROFILE_IMAGE_URL   + "=?,"
-                            + Vehicle.MIN_TRIP_CHARGES    + "=?,"
+                + " SET "   + Vehicle.MIN_TRIP_CHARGES    + "=?,"
                             + Vehicle.CHARGES_PER_KM      + "=?"
                 + " WHERE " + Vehicle.DRIVER_ID          + " = ?";
+
 
 
 
@@ -573,9 +738,7 @@ public class VehicleDAO {
             int i = 0;
 
 
-            statementUpdate.setString(++i,vehicle.getVehicleModelName());
-            statementUpdate.setObject(++i,vehicle.getSeatingCapacity());
-            statementUpdate.setString(++i,vehicle.getProfileImageURL());
+//            statementUpdate.setString(++i,vehicle.getVehicleModelName());
             statementUpdate.setObject(++i,vehicle.getMinTripCharges());
             statementUpdate.setObject(++i,vehicle.getChargesPerKM());
 
@@ -1550,6 +1713,7 @@ public class VehicleDAO {
             Boolean isEnabled,
             Boolean registrationExpired,
             Integer status,
+            String searchString,
             String sortBy,
             Integer limit, Integer offset,
             boolean getRowCount,
@@ -1643,6 +1807,21 @@ public class VehicleDAO {
         {
             queryJoin = queryJoin + " AND " + User.TABLE_NAME + "." + User.GENDER + " = ?";
         }
+
+
+
+
+        if(searchString !=null) {
+//
+//            Shop.TABLE_NAME + "." + Shop.SHOP_NAME + " ilike '%" + searchString + "%'"
+//                    + " or " + Shop.TABLE_NAME + "." + Shop.LONG_DESCRIPTION + " ilike '%" + searchString + "%'"
+//                    + " or " + Shop.TABLE_NAME + "." + Shop.SHOP_ADDRESS + " ilike '%" + searchString + "%'"
+
+            String queryPartSearch = " AND CAST ( " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + " AS text )" + " ilike '%" + searchString + "%'" + " ";
+
+            queryJoin = queryJoin + queryPartSearch;
+        }
+
 //
 
 

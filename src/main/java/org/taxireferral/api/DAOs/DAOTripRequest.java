@@ -304,6 +304,9 @@ public class DAOTripRequest {
 
 
 
+
+
+
     public int approve_pickup(int tripRequestID, int driverID, boolean getRowCount,
                               Location currentLocation)
     {
@@ -893,6 +896,7 @@ public class DAOTripRequest {
                 + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.PROFILE_IMAGE_URL + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_MODEL_NAME + ","
 
                 + Vehicle.TABLE_NAME + "." + Vehicle.MIN_TRIP_CHARGES + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.CHARGES_PER_KM + ","
@@ -1065,6 +1069,7 @@ public class DAOTripRequest {
                     vehicle.setProfileImageURL(rs.getString(Vehicle.PROFILE_IMAGE_URL));
 
                     vehicle.setVehicleStatus(rs.getInt(Vehicle.VEHICLE_STATUS));
+                    vehicle.setVehicleModelName(rs.getString(Vehicle.VEHICLE_MODEL_NAME));
 
                     vehicle.setMinTripCharges(rs.getInt(Vehicle.MIN_TRIP_CHARGES));
                     vehicle.setChargesPerKM(rs.getInt(Vehicle.CHARGES_PER_KM));
@@ -1238,6 +1243,7 @@ public class DAOTripRequest {
                 + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.PROFILE_IMAGE_URL + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_MODEL_NAME + ","
 
                 + Vehicle.TABLE_NAME + "." + Vehicle.MIN_TRIP_CHARGES + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.CHARGES_PER_KM + ","
@@ -1410,6 +1416,7 @@ public class DAOTripRequest {
                     vehicle.setProfileImageURL(rs.getString(Vehicle.PROFILE_IMAGE_URL));
 
                     vehicle.setVehicleStatus(rs.getInt(Vehicle.VEHICLE_STATUS));
+                    vehicle.setVehicleModelName(rs.getString(Vehicle.VEHICLE_MODEL_NAME));
 
                     vehicle.setMinTripCharges(rs.getInt(Vehicle.MIN_TRIP_CHARGES));
                     vehicle.setChargesPerKM(rs.getInt(Vehicle.CHARGES_PER_KM));

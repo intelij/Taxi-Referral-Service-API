@@ -7,6 +7,7 @@ import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.glassfish.jersey.media.sse.SseBroadcaster;
 import org.taxireferral.api.DAORoles.*;
 import org.taxireferral.api.DAORoles.deprecated.DAOUser;
+import org.taxireferral.api.DAOSettings.DAOServiceConfig;
 import org.taxireferral.api.DAOs.*;
 import org.taxireferral.api.JDBCContract;
 
@@ -37,6 +38,7 @@ public class Globals {
     public static DAOResetPassword daoResetPassword = new DAOResetPassword();
     public static DAOUserSignUp daoUserSignUp = new DAOUserSignUp();
     public static DAOStaff daoStaff = new DAOStaff();
+    public static DAOServiceConfig daoServiceConfig = new DAOServiceConfig();
 
     public static VehicleDAO vehicleDAO = new VehicleDAO();
     public static DAOTripRequest tripRequestDAO = new DAOTripRequest();

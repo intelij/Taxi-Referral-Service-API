@@ -9,7 +9,9 @@ import org.taxireferral.api.Model.*;
 import org.taxireferral.api.ModelBilling.Transaction;
 import org.taxireferral.api.ModelRoles.EmailVerificationCode;
 import org.taxireferral.api.ModelRoles.PhoneVerificationCode;
+import org.taxireferral.api.ModelRoles.StaffPermissions;
 import org.taxireferral.api.ModelRoles.User;
+import org.taxireferral.api.ModelSettings.ServiceConfigurationLocal;
 import org.taxireferral.api.WebSocket.SimpleServer;
 
 import java.io.File;
@@ -319,14 +321,15 @@ public class Main {
 
         try {
 
-            connection = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL
-                    ,JDBCContract.CURRENT_USERNAME
-                    ,JDBCContract.CURRENT_PASSWORD);
+            connection = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
+                    JDBCContract.CURRENT_USERNAME, JDBCContract.CURRENT_PASSWORD);
+
 
             statement = connection.createStatement();
 
-
             statement.executeUpdate(User.createTableUsernamesPostgres);
+            statement.executeUpdate(StaffPermissions.createTablePostgres);
+
             statement.executeUpdate(Vehicle.createTableVehiclePostgres);
             statement.executeUpdate(TripRequest.createTablePostgres);
             statement.executeUpdate(CurrentTrip.createTablePostgres);
@@ -337,9 +340,10 @@ public class Main {
 
             statement.executeUpdate(VehicleType.createTablePostgres);
             statement.executeUpdate(VehicleTypeVersion.createTablePostgres);
-
             statement.executeUpdate(Transaction.createTablePostgres);
 
+
+            statement.executeUpdate(ServiceConfigurationLocal.createTablePostgres);
             System.out.println("Tables Created ... !");
 
 
@@ -370,6 +374,7 @@ public class Main {
             {
                 System.out.println(ex.toString());
             }
+
 
 
 

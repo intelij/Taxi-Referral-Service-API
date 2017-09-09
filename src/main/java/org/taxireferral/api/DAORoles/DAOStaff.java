@@ -1,6 +1,7 @@
 package org.taxireferral.api.DAORoles;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.Vehicle;
 import org.taxireferral.api.ModelEndpoints.UserEndpoint;
@@ -213,8 +214,8 @@ public class DAOStaff {
 
                 + " FROM " + User.TABLE_NAME
                 + " LEFT OUTER JOIN " + StaffPermissions.TABLE_NAME + " ON (" + StaffPermissions.TABLE_NAME + "." + StaffPermissions.STAFF_ID + " = " + User.TABLE_NAME + "." + User.USER_ID + ")"
-                + " WHERE TRUE ";
-
+                + " WHERE TRUE "
+                + " AND " + User.TABLE_NAME + "." + User.ROLE + " = " + GlobalConstants.ROLE_STAFF_CODE;
 
 
 
@@ -231,7 +232,7 @@ public class DAOStaff {
         queryJoin = queryJoin
 
                 + " group by "
-                + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ","
+                + StaffPermissions.TABLE_NAME + "." + StaffPermissions.PERMISSION_ID + ","
                 + User.TABLE_NAME + "." + User.USER_ID;
 
 

@@ -219,13 +219,10 @@ public class UserLoginRESTEndpoint {
 
 
 
-
-
-
     @PUT
     @Path("/ChangePassword/{OldPassword}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({GlobalConstants.ROLE_DRIVER})
+    @RolesAllowed({GlobalConstants.ROLE_DRIVER,GlobalConstants.ROLE_END_USER,GlobalConstants.ROLE_STAFF})
     public Response changePassword(User user, @PathParam("OldPassword")String oldPassword)
     {
 
