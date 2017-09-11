@@ -1,9 +1,7 @@
 package org.taxireferral.api.RESTEndpointRoles;
 
 import org.taxireferral.api.Globals.GlobalConstants;
-import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.ModelEndpoints.UserEndpoint;
-import org.taxireferral.api.ModelEndpoints.VehicleEndPoint;
 import org.taxireferral.api.ModelRoles.User;
 
 import javax.annotation.security.RolesAllowed;
@@ -30,7 +28,7 @@ public class StaffLoginRESTEndpoint {
     {
 
         user.setUserID(userID);
-        int rowCount = daoStaff.updateUserByAdmin(user);
+        int rowCount = daoStaff.updateStaffByAdmin(user);
 
 
         if(rowCount >= 1)

@@ -223,7 +223,7 @@ public class VehicleResource {
 
 
         vehicle.setDriverID(((User)Globals.accountApproved).getUserID());
-        int rowCount = daoVehicle.updateVehicle(vehicle);
+        int rowCount = daoVehicle.updateVehicleByDriver(vehicle);
 
         if(rowCount >= 1)
         {
@@ -298,7 +298,7 @@ public class VehicleResource {
 
 
 
-        int rowCount = daoVehicle.update_location(location,((User)Globals.accountApproved).getUserID());
+        int rowCount = daoVehicle.updateLocationByDriver(location,((User)Globals.accountApproved).getUserID());
 
         if(rowCount >= 1)
         {
@@ -617,15 +617,15 @@ public class VehicleResource {
     @Path("/GetProfile")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({GlobalConstants.ROLE_DRIVER})
-    public Response getVehicle(@QueryParam("latCenter")double latCenter,
-                               @QueryParam("lonCenter")double lonCenter)
+    public Response getProfileByDriver(@QueryParam("latCenter")double latCenter,
+                                       @QueryParam("lonCenter")double lonCenter)
     {
 
         System.out.println("Vehicle Get Taxi Profile !");
 
         User user = (User) Globals.accountApproved;
 
-        Vehicle vehicle = daoVehicle.getVehicle(user.getUserID(),latCenter,lonCenter);
+        Vehicle vehicle = daoVehicle.getProfileByDriver(user.getUserID(),latCenter,lonCenter);
 
         if(vehicle!= null)
         {

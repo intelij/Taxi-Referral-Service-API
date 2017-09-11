@@ -181,7 +181,8 @@ public class Main {
         startJettyServer();
 
 
-        SimpleServer.main(null);
+//        SimpleServer.main(null);
+
 
 //        startJettyServerThree();
     }

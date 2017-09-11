@@ -34,7 +34,7 @@ public class VehicleDAO {
 
     // delete vehicle
 
-    // getVehicle(int driverID) : get vehicle details for driver ID
+    // getProfileByDriver(int driverID) : get vehicle details for driver ID
     // getVehicles(double latPickUp, double latPickUp, String searchString)
     // getTaxisForAdmin
 
@@ -686,7 +686,7 @@ public class VehicleDAO {
 
 
 
-    public int updateVehicle(Vehicle vehicle)
+    public int updateVehicleByDriver(Vehicle vehicle)
     {
 
         if(vehicle.getMinTripCharges()> GlobalConstants.max_min_trip_charges)
@@ -799,7 +799,7 @@ public class VehicleDAO {
 
 
 
-    public int update_location(Location location,int driverID)
+    public int updateLocationByDriver(Location location, int driverID)
     {
 
         Connection connection = null;
@@ -1093,7 +1093,7 @@ public class VehicleDAO {
 
 
     // marked as deprecated
-    public int update_status(int status, int vehicleID)
+    public int updateStatus(int status, int vehicleID)
     {
 
         Connection connection = null;
@@ -1173,6 +1173,7 @@ public class VehicleDAO {
         }
 
 
+
         return rowCountItems;
     }
 
@@ -1238,8 +1239,8 @@ public class VehicleDAO {
 
 
 
-    public Vehicle getVehicle(int driverID,
-                              Double latCenter, Double lonCenter)
+    public Vehicle getProfileByDriver(int driverID,
+                                      Double latCenter, Double lonCenter)
     {
 
         String query = " ";
@@ -1700,6 +1701,8 @@ public class VehicleDAO {
 
         return endPoint;
     }
+
+
 
 
 

@@ -60,8 +60,8 @@ public class ServiceConfigurationLocal {
             + " " + ServiceConfigurationLocal.SERVICE_NAME + " text,"
             + " " + ServiceConfigurationLocal.HELPLINE_NUMBER + " text,"
 
-            + " " + ServiceConfigurationGlobal.DESCRIPTION_SHORT + " text,"
-            + " " + ServiceConfigurationGlobal.DESCRIPTION_LONG + " text,"
+            + " " + ServiceConfigurationLocal.DESCRIPTION_SHORT + " text,"
+            + " " + ServiceConfigurationLocal.DESCRIPTION_LONG + " text,"
 
             + " " + ServiceConfigurationLocal.ADDRESS + " text,"
             + " " + ServiceConfigurationLocal.CITY + " text,"

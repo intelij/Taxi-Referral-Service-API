@@ -207,8 +207,8 @@ public class DAOUserNotifications {
     {
 
         String updateStatement =  " UPDATE " + User.TABLE_NAME
-                + " SET "    + User.FIREBASE_ID + "=?"
-                + " WHERE "  + User.USER_ID + "=?";
+                                + " SET "    + User.FIREBASE_ID + "=?"
+                                + " WHERE "  + User.USER_ID + "=?";
 
         Connection connection = null;
         PreparedStatement statement = null;

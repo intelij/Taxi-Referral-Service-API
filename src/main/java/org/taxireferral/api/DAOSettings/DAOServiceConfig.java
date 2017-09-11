@@ -225,7 +225,10 @@ public class DAOServiceConfig {
 
                 + ServiceConfigurationLocal.LAT_CENTER + ","
                 + ServiceConfigurationLocal.LON_CENTER + ","
-                + ServiceConfigurationLocal.SERVICE_RANGE + ""
+                + ServiceConfigurationLocal.SERVICE_RANGE + ","
+
+                + ServiceConfigurationLocal.CREATED + ","
+                + ServiceConfigurationLocal.UPDATED + ""
 
                 + " FROM " + ServiceConfigurationLocal.TABLE_NAME
                 + " WHERE " + ServiceConfigurationLocal.SERVICE_CONFIGURATION_ID  + " = 1 ";
@@ -287,6 +290,8 @@ public class DAOServiceConfig {
                 serviceConfig.setLonCenter(rs.getDouble(ServiceConfigurationLocal.LON_CENTER));
                 serviceConfig.setServiceRange(rs.getInt(ServiceConfigurationLocal.SERVICE_RANGE));
 
+                serviceConfig.setCreated(rs.getTimestamp(ServiceConfigurationLocal.CREATED));
+                serviceConfig.setUpdated(rs.getTimestamp(ServiceConfigurationLocal.UPDATED));
             }
 
 

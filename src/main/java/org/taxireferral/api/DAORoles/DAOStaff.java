@@ -38,7 +38,7 @@ public class DAOStaff {
 
 
 
-    public int updateUserByAdmin(User user)
+    public int updateStaffByAdmin(User user)
     {
 
         String updateStatement = "UPDATE " + User.TABLE_NAME
