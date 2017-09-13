@@ -65,6 +65,15 @@
         </dependency>
 
 
+        <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.containers/jersey-container-jetty-http -->
+        <!--<dependency>-->
+            <!--<groupId>org.glassfish.jersey.containers</groupId>-->
+            <!--<artifactId>jersey-container-jetty-http</artifactId>-->
+            <!--<version>2.26</version>-->
+        <!--</dependency>-->
+
+
+
 
 
         <dependency>
@@ -163,10 +172,11 @@
 
     </dependencies>
 
+
+
+
     <build>
         <plugins>
-
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>

@@ -7,6 +7,7 @@ import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.Vehicle;
 import org.taxireferral.api.ModelEndpoints.VehicleEndPoint;
 import org.taxireferral.api.ModelImages.Image;
+import org.taxireferral.api.ModelRoles.StaffPermissions;
 import org.taxireferral.api.ModelRoles.User;
 import org.taxireferral.api.ModelUtility.Location;
 
@@ -43,20 +44,6 @@ public class VehicleResource {
     {
 
         int idOfInsertedRow = -1;
-
-//        if (Globals.accountApproved instanceof User)
-//        {
-//            if(((User)Globals.accountApproved).getRole() != GlobalConstants.ROLE_DRIVER_CODE)
-//            {
-//                throw new ForbiddenException();
-//            }
-//
-//
-//            idOfInsertedRow = daoVehicle.insert_vehicle(vehicle,false);
-//
-//            vehicle.setVehicleID(idOfInsertedRow);
-//        }
-
 
 
 
@@ -102,21 +89,22 @@ public class VehicleResource {
     {
 
 
-//        if(Globals.accountApproved instanceof User) {
+        User user = (User) Globals.accountApproved;
+        StaffPermissions permissions = Globals.daoStaff.getStaffPermissions(user.getUserID());
 
-            // checking permission
-//            Staff staff = (Staff) Globals.accountApproved;
-//            if (!staff.isApproveShops())
-//            {
-//                 the staff member doesnt have persmission to post Item Category
-//                throw new ForbiddenException("Not Permitted");
-//            }
-//        }
+        // check staff permissions
+
+        if(user.getRole()!=GlobalConstants.ROLE_ADMIN_CODE)
+        {
+            if(permissions==null || !permissions.isPermitTaxiRegistrationAndRenewal())
+            {
+                return Response.status(Response.Status.EXPECTATION_FAILED)
+                        .build();
+            }
+        }
+
 
         System.out.println("Update By Admin");
-
-//        vehicle.setVehicleID(vehicleID);
-
         int rowCount = daoVehicle.enableVehicleByAdmin(enabled,vehicleID);
 
 
@@ -154,22 +142,22 @@ public class VehicleResource {
                                   @PathParam("MonthsToExtend")int monthsToExtend)
     {
 
+        User user = (User) Globals.accountApproved;
+        StaffPermissions permissions = Globals.daoStaff.getStaffPermissions(user.getUserID());
 
-//        if(Globals.accountApproved instanceof User) {
+        // check staff permissions
 
-        // checking permission
-//            Staff staff = (Staff) Globals.accountApproved;
-//            if (!staff.isApproveShops())
-//            {
-//                 the staff member doesnt have persmission to post Item Category
-//                throw new ForbiddenException("Not Permitted");
-//            }
-//        }
+        if(user.getRole()!=GlobalConstants.ROLE_ADMIN_CODE)
+        {
+            if(permissions==null || !permissions.isPermitTaxiRegistrationAndRenewal())
+            {
+                return Response.status(Response.Status.EXPECTATION_FAILED)
+                        .build();
+            }
+        }
+
 
         System.out.println("Extend Registration : Months " + monthsToExtend);
-
-//        vehicle.setVehicleID(vehicleID);
-
         int rowCount = daoVehicle.extend_registration(vehicleID,monthsToExtend);
 
 
@@ -211,17 +199,6 @@ public class VehicleResource {
     public Response updateBySelf(Vehicle vehicle)
     {
 
-
-//        if(Globals.accountApproved instanceof User)
-//        {
-//            shop.setShopAdminID(((ShopAdmin) Globals.accountApproved).getShopAdminID());
-//        }
-//        else
-//        {
-//            throw new ForbiddenException();
-//        }
-
-
         vehicle.setDriverID(((User)Globals.accountApproved).getUserID());
         int rowCount = daoVehicle.updateVehicleByDriver(vehicle);
 
@@ -250,6 +227,20 @@ public class VehicleResource {
     @RolesAllowed({GlobalConstants.ROLE_STAFF,GlobalConstants.ROLE_ADMIN})
     public Response updateByAdmin(Vehicle vehicle)
     {
+        User user = (User) Globals.accountApproved;
+        StaffPermissions permissions = Globals.daoStaff.getStaffPermissions(user.getUserID());
+
+
+
+
+        if(user.getRole()!=GlobalConstants.ROLE_ADMIN_CODE) {
+
+            if (permissions == null || !permissions.isPermitTaxiProfileUpdate()) {
+                return Response.status(Response.Status.EXPECTATION_FAILED)
+                        .build();
+            }
+        }
+
 
         int rowCount = daoVehicle.updateVehicleByAdmin(vehicle);
 
@@ -281,22 +272,6 @@ public class VehicleResource {
     @RolesAllowed({GlobalConstants.ROLE_DRIVER})
     public Response updateLocation(Location location)
     {
-
-//        , @PathParam("VehicleID")int vehicleID
-//        /{VehicleID}
-
-
-//        if(Globals.accountApproved instanceof User)
-//        {
-//            shop.setShopAdminID(((ShopAdmin) Globals.accountApproved).getShopAdminID());
-//        }
-//        else
-//        {
-//            throw new ForbiddenException();
-//        }
-
-
-
 
         int rowCount = daoVehicle.updateLocationByDriver(location,((User)Globals.accountApproved).getUserID());
 
@@ -364,16 +339,6 @@ public class VehicleResource {
     public Response setTaxiAvailable()
     {
 
-//        if(Globals.accountApproved instanceof User)
-//        {
-//            shop.setShopAdminID(((ShopAdmin) Globals.accountApproved).getShopAdminID());
-//        }
-//        else
-//        {
-//            throw new ForbiddenException();
-//        }
-
-
         int rowCount = daoVehicle.setTaxiAvailable(((User)Globals.accountApproved).getUserID());
 
 
@@ -407,16 +372,6 @@ public class VehicleResource {
     @RolesAllowed({GlobalConstants.ROLE_DRIVER})
     public Response setTaxiNotAvailable()
     {
-
-//        if(Globals.accountApproved instanceof User)
-//        {
-//            shop.setShopAdminID(((ShopAdmin) Globals.accountApproved).getShopAdminID());
-//        }
-//        else
-//        {
-//            throw new ForbiddenException();
-//        }
-
 
         int rowCount = daoVehicle.setTaxiNotAvailable(((User)Globals.accountApproved).getUserID());
 
