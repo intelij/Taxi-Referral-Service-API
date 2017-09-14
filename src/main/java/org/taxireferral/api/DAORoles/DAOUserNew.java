@@ -697,18 +697,17 @@ public class DAOUserNew {
 
 
 
-    public int updateUser(User user)
+    public int updateEndUser(User user)
     {
 
         String updateStatement = "UPDATE " + User.TABLE_NAME
 
                 + " SET "
 
-                + User.USERNAME + "=?,"
+//                + User.USERNAME + "=?,"
 //                + User.PASSWORD + "=?,"
 //                + User.E_MAIL + "=?,"
-
-                + User.PHONE + "=?,"
+//                + User.PHONE + "=?,"
                 + User.NAME + "=?,"
                 + User.GENDER + "=?,"
 
@@ -731,11 +730,11 @@ public class DAOUserNew {
 
             int i = 0;
 
-            statement.setString(++i,user.getUsername());
+//            statement.setString(++i,user.getUsername());
 //            statement.setString(++i,user.getPassword());
 //            statement.setString(++i,user.getEmail());
+//            statement.setString(++i,user.getPhone());
 
-            statement.setString(++i,user.getPhone());
             statement.setString(++i,user.getName());
             statement.setObject(++i,user.getGender());
 
@@ -781,6 +780,94 @@ public class DAOUserNew {
 
         return rowCountUpdated;
     }
+
+
+    public int updateDriver(User user)
+    {
+
+        String updateStatement = "UPDATE " + User.TABLE_NAME
+
+                + " SET "
+
+//                + User.USERNAME + "=?,"
+//                + User.PASSWORD + "=?,"
+//                + User.E_MAIL + "=?,"
+
+//                + User.PHONE + "=?,"
+//                + User.NAME + "=?,"
+//                + User.GENDER + "=?,"
+
+                + User.PROFILE_IMAGE_URL + "=?,"
+                + User.IS_ACCOUNT_PRIVATE + "=?,"
+                + User.ABOUT + "=?"
+
+                + " WHERE " + User.USER_ID + " = ?";
+
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        int rowCountUpdated = 0;
+
+        try {
+
+            connection = dataSource.getConnection();
+            statement = connection.prepareStatement(updateStatement);
+
+            int i = 0;
+
+//            statement.setString(++i,user.getUsername());
+//            statement.setString(++i,user.getPassword());
+//            statement.setString(++i,user.getEmail());
+
+//            statement.setString(++i,user.getPhone());
+//            statement.setString(++i,user.getName());
+//            statement.setObject(++i,user.getGender());
+
+            statement.setString(++i,user.getProfileImagePath());
+            statement.setObject(++i,user.isAccountPrivate());
+            statement.setString(++i,user.getAbout());
+
+            statement.setObject(++i,user.getUserID());
+
+
+            rowCountUpdated = statement.executeUpdate();
+
+
+            System.out.println("Total rows updated: " + rowCountUpdated);
+
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        finally
+
+        {
+
+            try {
+
+                if(statement!=null)
+                {statement.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return rowCountUpdated;
+    }
+
+
 
 
 

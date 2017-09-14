@@ -124,15 +124,49 @@ public class UserLoginRESTEndpoint {
 
     //    GlobalConstants.ROLE_ADMIN,GlobalConstants.ROLE_STAFF,GlobalConstants.ROLE_END_USER
 
-    @PUT
-    @Path("/{UserID}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({GlobalConstants.ROLE_DRIVER,GlobalConstants.ROLE_END_USER,GlobalConstants.ROLE_STAFF,GlobalConstants.ROLE_ADMIN})
-    public Response updateUser(User user, @PathParam("UserID")int userID)
-    {
 
-        user.setUserID(userID);
-        int rowCount = daoUser.updateUser(user);
+
+    @PUT
+    @Path("/UpdateProfileEndUser")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_END_USER})
+    public Response updateProfileEndUser(User user)
+    {
+//        /{UserID}
+//        @PathParam("UserID")int userID
+
+        user.setUserID(((User)Globals.accountApproved).getUserID());
+        int rowCount = daoUser.updateEndUser(user);
+
+
+        if(rowCount >= 1)
+        {
+
+            return Response.status(Response.Status.OK)
+                    .build();
+        }
+        if(rowCount == 0)
+        {
+
+            return Response.status(Response.Status.NOT_MODIFIED)
+                    .build();
+        }
+
+        return null;
+    }
+
+
+    @PUT
+    @Path("/UpdateProfileDriver")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_DRIVER})
+    public Response updateProfileDriver(User user)
+    {
+//        /{UserID}
+//        , @PathParam("UserID")int userID
+
+        user.setUserID(((User)Globals.accountApproved).getUserID());
+        int rowCount = daoUser.updateDriver(user);
 
 
         if(rowCount >= 1)

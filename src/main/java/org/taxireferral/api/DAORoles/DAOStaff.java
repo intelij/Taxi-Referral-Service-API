@@ -39,6 +39,98 @@ public class DAOStaff {
 
 
 
+
+    public int updateStaffProfile(User user)
+    {
+
+        String updateStatement = "UPDATE " + User.TABLE_NAME
+
+                + " SET "
+
+//                + User.USERNAME + "=?,"
+//                + User.PASSWORD + "=?,"
+//                + User.E_MAIL + "=?,"
+//                + User.PHONE + "=?,"
+                + User.NAME + "=?,"
+                + User.GENDER + "=?,"
+
+                + User.PROFILE_IMAGE_URL + "=?,"
+                + User.IS_ACCOUNT_PRIVATE + "=?,"
+                + User.ABOUT + "=?"
+
+                + " WHERE " + User.USER_ID + " = ?";
+
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        int rowCountUpdated = 0;
+
+        try {
+
+            connection = dataSource.getConnection();
+            statement = connection.prepareStatement(updateStatement);
+
+            int i = 0;
+
+//            statement.setString(++i,user.getUsername());
+//            statement.setString(++i,user.getPassword());
+//            statement.setString(++i,user.getEmail());
+//            statement.setString(++i,user.getPhone());
+
+            statement.setString(++i,user.getName());
+            statement.setObject(++i,user.getGender());
+
+            statement.setString(++i,user.getProfileImagePath());
+            statement.setObject(++i,user.isAccountPrivate());
+            statement.setString(++i,user.getAbout());
+
+            statement.setObject(++i,user.getUserID());
+
+
+            rowCountUpdated = statement.executeUpdate();
+
+
+            System.out.println("Total rows updated: " + rowCountUpdated);
+
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        finally
+
+        {
+
+            try {
+
+                if(statement!=null)
+                {statement.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return rowCountUpdated;
+    }
+
+
+
+
+
+
+
+
     public int updateStaffByAdmin(User user)
     {
 
@@ -367,6 +459,9 @@ public class DAOStaff {
 
 
     public UserEndpoint getStaffForAdmin(
+            Double latPickUp, Double lonPickUp,
+            Boolean permitProfileUpdate,
+            Boolean permitRegistrationAndRenewal,
             Boolean gender,
             String sortBy,
             Integer limit, Integer offset,
@@ -382,6 +477,11 @@ public class DAOStaff {
 
         String queryJoin = "SELECT DISTINCT "
 
+
+                + "6371 * acos( cos( radians("
+                + latPickUp + ")) * cos( radians(" +  StaffPermissions.LAT_CURRENT +  ") ) * cos(radians(" + StaffPermissions.LON_CURRENT +  ") - radians("
+                + lonPickUp + "))"
+                + " + sin( radians(" + latPickUp + ")) * sin(radians(" + StaffPermissions.LAT_CURRENT + "))) as distance" + ","
 
                 + User.TABLE_NAME + "." + User.USER_ID + ","
                 + User.TABLE_NAME + "." + User.USERNAME + ","
@@ -415,6 +515,20 @@ public class DAOStaff {
             queryJoin = queryJoin + " AND " + User.TABLE_NAME + "." + User.GENDER + " = ?";
         }
 //
+
+
+        if(permitProfileUpdate!=null && permitProfileUpdate)
+        {
+            queryJoin = queryJoin + " AND " + StaffPermissions.TABLE_NAME + "." + StaffPermissions.PERMIT_TAXI_PROFILE_UPDATE + " = TRUE ";
+        }
+
+
+        if(permitRegistrationAndRenewal !=null && permitRegistrationAndRenewal)
+        {
+            queryJoin = queryJoin + " AND " + StaffPermissions.TABLE_NAME + "." + StaffPermissions.PERMIT_TAXI_REGISTRATION_AND_RENEWAL + " = TRUE ";
+        }
+
+
 
 
 

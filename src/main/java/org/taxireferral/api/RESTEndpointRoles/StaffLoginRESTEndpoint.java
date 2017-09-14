@@ -22,6 +22,44 @@ import static org.taxireferral.api.Globals.Globals.daoStaff;
 public class StaffLoginRESTEndpoint {
 
 
+
+
+
+    @PUT
+    @Path("/UpdateProfileStaff")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_ADMIN,GlobalConstants.ROLE_STAFF})
+    public Response updateProfileStaff(User user)
+    {
+//        /{UserID}
+//        @PathParam("UserID")int userID
+
+        user.setUserID(((User)Globals.accountApproved).getUserID());
+        int rowCount = daoStaff.updateStaffProfile(user);
+
+
+        if(rowCount >= 1)
+        {
+
+            return Response.status(Response.Status.OK)
+                    .build();
+        }
+        if(rowCount == 0)
+        {
+
+            return Response.status(Response.Status.NOT_MODIFIED)
+                    .build();
+        }
+
+        return null;
+    }
+
+
+
+
+
+
+
     @PUT
     @Path("/{UserID}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -88,6 +126,9 @@ public class StaffLoginRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({GlobalConstants.ROLE_ADMIN})
     public Response getStaffForAdmin(
+            @QueryParam("latCurrent") Double latPickUp, @QueryParam("lonCurrent") Double lonPickUp,
+            @QueryParam("PermitProfileUpdate") Boolean permitProfileUpdate,
+            @QueryParam("PermitRegistrationAndRenewal") Boolean permitRegistrationAndRenewal,
             @QueryParam("Gender") Boolean gender,
             @QueryParam("SortBy") String sortBy,
             @QueryParam("Limit")Integer limit, @QueryParam("Offset")Integer offset,
@@ -112,6 +153,8 @@ public class StaffLoginRESTEndpoint {
 
 
         UserEndpoint endPoint = daoStaff.getStaffForAdmin(
+                latPickUp,lonPickUp,
+                permitProfileUpdate,permitRegistrationAndRenewal,
                 gender,
                 sortBy,limit,offset,
                 getRowCount,getOnlyMetaData
