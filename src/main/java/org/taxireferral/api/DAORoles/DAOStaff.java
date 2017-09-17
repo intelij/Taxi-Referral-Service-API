@@ -505,7 +505,9 @@ public class DAOStaff {
                 + " FROM " + User.TABLE_NAME
                 + " LEFT OUTER JOIN " + StaffPermissions.TABLE_NAME + " ON (" + StaffPermissions.TABLE_NAME + "." + StaffPermissions.STAFF_ID + " = " + User.TABLE_NAME + "." + User.USER_ID + ")"
                 + " WHERE TRUE "
-                + " AND " + User.TABLE_NAME + "." + User.ROLE + " = " + GlobalConstants.ROLE_STAFF_CODE;
+                + " AND ( " + User.TABLE_NAME + "." + User.ROLE + " = " + GlobalConstants.ROLE_STAFF_CODE
+                + " OR "
+                + User.TABLE_NAME + "." + User.ROLE + " = " + GlobalConstants.ROLE_ADMIN_CODE + " ) ";
 
 
 
@@ -800,7 +802,12 @@ public class DAOStaff {
                 + " FROM " + User.TABLE_NAME
                 + " LEFT OUTER JOIN " + StaffPermissions.TABLE_NAME + " ON (" + StaffPermissions.TABLE_NAME + "." + StaffPermissions.STAFF_ID + " = " + User.TABLE_NAME + "." + User.USER_ID + ")"
                 + " WHERE TRUE "
-                + " AND " + User.TABLE_NAME + "." + User.ROLE + " = " + GlobalConstants.ROLE_STAFF_CODE;
+                + " AND ( " + User.TABLE_NAME + "." + User.ROLE + " = " + GlobalConstants.ROLE_STAFF_CODE
+                + " OR "
+                + User.TABLE_NAME + "." + User.ROLE + " = " + GlobalConstants.ROLE_ADMIN_CODE + " ) ";
+
+
+//        + " AND " + User.TABLE_NAME + "." + User.ROLE + " = " + GlobalConstants.ROLE_STAFF_CODE;
 
 
 
