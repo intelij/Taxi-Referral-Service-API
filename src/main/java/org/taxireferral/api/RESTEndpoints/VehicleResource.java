@@ -108,11 +108,11 @@ public class VehicleResource {
         int rowCount = daoVehicle.enableVehicleByAdmin(enabled,vehicleID);
 
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
 
         if(rowCount >= 1)
@@ -161,11 +161,11 @@ public class VehicleResource {
         int rowCount = daoVehicle.extend_registration(vehicleID,monthsToExtend);
 
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
 
         if(rowCount >= 1)

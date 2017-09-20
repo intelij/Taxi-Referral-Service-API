@@ -425,11 +425,12 @@ public class CurrentTripRESTEndpoint {
 //        System.out.println(email);
 
 
-        try {
-            Thread.sleep(400);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//
+//        try {
+//            Thread.sleep(400);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
 
         if(result!=null)
@@ -468,11 +469,11 @@ public class CurrentTripRESTEndpoint {
 //        System.out.println(email);
 
 
-        try {
-            Thread.sleep(400);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(400);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
 
         if(result!=null)
