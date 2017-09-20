@@ -7,6 +7,7 @@ import org.taxireferral.api.Model.CurrentTrip;
 import org.taxireferral.api.Model.TripRequest;
 import org.taxireferral.api.Model.Vehicle;
 import org.taxireferral.api.ModelEndpoints.TripRequestEndPoint;
+import org.taxireferral.api.ModelNotifications.NotificationData;
 import org.taxireferral.api.ModelRoles.EmailVerificationCode;
 import org.taxireferral.api.ModelRoles.User;
 import org.taxireferral.api.ModelUtility.Location;
@@ -721,10 +722,6 @@ public class DAOTripRequest {
 
             rowCountItems = statementUpdate.executeUpdate();
 
-            if(rowCountItems==1)
-            {
-                Globals.userNotifications.sendNotificationToUser(userID,1,GlobalConstants.FIREBASE_END_USER_KEY);
-            }
 
 
 //            connection.commit();

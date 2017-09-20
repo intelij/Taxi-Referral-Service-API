@@ -19,8 +19,8 @@ public class GlobalConstants {
     public static final String FIREBASE_DRIVER_KEY = "Key=" + "AIzaSyCujFExkfJ5bYwDYpMfbSWLr4NVemwD0KY";
     public static final String FIREBASE_END_USER_KEY = "Key=" + "AIzaSyC4eRU7FEf-DiRheyaQZrde-vI6W32taLU";
 
-    public static final int NOTIFICATION_TYPE_TRIP_REQUESTS = 1;
-    public static final int NOTIFICATION_TYPE_CURRENT_TRIP = 2;
+//    public static final int NOTIFICATION_TYPE_TRIP_REQUESTS = 1;
+//    public static final int NOTIFICATION_TYPE_CURRENT_TRIP = 2;
 
 
 

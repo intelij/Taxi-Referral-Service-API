@@ -166,12 +166,23 @@ public class TripHistory {
     // stores the taxi
     private Vehicle rt_vehicle;
     private User rt_end_user;
+    private int rt_driver_id;
 
 
 
 
 
     // getter and setters
+
+
+    public int getRt_driver_id() {
+        return rt_driver_id;
+    }
+
+    public void setRt_driver_id(int rt_driver_id) {
+        this.rt_driver_id = rt_driver_id;
+    }
+
     public Vehicle getRt_vehicle() {
         return rt_vehicle;
     }

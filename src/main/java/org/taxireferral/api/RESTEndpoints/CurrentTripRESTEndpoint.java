@@ -5,6 +5,7 @@ import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.CurrentTrip;
 import org.taxireferral.api.Model.TripHistory;
+import org.taxireferral.api.ModelNotifications.NotificationData;
 import org.taxireferral.api.ModelRoles.User;
 import org.taxireferral.api.ModelUtility.LocationCurrentTrip;
 
@@ -72,6 +73,7 @@ public class CurrentTripRESTEndpoint {
     public Response finishTrip(TripHistory tripHistory)
     {
 
+
         tripHistory.setCancelled(false);
 
         int rowCount = daoCurrentTrip.finish_trip(
@@ -83,6 +85,11 @@ public class CurrentTripRESTEndpoint {
 
         if(rowCount >= 1)
         {
+            Globals.userNotifications.sendNotificationToEndUser(
+                    tripHistory.getEndUserID(),
+                    NotificationData.NOTIFICATION_TYPE_CURRENT_TRIP,
+                    NotificationData.NOTIFICATION_SUB_TYPE_CURRENT_TRIP_TRIP_FINISHED
+            );
 
             return Response.status(Response.Status.OK)
                     .build();
@@ -119,6 +126,12 @@ public class CurrentTripRESTEndpoint {
         if(rowCount >= 1)
         {
 
+            Globals.userNotifications.sendNotificationToEndUser(
+                    tripHistory.getEndUserID(),
+                    NotificationData.NOTIFICATION_TYPE_CURRENT_TRIP,
+                    NotificationData.NOTIFICATION_SUB_TYPE_CURRENT_TRIP_TRIP_CANCELLED_BY_DRIVER
+            );
+
             return Response.status(Response.Status.OK)
                     .build();
         }
@@ -144,6 +157,7 @@ public class CurrentTripRESTEndpoint {
         tripHistory.setCancelled(true);
         tripHistory.setCancelledByUser(true);
 
+
         int rowCount = daoCurrentTrip.cancel_trip_by_end_user(
                 ((User) Globals.accountApproved).getUserID(),
                 true,tripHistory
@@ -153,6 +167,11 @@ public class CurrentTripRESTEndpoint {
 
         if(rowCount >= 1)
         {
+            Globals.userNotifications.sendNotificationToDriver(
+                    tripHistory.getRt_driver_id(),
+                    NotificationData.NOTIFICATION_TYPE_CURRENT_TRIP,
+                    NotificationData.NOTIFICATION_SUB_TYPE_CURRENT_TRIP_TRIP_CANCELLED_BY_DRIVER
+            );
 
             return Response.status(Response.Status.OK)
                     .build();
@@ -201,9 +220,9 @@ public class CurrentTripRESTEndpoint {
 
 
     @PUT
-    @Path("/StartTripByEndUser")
-    @RolesAllowed({GlobalConstants.ROLE_END_USER, ROLE_DRIVER})
-    public Response startTripByEndUser()
+    @Path("/StartTripByEndUser/{DriverID}")
+    @RolesAllowed({GlobalConstants.ROLE_END_USER})
+    public Response startTripByEndUser(@PathParam("DriverID")int driverID)
     {
 
 //        /{CurrentTripID}
@@ -213,6 +232,13 @@ public class CurrentTripRESTEndpoint {
 
         if(rowCount >= 1)
         {
+
+            Globals.userNotifications.sendNotificationToDriver(
+                    driverID,
+                    NotificationData.NOTIFICATION_TYPE_CURRENT_TRIP,
+                    NotificationData.NOTIFICATION_SUB_TYPE_CURRENT_TRIP_START_REQUESTED
+            );
+
 
             return Response.status(Response.Status.OK)
                     .build();
@@ -241,6 +267,13 @@ public class CurrentTripRESTEndpoint {
 
         if(rowCount >= 1)
         {
+            Globals.userNotifications.sendNotificationToEndUser(
+                    currentTrip.getEndUserID(),
+                    NotificationData.NOTIFICATION_TYPE_CURRENT_TRIP,
+                    NotificationData.NOTIFICATION_SUB_TYPE_CURRENT_TRIP_TRIP_STARTED
+            );
+
+
 
             return Response.status(Response.Status.OK)
                     .build();

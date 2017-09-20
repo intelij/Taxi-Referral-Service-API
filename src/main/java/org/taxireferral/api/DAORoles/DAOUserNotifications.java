@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.zaxxer.hikari.HikariDataSource;
 import okhttp3.*;
 import org.postgresql.util.Base64;
+import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.ModelNotifications.FirebaseNotification;
 import org.taxireferral.api.ModelNotifications.NotificationData;
@@ -56,12 +57,58 @@ public class DAOUserNotifications {
 
 
 
-    public void sendNotificationToUser(int userID,int notificationType,String firebase_server_key)
+    public void sendNotificationToEndUser(int userID,
+                                          int notificationType,
+                                          int notificationSubType)
+    {
+
+        sendNotificationToUser(
+                userID,
+                notificationType,
+                notificationSubType,
+                GlobalConstants.FIREBASE_END_USER_KEY
+        );
+
+    }
+
+
+
+
+    public void sendNotificationToDriver(int userID,
+                                         int notificationType,
+                                         int notificationSubType)
+    {
+
+        sendNotificationToUser(
+                userID,
+                notificationType,
+                notificationSubType,
+                GlobalConstants.FIREBASE_DRIVER_KEY
+        );
+
+    }
+
+
+
+
+
+
+
+
+
+
+    public void sendNotificationToUser(
+            int userID,
+            int notificationType,
+            int notificationSubType,
+            String firebase_server_key
+    )
     {
         User user = getFirebaseToken(userID);
 
         NotificationData data = new NotificationData();
         data.setNotificationType(notificationType);
+        data.setNotificationSubType(notificationSubType);
 
         FirebaseNotification firebaseNotification = new FirebaseNotification();
         firebaseNotification.setTo(user.getFirebaseID());

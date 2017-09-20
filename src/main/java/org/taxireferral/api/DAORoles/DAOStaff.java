@@ -306,14 +306,13 @@ public class DAOStaff {
             int i = 0;
 
 
-
             if(permissions!=null)
             {
                 statement.setObject(++i,permissions.getStaffUserID());
                 statement.setObject(++i,permissions.getLatCurrent());
                 statement.setObject(++i,permissions.getLonCurrent());
 
-                statement.executeUpdate();
+                rowCountUpdated = statement.executeUpdate();
             }
 
 

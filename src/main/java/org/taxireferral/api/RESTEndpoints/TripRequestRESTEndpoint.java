@@ -8,6 +8,7 @@ import org.taxireferral.api.Model.TripRequest;
 import org.taxireferral.api.Model.Vehicle;
 import org.taxireferral.api.ModelEndpoints.TripRequestEndPoint;
 import org.taxireferral.api.ModelEndpoints.VehicleEndPoint;
+import org.taxireferral.api.ModelNotifications.NotificationData;
 import org.taxireferral.api.ModelRoles.User;
 import org.taxireferral.api.ModelUtility.Location;
 
@@ -55,10 +56,10 @@ public class TripRequestRESTEndpoint {
         if(idOfInsertedRow >=1)
         {
 
-            Globals.userNotifications.sendNotificationToUser(
+            Globals.userNotifications.sendNotificationToDriver(
                     tripRequest.getRt_vehicle().getDriverID(),
-                    GlobalConstants.NOTIFICATION_TYPE_TRIP_REQUESTS,
-                    GlobalConstants.FIREBASE_DRIVER_KEY
+                    NotificationData.NOTIFICATION_TYPE_TAXI_REQUEST,
+                    NotificationData.NOTIFICATION_SUB_TYPE_TAXI_REQUEST_REQUEST_RECEIVED
             );
 
 
@@ -106,6 +107,11 @@ public class TripRequestRESTEndpoint {
         if(rowCount >= 1)
         {
 
+            Globals.userNotifications.sendNotificationToEndUser(userID,
+                    NotificationData.NOTIFICATION_TYPE_TAXI_REQUEST,
+                    NotificationData.NOTIFICATION_SUB_TYPE_TAXI_REQUEST_REQUEST_ACCEPTED
+            );
+
             return Response.status(Response.Status.OK)
                     .build();
         }
@@ -140,12 +146,11 @@ public class TripRequestRESTEndpoint {
             if(rowCount >= 1)
             {
 
-                Globals.userNotifications.sendNotificationToUser(
+                Globals.userNotifications.sendNotificationToDriver(
                         driverID,
-                        GlobalConstants.NOTIFICATION_TYPE_TRIP_REQUESTS,
-                        GlobalConstants.FIREBASE_DRIVER_KEY
+                        NotificationData.NOTIFICATION_TYPE_TAXI_REQUEST,
+                        NotificationData.NOTIFICATION_SUB_TYPE_TAXI_REQUEST_PICKUP_REQUESTED
                 );
-
 
 
                 return Response.status(Response.Status.OK)
@@ -192,7 +197,12 @@ public class TripRequestRESTEndpoint {
         if(rowCount >= 1)
         {
 
-            Globals.userNotifications.sendNotificationToUser(userID,2,GlobalConstants.FIREBASE_END_USER_KEY);
+            Globals.userNotifications.sendNotificationToEndUser(
+                    userID,
+                    NotificationData.NOTIFICATION_TYPE_TAXI_REQUEST,
+                    NotificationData.NOTIFICATION_SUB_TYPE_TAXI_REQUEST_PICKUP_STARTED
+            );
+
 
             return Response.status(Response.Status.OK)
                     .build();
@@ -206,6 +216,9 @@ public class TripRequestRESTEndpoint {
 
         return null;
     }
+
+
+
 
 
 
@@ -225,11 +238,12 @@ public class TripRequestRESTEndpoint {
 //        System.out.println(email);
 
 
-        try {
-            Thread.sleep(400);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
+//        try {
+//            Thread.sleep(400);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
 
         if(result)
@@ -268,12 +282,12 @@ public class TripRequestRESTEndpoint {
 
 //        System.out.println(email);
 
-
-        try {
-            Thread.sleep(400);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//
+//        try {
+//            Thread.sleep(400);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
 
         if(result!=null)
@@ -290,6 +304,9 @@ public class TripRequestRESTEndpoint {
         }
 
     }
+
+
+
 
 
 
@@ -334,6 +351,9 @@ public class TripRequestRESTEndpoint {
         }
 
     }
+
+
+
 
 
 
