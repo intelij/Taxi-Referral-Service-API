@@ -74,7 +74,6 @@ public class GlobalConstants {
 
 
 
-
     // credits and offers
     public static final int REFERRAL_CREDIT_FOR_DRIVER_REGISTRATION = 200; // credited in the account of the one who refers
     public static final int REFERRAL_CREDIT_FOR_END_USER_REGISTRATION = 100; // referral credit - credited into the account of the one who refers
@@ -87,8 +86,12 @@ public class GlobalConstants {
     public static final int CREDIT_LIMIT_FOR_END_USER = 1000;
 
 
+
+
+
+
     // constants
-    public static final int TOKEN_DURATION_MINUTES = 1;
+    public static final int TOKEN_DURATION_MINUTES = 24 * 60; // 24 hours for expiry of a token
     public static final int EMAIL_VERIFICATION_CODE_EXPIRY_MINUTES = 10;
     public static final int PHONE_OTP_EXPIRY_MINUTES = 10;
     public static final int PASSWORD_RESET_CODE_EXPIRY_MINUTES = 10;
@@ -106,11 +109,8 @@ public class GlobalConstants {
     public static final int max_charges_per_km = 15;  // 12 bucks per km
     //    public static final int min_free_pickup_distance = 5; // 3 km
 //    public static final int max_free_pickup_distance = 3; // 3 km
-    public static final int free_pickup_distance = 3; // 3 km
+    public static final int free_pickup_distance = 2; // 2 km
     public static final int taxi_referral_charges = 5; // 3 bucks per km
     public static final int free_minutes_per_km = 3; // for calculating the waiting charges
-
-
-
 
 }
