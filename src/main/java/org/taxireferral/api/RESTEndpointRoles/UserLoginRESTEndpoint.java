@@ -192,7 +192,7 @@ public class UserLoginRESTEndpoint {
     @PUT
     @Path("/UpdateEmail")
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({GlobalConstants.ROLE_DRIVER,GlobalConstants.ROLE_END_USER,GlobalConstants.ROLE_STAFF})
+    @RolesAllowed({GlobalConstants.ROLE_DRIVER,GlobalConstants.ROLE_END_USER,GlobalConstants.ROLE_STAFF,GlobalConstants.ROLE_ADMIN})
     public Response updateEmail(User user)
     {
 
@@ -223,7 +223,7 @@ public class UserLoginRESTEndpoint {
     @PUT
     @Path("/UpdatePhone")
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({GlobalConstants.ROLE_DRIVER,GlobalConstants.ROLE_END_USER,GlobalConstants.ROLE_STAFF})
+    @RolesAllowed({GlobalConstants.ROLE_DRIVER,GlobalConstants.ROLE_END_USER,GlobalConstants.ROLE_STAFF,GlobalConstants.ROLE_ADMIN})
     public Response updatePhone(User user)
     {
 
