@@ -110,7 +110,7 @@ public class GlobalConstants {
     //    public static final int min_free_pickup_distance = 5; // 3 km
 //    public static final int max_free_pickup_distance = 3; // 3 km
     public static final int free_pickup_distance = 2; // 2 km
-    public static final int taxi_referral_charges = 5; // 3 bucks per km
+    public static final int taxi_referral_charges = 10; // 3 bucks per km
     public static final int free_minutes_per_km = 3; // for calculating the waiting charges
 
 }

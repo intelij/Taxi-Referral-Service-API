@@ -104,6 +104,7 @@ public class User {
                     + " " + User.TOTAL_SERVICE_CHARGES + " float NOT NULL default 0,"
                     + " " + User.TOTAL_CREDITS + " float NOT NULL default 0,"
                     + " " + User.TOTAL_PAID + " float NOT NULL default 0,"
+
                     + " " + User.EXTENDED_CREDIT_LIMIT + " float NOT NULL default 0,"
 
                     + " " + User.REFERRED_BY + " int,"

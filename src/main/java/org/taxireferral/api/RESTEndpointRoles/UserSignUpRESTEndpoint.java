@@ -153,8 +153,20 @@ public class UserSignUpRESTEndpoint {
 
             if(idOfInsertedRow>=1)
             {
-                SendSMS.sendSMS("Congratulations your account has been registered with Taxi Referral Service.",
-                        user.getPhone());
+                if(user.getRole()==GlobalConstants.ROLE_DRIVER_CODE)
+                {
+
+                    String message = "Thank you for registering with Taxi Referral Service. Your referral credit number is "
+                            + user.getUserID() + ". You have received Joining Credit of Rs. 1000 and you will be entitled for Referral Credit of Rs. 200 for registering each driver and Rs. 100 for registering each Customer with TRS.\nBest Regards - TRS Team";
+
+                            SendSMS.sendSMS(message, user.getPhone());
+                }
+                else
+                {
+                    SendSMS.sendSMS("Congratulations your account has been registered with Taxi Referral Service.",
+                            user.getPhone());
+                }
+
 
             }
 
@@ -458,11 +470,6 @@ public class UserSignUpRESTEndpoint {
                     .build();
         }
     }
-
-
-
-
-
 
 
 
