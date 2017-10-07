@@ -11,7 +11,16 @@ public class LocationCurrentTrip {
     private double longitude;
     private double distanceTravelledForPickup;
     private double distanceTravelledForTrip;
+    private int rt_end_user_id;
 
+
+    public int getRt_end_user_id() {
+        return rt_end_user_id;
+    }
+
+    public void setRt_end_user_id(int rt_end_user_id) {
+        this.rt_end_user_id = rt_end_user_id;
+    }
 
     public double getDistanceTravelledForPickup() {
         return distanceTravelledForPickup;

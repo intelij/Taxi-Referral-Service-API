@@ -98,6 +98,11 @@ public class DAOTripHistory {
                 + TripHistory.TABLE_NAME + "." + TripHistory.MIN_TRIP_CHARGES + ","
                 + TripHistory.TABLE_NAME + "." + TripHistory.CHARGES_PER_KM + ","
 
+                + TripHistory.TABLE_NAME + "." + TripHistory.FREE_START_WAITING_MINUTES + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.FREE_MINUTES_PER_KM + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.WAIT_CHARGES_PER_MINUTE + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.TAX_RATE + ","
+
                 + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.PROFILE_IMAGE_URL + ","
@@ -302,6 +307,11 @@ public class DAOTripHistory {
                     tripHistory.setMinTripCharges(rs.getDouble(TripHistory.MIN_TRIP_CHARGES));
                     tripHistory.setChargesPerKm(rs.getDouble(TripHistory.CHARGES_PER_KM));
 
+
+                    tripHistory.setFreeStartWaitMinutes(rs.getInt(TripHistory.FREE_START_WAITING_MINUTES));
+                    tripHistory.setFreeMinutesPerKm(rs.getInt(TripHistory.FREE_MINUTES_PER_KM));
+                    tripHistory.setWaitingChargePerMinute(rs.getInt(TripHistory.WAIT_CHARGES_PER_MINUTE));
+                    tripHistory.setTaxRate(rs.getInt(TripHistory.TAX_RATE));
 
 
 
@@ -516,6 +526,11 @@ public class DAOTripHistory {
                 + TripHistory.TABLE_NAME + "." + TripHistory.MIN_TRIP_CHARGES + ","
                 + TripHistory.TABLE_NAME + "." + TripHistory.CHARGES_PER_KM + ","
 
+                + TripHistory.TABLE_NAME + "." + TripHistory.FREE_START_WAITING_MINUTES + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.FREE_MINUTES_PER_KM + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.WAIT_CHARGES_PER_MINUTE + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.TAX_RATE + ","
+
                 + User.TABLE_NAME + "." + User.USER_ID + ","
                 + User.TABLE_NAME + "." + User.PHONE + ","
                 + User.TABLE_NAME + "." + User.NAME + ","
@@ -716,6 +731,13 @@ public class DAOTripHistory {
 
                     tripHistory.setMinTripCharges(rs.getDouble(TripHistory.MIN_TRIP_CHARGES));
                     tripHistory.setChargesPerKm(rs.getDouble(TripHistory.CHARGES_PER_KM));
+
+
+                    tripHistory.setFreeStartWaitMinutes(rs.getInt(TripHistory.FREE_START_WAITING_MINUTES));
+                    tripHistory.setFreeMinutesPerKm(rs.getInt(TripHistory.FREE_MINUTES_PER_KM));
+                    tripHistory.setWaitingChargePerMinute(rs.getInt(TripHistory.WAIT_CHARGES_PER_MINUTE));
+                    tripHistory.setTaxRate(rs.getInt(TripHistory.TAX_RATE));
+
 
                     User endUser = new User();
 

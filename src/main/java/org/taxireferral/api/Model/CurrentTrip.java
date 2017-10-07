@@ -44,6 +44,12 @@ public class CurrentTrip {
     public static final String MIN_TRIP_CHARGES = "MIN_TRIP_CHARGES";
     public static final String CHARGES_PER_KM = "CHARGES_PER_KM";
 
+    public static final String FREE_START_WAITING_MINUTES = "FREE_START_WAITING_MINUTES";
+    public static final String FREE_MINUTES_PER_KM = "FREE_MINUTES_PER_KM";
+    public static final String WAIT_CHARGES_PER_MINUTE = "WAIT_CHARGES_PER_MINUTE";
+
+    public static final String TAX_RATE = "TAX_RATE";
+
 
 
 //    public static final String LAT_CURRENT = "LAT_CURRENT"; // not required - because it equals vehicle coordinates
@@ -61,7 +67,6 @@ public class CurrentTrip {
 
             "CREATE TABLE IF NOT EXISTS "
                     + CurrentTrip.TABLE_NAME + "("
-
 
                     + " " + CurrentTrip.CURRENT_TRIP_ID + " SERIAL PRIMARY KEY,"
                     + " " + CurrentTrip.VEHICLE_ID + " int UNIQUE NOT NULL,"
@@ -93,9 +98,23 @@ public class CurrentTrip {
                     + " " + CurrentTrip.MIN_TRIP_CHARGES + " float NOT NULL default 0,"
                     + " " + CurrentTrip.CHARGES_PER_KM + " float NOT NULL default 0,"
 
+                    + " " + CurrentTrip.FREE_START_WAITING_MINUTES + " float NOT NULL default 0,"
+                    + " " + CurrentTrip.FREE_MINUTES_PER_KM + " float NOT NULL default 0,"
+                    + " " + CurrentTrip.WAIT_CHARGES_PER_MINUTE + " float NOT NULL default 0,"
+                    + " " + CurrentTrip.TAX_RATE + " float NOT NULL default 0,"
+
                     + " FOREIGN KEY(" + CurrentTrip.VEHICLE_ID +") REFERENCES " + Vehicle.TABLE_NAME + "(" + Vehicle.VEHICLE_ID + ") ON DELETE CASCADE,"
                     + " FOREIGN KEY(" + CurrentTrip.END_USER_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE"
                     + ")";
+
+
+
+    public static final String upgradeTableSchema =
+                    " ALTER TABLE IF EXISTS " + CurrentTrip.TABLE_NAME +
+                    " ADD COLUMN IF NOT EXISTS " + CurrentTrip.FREE_START_WAITING_MINUTES + " float NOT NULL default 0," +
+                    " ADD COLUMN IF NOT EXISTS " + CurrentTrip.FREE_MINUTES_PER_KM + " float NOT NULL default 0," +
+                    " ADD COLUMN IF NOT EXISTS " + CurrentTrip.WAIT_CHARGES_PER_MINUTE + " float NOT NULL default 0," +
+                    " ADD COLUMN IF NOT EXISTS " + CurrentTrip.TAX_RATE + " float NOT NULL default 0";
 
 
 
@@ -130,16 +149,165 @@ public class CurrentTrip {
     private double minTripCharges;
     private double chargesPerKm;
 
+    private double freeStartWaitMinutes; // free bulk minutes for each trip
+    private double freeMinutesPerKm; // free minutes user gets for 1 km
+    private double waitingChargePerMinute; // waiting charge per minute
+    private double taxRate;
+
 
     private Vehicle rt_vehicle;
     private User rt_end_user;
 
 
+    // utility functions
+
+
+    public double calculateTripTotal()
+    {
+        double total = 0;
+
+        total = calculateTripCharges()
+                + calculatePickupCharges()
+                + referralCharges
+                + calculateWaitingCharges();
+
+        if(total < minTripCharges)
+        {
+            total = minTripCharges;
+        }
+
+        return total;
+    }
+
+
+
+
+    public double calculateTaxes()
+    {
+
+        return (calculateTripTotal() * taxRate * 0.01);
+    }
+
+
+
+    public double calculateNetPayable()
+    {
+        return  calculateTripTotal() + calculateTaxes();
+    }
+
+
+
+
+    public double calculatePickupCharges()
+    {
+        double pickupCharges = 0;
+
+        double chargablePickupDistance = distanceTravelledForPickup - freePickUpDistance;
+
+        if(chargablePickupDistance > 0)
+        {
+            pickupCharges = chargablePickupDistance * chargesPerKm;
+        }
+
+        return pickupCharges;
+    }
+
+
+
+    public double calculateTripCharges()
+    {
+        return distanceTravelledForTrip * chargesPerKm;
+    }
+
+
+
+
+    public double calculateWaitingCharges()
+    {
+
+        long diff = getTimestampFinished().getTime() - getTimestampStarted().getTime();
+        long seconds = diff / 1000;
+
+        long freeSeconds = 0;
+        long chargableMinutes = 0;
+
+        freeSeconds = (long) ((freeStartWaitMinutes + freeMinutesPerKm * distanceTravelledForTrip) * 60);
+
+        chargableMinutes = (seconds - freeSeconds) / 60 ;
+
+
+        if(chargableMinutes <= 0)
+        {
+            return 0;
+        }
+        else
+        {
+            return chargableMinutes * waitingChargePerMinute;
+        }
+    }
+
+
+
+    public double calculateWaitingChargesUntilNow()
+    {
+
+        long diff = System.currentTimeMillis() - getTimestampStarted().getTime();
+        long seconds = diff / 1000;
+
+        long freeSeconds = 0;
+        long chargableMinutes = 0;
+
+        freeSeconds = (long) ((freeStartWaitMinutes + freeMinutesPerKm * distanceTravelledForTrip) * 60);
+
+        chargableMinutes = (seconds - freeSeconds) / 60 ;
+
+
+        if(chargableMinutes <= 0)
+        {
+            return 0;
+        }
+        else
+        {
+            return chargableMinutes * waitingChargePerMinute;
+        }
+    }
 
 
 
     // getter and setters
 
+
+    public double getTaxRate() {
+        return taxRate;
+    }
+
+    public void setTaxRate(double taxRate) {
+        this.taxRate = taxRate;
+    }
+
+    public double getFreeStartWaitMinutes() {
+        return freeStartWaitMinutes;
+    }
+
+    public void setFreeStartWaitMinutes(double freeStartWaitMinutes) {
+        this.freeStartWaitMinutes = freeStartWaitMinutes;
+    }
+
+    public double getFreeMinutesPerKm() {
+        return freeMinutesPerKm;
+    }
+
+    public void setFreeMinutesPerKm(double freeMinutesPerKm) {
+        this.freeMinutesPerKm = freeMinutesPerKm;
+    }
+
+    public double getWaitingChargePerMinute() {
+        return waitingChargePerMinute;
+    }
+
+    public void setWaitingChargePerMinute(double waitingChargePerMinute) {
+        this.waitingChargePerMinute = waitingChargePerMinute;
+    }
 
     public Vehicle getRt_vehicle() {
         return rt_vehicle;

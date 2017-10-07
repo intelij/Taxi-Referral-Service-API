@@ -82,10 +82,8 @@ public class GlobalConstants {
     public static final int JOINING_CREDIT_FOR_END_USER = 500; // credit applied when a end user joins the platform
 
     // services get suspended if the user current_dues exceed the max current dues
-    public static final int CREDIT_LIMIT_FOR_DRIVER = 1000;
-    public static final int CREDIT_LIMIT_FOR_END_USER = 1000;
-
-
+    public static final int CREDIT_LIMIT_FOR_DRIVER = - 1000;
+//    public static final int CREDIT_LIMIT_FOR_END_USER = - 1000;
 
 
 
@@ -111,6 +109,16 @@ public class GlobalConstants {
 //    public static final int max_free_pickup_distance = 3; // 3 km
     public static final int free_pickup_distance = 2; // 2 km
     public static final int taxi_referral_charges = 10; // 3 bucks per km
+
+
+
+    public static final int free_start_waiting_minutes = 5;
     public static final int free_minutes_per_km = 3; // for calculating the waiting charges
+    public static final int wait_charges_per_minute = 2;
+    public static final int tax_rate_in_percent = 5;
+
+    public static final int MIN_TAX_ACCOUNT_BALANCE = 0;
+    public static final int MIN_SERVICE_ACCOUNT_BALANCE = 0;
+
 
 }

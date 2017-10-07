@@ -67,7 +67,6 @@ public class VehicleResource {
 
 
         return null;
-
     }
 
 

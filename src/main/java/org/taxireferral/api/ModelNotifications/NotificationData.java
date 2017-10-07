@@ -1,5 +1,7 @@
 package org.taxireferral.api.ModelNotifications;
 
+import org.taxireferral.api.ModelUtility.LocationCurrentTrip;
+
 /**
  * Created by sumeet on 2/8/17.
  */
@@ -26,15 +28,27 @@ public class NotificationData {
     public static final int NOTIFICATION_SUB_TYPE_CURRENT_TRIP_TRIP_STARTED = 2; // for end user
     public static final int NOTIFICATION_SUB_TYPE_CURRENT_TRIP_TRIP_FINISHED = 3; // for end user
 
+
+
     public static final int NOTIFICATION_SUB_TYPE_CURRENT_TRIP_TRIP_CANCELLED_BY_DRIVER = 4; // for end user
     public static final int NOTIFICATION_SUB_TYPE_CURRENT_TRIP_TRIP_CANCELLED_BY_END_USER = 5; // for driver
 
+    public static final int NOTIFICATION_SUB_TYPE_CURRENT_TRIP_LOCATION_UPDATE = 6; // for end user
 
     private int notificationType;
     private int notificationSubType;
 
 
+    private LocationCurrentTrip locationCurrentTrip;
 
+
+    public LocationCurrentTrip getLocationCurrentTrip() {
+        return locationCurrentTrip;
+    }
+
+    public void setLocationCurrentTrip(LocationCurrentTrip locationCurrentTrip) {
+        this.locationCurrentTrip = locationCurrentTrip;
+    }
 
     public int getNotificationSubType() {
         return notificationSubType;

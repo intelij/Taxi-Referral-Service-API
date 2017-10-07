@@ -54,6 +54,20 @@ public class TripHistory {
     public static final String CHARGES_PER_KM = "CHARGES_PER_KM";
 
 
+    public static final String FREE_START_WAITING_MINUTES = "FREE_START_WAITING_MINUTES";
+    public static final String FREE_MINUTES_PER_KM = "FREE_MINUTES_PER_KM";
+    public static final String WAIT_CHARGES_PER_MINUTE = "WAIT_CHARGES_PER_MINUTE";
+
+    public static final String TAX_RATE = "TAX_RATE";
+
+    public static final String DERIVED_PICKUP_CHARGE = "DERIVED_PICKUP_CHARGE";
+    public static final String DERIVED_TRIP_CHARGE = "DERIVED_TRIP_CHARGE";
+    public static final String DERIVED_WAITING_CHARGE = "DERIVED_WAITING_CHARGE";
+    public static final String DERIVED_TRIP_TOTAL = "DERIVED_TRIP_TOTAL";
+    public static final String DERIVED_TAXES = "DERIVED_TAXES";
+    public static final String DERIVED_NET_PAYABLE = "DERIVED_NET_PAYABLE";
+
+
     // people above 18 are considered as adults in the context of taxi referral service
     //    public static final String ADULTS_TOTAL = "ADULTS_TOTAL";
 
@@ -104,6 +118,18 @@ public class TripHistory {
                     + " " + TripHistory.MIN_TRIP_CHARGES + " float NOT NULL default 0,"
                     + " " + TripHistory.CHARGES_PER_KM + " float NOT NULL default 0,"
 
+                    + " " + TripHistory.FREE_START_WAITING_MINUTES + " float NOT NULL default 0,"
+                    + " " + TripHistory.FREE_MINUTES_PER_KM + " float NOT NULL default 0,"
+                    + " " + TripHistory.WAIT_CHARGES_PER_MINUTE + " float NOT NULL default 0,"
+                    + " " + TripHistory.TAX_RATE + " float NOT NULL default 0,"
+
+                    + " " + TripHistory.DERIVED_PICKUP_CHARGE + " float NOT NULL default 0,"
+                    + " " + TripHistory.DERIVED_TRIP_CHARGE + " float NOT NULL default 0,"
+                    + " " + TripHistory.DERIVED_WAITING_CHARGE + " float NOT NULL default 0,"
+                    + " " + TripHistory.DERIVED_TRIP_TOTAL + " float NOT NULL default 0,"
+                    + " " + TripHistory.DERIVED_TAXES + " float NOT NULL default 0,"
+                    + " " + TripHistory.DERIVED_NET_PAYABLE + " float NOT NULL default 0,"
+
                     + " FOREIGN KEY(" + TripHistory.VEHICLE_ID +") REFERENCES " + Vehicle.TABLE_NAME + "(" + Vehicle.VEHICLE_ID + ") ON DELETE CASCADE,"
                     + " FOREIGN KEY(" + TripHistory.END_USER_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE"
                     + ")";
@@ -111,14 +137,24 @@ public class TripHistory {
 
 
 
+
+
     public static final String upgradeTableSchema =
             " ALTER TABLE IF EXISTS " + TripHistory.TABLE_NAME +
-                    " ADD COLUMN IF NOT EXISTS " + " " + TripHistory.RATING_BY_DRIVER + " int," +
-                    " ADD COLUMN IF NOT EXISTS " + " " + TripHistory.RATING_BY_END_USER + " int";
+                    " ADD COLUMN IF NOT EXISTS " + TripHistory.RATING_BY_DRIVER + " int," +
+                    " ADD COLUMN IF NOT EXISTS " + TripHistory.RATING_BY_END_USER + " int," +
 
+                    " ADD COLUMN IF NOT EXISTS " + TripHistory.FREE_START_WAITING_MINUTES + " float NOT NULL default 0," +
+                    " ADD COLUMN IF NOT EXISTS " + TripHistory.FREE_MINUTES_PER_KM + " float NOT NULL default 0," +
+                    " ADD COLUMN IF NOT EXISTS " + TripHistory.WAIT_CHARGES_PER_MINUTE + " float NOT NULL default 0," +
+                    " ADD COLUMN IF NOT EXISTS " + TripHistory.TAX_RATE + " float NOT NULL default 0," +
 
-
-
+                    " ADD COLUMN IF NOT EXISTS " + TripHistory.DERIVED_PICKUP_CHARGE + " float NOT NULL default 0," +
+                    " ADD COLUMN IF NOT EXISTS " + TripHistory.DERIVED_TRIP_CHARGE + " float NOT NULL default 0," +
+                    " ADD COLUMN IF NOT EXISTS " + TripHistory.DERIVED_WAITING_CHARGE + " float NOT NULL default 0," +
+                    " ADD COLUMN IF NOT EXISTS " + TripHistory.DERIVED_TRIP_TOTAL + " float NOT NULL default 0," +
+                    " ADD COLUMN IF NOT EXISTS " + TripHistory.DERIVED_TAXES + " float NOT NULL default 0," +
+                    " ADD COLUMN IF NOT EXISTS " + TripHistory.DERIVED_NET_PAYABLE + " float NOT NULL default 0";
 
 
 
@@ -163,6 +199,12 @@ public class TripHistory {
     private double chargesPerKm;
 
 
+    private double freeStartWaitMinutes; // free bulk minutes for each trip
+    private double freeMinutesPerKm; // free minutes user gets for 1 km
+    private double waitingChargePerMinute; // waiting charge per minute
+    private double taxRate;
+
+
     // stores the taxi
     private Vehicle rt_vehicle;
     private User rt_end_user;
@@ -173,6 +215,38 @@ public class TripHistory {
 
     // getter and setters
 
+
+    public double getFreeStartWaitMinutes() {
+        return freeStartWaitMinutes;
+    }
+
+    public void setFreeStartWaitMinutes(double freeStartWaitMinutes) {
+        this.freeStartWaitMinutes = freeStartWaitMinutes;
+    }
+
+    public double getFreeMinutesPerKm() {
+        return freeMinutesPerKm;
+    }
+
+    public void setFreeMinutesPerKm(double freeMinutesPerKm) {
+        this.freeMinutesPerKm = freeMinutesPerKm;
+    }
+
+    public double getWaitingChargePerMinute() {
+        return waitingChargePerMinute;
+    }
+
+    public void setWaitingChargePerMinute(double waitingChargePerMinute) {
+        this.waitingChargePerMinute = waitingChargePerMinute;
+    }
+
+    public double getTaxRate() {
+        return taxRate;
+    }
+
+    public void setTaxRate(double taxRate) {
+        this.taxRate = taxRate;
+    }
 
     public int getRt_driver_id() {
         return rt_driver_id;

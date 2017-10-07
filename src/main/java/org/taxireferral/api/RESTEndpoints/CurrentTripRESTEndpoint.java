@@ -47,6 +47,18 @@ public class CurrentTripRESTEndpoint {
         if(rowCount >= 2)
         {
 
+
+
+
+            Globals.userNotifications.sendNotificationToEndUser(
+                    locationCurrentTrip.getRt_end_user_id(),
+                    NotificationData.NOTIFICATION_TYPE_CURRENT_TRIP,
+                    NotificationData.NOTIFICATION_SUB_TYPE_CURRENT_TRIP_LOCATION_UPDATE,
+                    locationCurrentTrip
+            );
+//
+
+
             return Response.status(Response.Status.OK)
                     .build();
         }
@@ -61,6 +73,7 @@ public class CurrentTripRESTEndpoint {
 
 
     }
+
 
 
 
@@ -144,6 +157,7 @@ public class CurrentTripRESTEndpoint {
 
         return null;
     }
+
 
 
 

@@ -2,13 +2,11 @@ package org.taxireferral.api.DAORoles;
 
 import com.google.gson.Gson;
 import com.zaxxer.hikari.HikariDataSource;
-import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.ModelRoles.EmailVerificationCode;
 import org.taxireferral.api.ModelRoles.PhoneVerificationCode;
 import org.taxireferral.api.ModelRoles.User;
 
-import java.math.BigInteger;
 import java.sql.*;
 
 /**
@@ -353,7 +351,7 @@ public class DAOUserNew {
                 + User.ROLE + ","
                 + User.IS_ACCOUNT_PRIVATE + ","
                 + User.ABOUT + ","
-                + User.CURRENT_DUES + ","
+                + User.SERVICE_ACCOUNT_BALANCE + ","
                 + User.IS_ACCOUNT_PRIVATE + ""
 //                + User.TOKEN + ","
 //                + User.TIMESTAMP_TOKEN_EXPIRES + ""
@@ -420,7 +418,7 @@ public class DAOUserNew {
                 user.setProfileImagePath(rs.getString(User.PROFILE_IMAGE_URL));
                 user.setRole(rs.getInt(User.ROLE));
                 user.setAccountPrivate(rs.getBoolean(User.IS_ACCOUNT_PRIVATE));
-                user.setCurrentDues(rs.getDouble(User.CURRENT_DUES));
+                user.setServiceAccountBalance(rs.getDouble(User.SERVICE_ACCOUNT_BALANCE));
                 user.setAbout(rs.getString(User.ABOUT));
 
 //                user.setToken(rs.getString(User.TOKEN));

@@ -80,10 +80,10 @@ public class DAOUserSignUp {
 
 
 
-        // add referral charges to the user bill
+        // add joining credit to the users account
         updateDUES =  " UPDATE " + User.TABLE_NAME
                     + " SET "
-                    + User.CURRENT_DUES + " = " + User.CURRENT_DUES + " - ?,"
+                    + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " + ?,"
                     + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " + ?"
                     + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
 
@@ -101,8 +101,8 @@ public class DAOUserSignUp {
 
                             + Transaction.IS_CREDIT + ","
 
-                            + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
-                            + Transaction.CURRENT_DUES_AFTER_TRANSACTION + ""
+//                            + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
+                            + Transaction.SERVICE_BALANCE_AFTER_TRANSACTION + ""
 
                             + ") "
                             + " SELECT "
@@ -116,8 +116,8 @@ public class DAOUserSignUp {
 
                             + " true " + ","
 
-                            + User.TABLE_NAME + "." + User.CURRENT_DUES + " - ?,"
-                            + User.TABLE_NAME + "." + User.CURRENT_DUES + ""
+//                            + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + " - ?,"
+                            + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + ""
 
                             + " FROM " + User.TABLE_NAME
                             + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
@@ -129,7 +129,7 @@ public class DAOUserSignUp {
 //        // add referral charges to the user bill
 //        updateDUESReferral =  " UPDATE " + User.TABLE_NAME
 //                        + " SET "
-//                        + User.CURRENT_DUES + " = " + User.CURRENT_DUES + " - ?,"
+//                        + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " - ?,"
 //                        + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " - ?"
 //                        + " FROM " + User.TABLE_NAME + " as registered_user"
 //                        + " WHERE " + "registered_user." + User.REFERRED_BY + " = " + User.TABLE_NAME + "." + User.USER_ID
@@ -143,7 +143,7 @@ public class DAOUserSignUp {
         // add referral charges to the user bill
         updateDUESReferral =  " UPDATE " + User.TABLE_NAME
                 + " SET "
-                + User.CURRENT_DUES + " = " + User.CURRENT_DUES + " - ?,"
+                + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " + ?,"
                 + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " + ?"
                 + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
 
@@ -163,8 +163,8 @@ public class DAOUserSignUp {
 
                 + Transaction.IS_CREDIT + ","
 
-                + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
-                + Transaction.CURRENT_DUES_AFTER_TRANSACTION + ""
+//                + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
+                + Transaction.SERVICE_BALANCE_AFTER_TRANSACTION + ""
 
                 + ") "
                 + " SELECT "
@@ -178,8 +178,8 @@ public class DAOUserSignUp {
 
                 + " true " + ","
 
-                + User.TABLE_NAME + "." + User.CURRENT_DUES + " - ?,"
-                + User.TABLE_NAME + "." + User.CURRENT_DUES + ""
+//                + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + " - ?,"
+                + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + ""
 
                 + " FROM " + User.TABLE_NAME
                 + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
@@ -282,17 +282,17 @@ public class DAOUserSignUp {
 
                 if(user.getRole()==GlobalConstants.ROLE_DRIVER_CODE)
                 {
-                    statementCreateTransaction.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_DRIVER);
+//                    statementCreateTransaction.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_DRIVER);
                     statementCreateTransaction.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_DRIVER);
                 }
                 else if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
                 {
-                    statementCreateTransaction.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_END_USER);
+//                    statementCreateTransaction.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_END_USER);
                     statementCreateTransaction.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_END_USER);
                 }
                 else
                 {
-                    statementCreateTransaction.setObject(++i,0);
+//                    statementCreateTransaction.setObject(++i,0);
                     statementCreateTransaction.setObject(++i,0);
                 }
 
@@ -337,12 +337,12 @@ public class DAOUserSignUp {
 
                     if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
                     {
-                        statementTransactionReferral.setObject(++i,GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION);
+//                        statementTransactionReferral.setObject(++i,GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION);
                         statementTransactionReferral.setObject(++i,GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION);
                     }
                     else
                     {
-                        statementTransactionReferral.setObject(++i,0);
+//                        statementTransactionReferral.setObject(++i,0);
                         statementTransactionReferral.setObject(++i,0);
                     }
 
@@ -513,7 +513,7 @@ public class DAOUserSignUp {
         // add referral charges to the user bill
         updateDUES =  " UPDATE " + User.TABLE_NAME
                 + " SET "
-                + User.CURRENT_DUES + " = " + User.CURRENT_DUES + " - ?,"
+                + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " - ?,"
                 + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " + ?"
                 + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
 
@@ -531,8 +531,8 @@ public class DAOUserSignUp {
 
                 + Transaction.IS_CREDIT + ","
 
-                + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
-                + Transaction.CURRENT_DUES_AFTER_TRANSACTION + ""
+//                + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
+                + Transaction.SERVICE_BALANCE_AFTER_TRANSACTION + ""
 
                 + ") "
                 + " SELECT "
@@ -546,8 +546,8 @@ public class DAOUserSignUp {
 
                 + " true " + ","
 
-                + User.TABLE_NAME + "." + User.CURRENT_DUES + " - ?,"
-                + User.TABLE_NAME + "." + User.CURRENT_DUES + ""
+                + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + " - ?,"
+                + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + ""
 
                 + " FROM " + User.TABLE_NAME
                 + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
@@ -559,7 +559,7 @@ public class DAOUserSignUp {
 //        // add referral charges to the user bill
 //        updateDUESReferral =  " UPDATE " + User.TABLE_NAME
 //                        + " SET "
-//                        + User.CURRENT_DUES + " = " + User.CURRENT_DUES + " - ?,"
+//                        + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " - ?,"
 //                        + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " - ?"
 //                        + " FROM " + User.TABLE_NAME + " as registered_user"
 //                        + " WHERE " + "registered_user." + User.REFERRED_BY + " = " + User.TABLE_NAME + "." + User.USER_ID
@@ -573,7 +573,7 @@ public class DAOUserSignUp {
         // add referral charges to the user bill
         updateDUESReferral =  " UPDATE " + User.TABLE_NAME
                 + " SET "
-                + User.CURRENT_DUES + " = " + User.CURRENT_DUES + " - ?,"
+                + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " - ?,"
                 + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " + ?"
                 + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
 
@@ -593,8 +593,8 @@ public class DAOUserSignUp {
 
                 + Transaction.IS_CREDIT + ","
 
-                + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
-                + Transaction.CURRENT_DUES_AFTER_TRANSACTION + ""
+//                + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
+                + Transaction.SERVICE_BALANCE_AFTER_TRANSACTION + ""
 
                 + ") "
                 + " SELECT "
@@ -608,8 +608,8 @@ public class DAOUserSignUp {
 
                 + " true " + ","
 
-                + User.TABLE_NAME + "." + User.CURRENT_DUES + " - ?,"
-                + User.TABLE_NAME + "." + User.CURRENT_DUES + ""
+                + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + " - ?,"
+                + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + ""
 
                 + " FROM " + User.TABLE_NAME
                 + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ?";

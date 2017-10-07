@@ -10,10 +10,7 @@ import org.taxireferral.api.ModelBilling.Transaction;
 import org.taxireferral.api.ModelRoles.User;
 import org.taxireferral.api.ModelUtility.LocationCurrentTrip;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 /**
  * Created by sumeet on 4/7/17.
@@ -705,230 +702,6 @@ public class DAOCurrentTrip {
 
 
 
-    public int finish_trip(int driverID, boolean getRowCount, TripHistory tripHistory)
-    {
-
-        // note of precaution : please check the end user id is the id of the user who is requesting to create the trip
-
-        Connection connection = null;
-        PreparedStatement statementInsert = null;
-        PreparedStatement statementDelete = null;
-        PreparedStatement statementUpdate = null;
-
-        int idOfInsertedRow = -1;
-        int rowCountItems = -1;
-
-        int rowCountDelete = -1;
-        int rowCountUpdateStatus = -1;
-
-
-        String deleteTripRequest = "";
-        String updateStatus = "";
-
-
-        String insert = "";
-
-        insert = "INSERT INTO " + TripHistory.TABLE_NAME
-                + "("
-
-                + TripHistory.VEHICLE_ID + ","
-                + TripHistory.END_USER_ID + ","
-
-                + TripHistory.TIMESTAMP_CREATED + ","
-                + TripHistory.TIMESTAMP_STARTED + ","
-                + TripHistory.TIMESTAMP_FINISHED + ","
-
-                + TripHistory.LAT_START_LOCATION + ","
-                + TripHistory.LON_START_LOCATION + ","
-
-                + TripHistory.LAT_PICK_UP_LOCATION + ","
-                + TripHistory.LON_PICK_UP_LOCATION + ","
-                + TripHistory.PICK_UP_ADDRESS + ","
-
-                + TripHistory.LAT_DESTINATION + ","
-                + TripHistory.LON_DESTINATION + ","
-                + TripHistory.DESTINATION_ADDRESS + ","
-
-                + TripHistory.DISTANCE_TRAVELLED_FOR_PICKUP + ","
-                + TripHistory.DISTANCE_TRAVELLED_FOR_TRIP + ","
-
-                + TripHistory.FREE_PICKUP_DISTANCE + ","
-                + TripHistory.REFERRAL_CHARGES + ","
-
-                + TripHistory.MIN_TRIP_CHARGES + ","
-                + TripHistory.CHARGES_PER_KM + ""
-
-                + ") "
-                + " SELECT "
-
-                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + ","
-                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.END_USER_ID + ","
-
-                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TIMESTAMP_CREATED + ","
-                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TIMESTAMP_STARTED + ","
-                + " now(),"
-
-                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LAT_START_LOCATION + ","
-                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LON_START_LOCATION + ","
-
-                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LAT_PICK_UP_LOCATION + ","
-                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LON_PICK_UP_LOCATION + ","
-                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.PICK_UP_ADDRESS + ","
-
-                + tripHistory.getLatDestination() + ","
-                + tripHistory.getLonDestination() + ","
-                + "'" + tripHistory.getDestinationAddress() + "',"
-//                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DESTINATION_ADDRESS + ","
-
-
-                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + ","
-                + tripHistory.getDistanceTravelledForTrip() + ","
-//                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_TRIP + ","
-
-
-                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.FREE_PICKUP_DISTANCE + ","
-                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.REFERRAL_CHARGES + ","
-
-                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.MIN_TRIP_CHARGES + ","
-                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CHARGES_PER_KM + ""
-
-                + " FROM " + CurrentTrip.TABLE_NAME
-                + " INNER JOIN " + Vehicle.TABLE_NAME + " ON " + "(" + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
-                + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ?";
-
-
-//        + " WHERE " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_ID + " = ? "
-
-        deleteTripRequest =   " DELETE FROM " + CurrentTrip.TABLE_NAME
-                            + " USING " + Vehicle.TABLE_NAME
-                            + " WHERE " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID
-                            + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ?";
-
-//                            + CurrentTrip.TABLE_NAME
-//                            + " WHERE " + CurrentTrip.CURRENT_TRIP_ID + " = ?";
-
-
-        updateStatus =  " UPDATE " + Vehicle.TABLE_NAME +
-                        " SET " + Vehicle.VEHICLE_STATUS + " = ? " +
-                        " WHERE " + Vehicle.DRIVER_ID + " = ? ";
-
-
-
-        try {
-
-            connection = dataSource.getConnection();
-            connection.setAutoCommit(false);
-
-            statementInsert = connection.prepareStatement(insert,PreparedStatement.RETURN_GENERATED_KEYS);
-            int i = 0;
-
-//            statementInsert.setObject(++i,currentTripID);
-            statementInsert.setObject(++i,driverID);
-
-            rowCountItems = statementInsert.executeUpdate();
-            ResultSet rs = statementInsert.getGeneratedKeys();
-            if(rs.next())
-            {
-                idOfInsertedRow = rs.getInt(1);
-            }
-
-
-            if(idOfInsertedRow > 0)
-            {
-                // execute the following statements only if the insert is successful
-
-
-                statementDelete = connection.prepareStatement(deleteTripRequest);
-                i = 0;
-
-                statementDelete.setObject(++i,driverID);
-                rowCountDelete = statementDelete.executeUpdate();
-
-
-
-                statementUpdate = connection.prepareStatement(updateStatus);
-                i = 0;
-
-                statementUpdate.setObject(++i,GlobalConstants.AVIALABLE);
-                statementUpdate.setObject(++i,driverID);
-
-                rowCountUpdateStatus = statementUpdate.executeUpdate();
-            }
-
-
-
-
-            connection.commit();
-
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-
-            if (connection != null) {
-                try {
-
-                    idOfInsertedRow=-1;
-                    rowCountItems = 0;
-
-                    connection.rollback();
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }
-        finally
-        {
-
-
-            if (statementInsert != null) {
-                try {
-                    statementInsert.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-
-
-
-            if (statementDelete != null) {
-                try {
-                    statementDelete.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-
-
-            if (statementUpdate != null) {
-                try {
-                    statementUpdate.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-
-
-            try {
-
-                if(connection!=null)
-                {connection.close();}
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        if(getRowCount)
-        {
-            return rowCountItems;
-        }
-        else
-        {
-            return idOfInsertedRow;
-        }
-    }
-
-
 
 
 
@@ -1094,24 +867,446 @@ public class DAOCurrentTrip {
 
 
 
+    public int finish_trip(int driverID, boolean getRowCount, TripHistory tripHistory)
+    {
+
+        // note of precaution : please check the end user id is the id of the user who is requesting to create the trip
+
+        Connection connection = null;
+        PreparedStatement statementInsert = null;
+        PreparedStatement statementDelete = null;
+        PreparedStatement statementUpdate = null;
+
+        PreparedStatement statementUpdateDUES = null;
+        PreparedStatement statementTransaction = null;
+
+
+        int idOfInsertedRow = -1;
+        int rowCountItems = -1;
+
+        int rowCountDelete = -1;
+        int rowCountUpdateStatus = -1;
+
+
+        int rowCountDUES = -1;
+        int rowCountTransaction = -1;
+
+
+        String insert = "";
+
+        String deleteTripRequest = "";
+        String updateStatus = "";
+
+        String updateDUES = "";
+        String createTransaction = "";
+
+
+
+        CurrentTrip currentTrip = getCurrentTripForDriver(driverID);
+
+        if(currentTrip==null)
+        {
+            return 0;
+        }
+
+        currentTrip.setTimestampFinished(new Timestamp(System.currentTimeMillis()));
+        currentTrip.setLatDestination(tripHistory.getLatDestination());
+        currentTrip.setLonDestination(tripHistory.getLonDestination());
+        currentTrip.setDistanceTravelledForTrip(tripHistory.getDistanceTravelledForTrip());
+        currentTrip.setDestinationAddress(tripHistory.getDestinationAddress());
+
+
+
+        insert = "INSERT INTO " + TripHistory.TABLE_NAME
+                + "("
+
+                + TripHistory.VEHICLE_ID + ","
+                + TripHistory.END_USER_ID + ","
+
+                + TripHistory.TIMESTAMP_CREATED + ","
+                + TripHistory.TIMESTAMP_STARTED + ","
+                + TripHistory.TIMESTAMP_FINISHED + ","
+
+                + TripHistory.LAT_START_LOCATION + ","
+                + TripHistory.LON_START_LOCATION + ","
+
+                + TripHistory.LAT_PICK_UP_LOCATION + ","
+                + TripHistory.LON_PICK_UP_LOCATION + ","
+                + TripHistory.PICK_UP_ADDRESS + ","
+
+                + TripHistory.LAT_DESTINATION + ","
+                + TripHistory.LON_DESTINATION + ","
+                + TripHistory.DESTINATION_ADDRESS + ","
+
+                + TripHistory.DISTANCE_TRAVELLED_FOR_PICKUP + ","
+                + TripHistory.DISTANCE_TRAVELLED_FOR_TRIP + ","
+
+                + TripHistory.FREE_PICKUP_DISTANCE + ","
+                + TripHistory.REFERRAL_CHARGES + ","
+
+                + TripHistory.MIN_TRIP_CHARGES + ","
+                + TripHistory.CHARGES_PER_KM + ","
+
+                + TripHistory.FREE_START_WAITING_MINUTES + ","
+                + TripHistory.FREE_MINUTES_PER_KM + ","
+                + TripHistory.WAIT_CHARGES_PER_MINUTE + ","
+                + TripHistory.TAX_RATE + ","
+
+
+                + TripHistory.DERIVED_PICKUP_CHARGE + ","
+                + TripHistory.DERIVED_TRIP_CHARGE + ","
+                + TripHistory.DERIVED_WAITING_CHARGE + ","
+                + TripHistory.DERIVED_TRIP_TOTAL + ","
+                + TripHistory.DERIVED_TAXES + ""
+
+
+                + ") "
+                + " SELECT "
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.END_USER_ID + ","
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TIMESTAMP_CREATED + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TIMESTAMP_STARTED + ","
+                + " now(),"
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LAT_START_LOCATION + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LON_START_LOCATION + ","
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LAT_PICK_UP_LOCATION + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.LON_PICK_UP_LOCATION + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.PICK_UP_ADDRESS + ","
+
+                + tripHistory.getLatDestination() + ","
+                + tripHistory.getLonDestination() + ","
+                + "'" + tripHistory.getDestinationAddress() + "',"
+//                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DESTINATION_ADDRESS + ","
+
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + ","
+                + tripHistory.getDistanceTravelledForTrip() + ","
+//                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_TRIP + ","
+
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.FREE_PICKUP_DISTANCE + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.REFERRAL_CHARGES + ","
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.MIN_TRIP_CHARGES + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CHARGES_PER_KM + ","
+
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.FREE_START_WAITING_MINUTES + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.FREE_MINUTES_PER_KM + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.WAIT_CHARGES_PER_MINUTE + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TAX_RATE + "," +
+
+                currentTrip.calculatePickupCharges() + "," +
+                currentTrip.calculateTripCharges() + "," +
+                currentTrip.calculateWaitingCharges() + "," +
+                currentTrip.calculateTripTotal() + "," +
+                currentTrip.calculateTaxes() + ""
+
+
+
+//                // calculation of pickup charge
+//                " ( ( GREATEST ( " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + " - " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.FREE_PICKUP_DISTANCE + " , 0 ) )  * " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CHARGES_PER_KM + " ) , " +
+//
+
+                // calculation of trip charge
+//                " ( " + tripHistory.getDistanceTravelledForTrip() + " * " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CHARGES_PER_KM + " ) , "  +
+
+
+                // Calculation of waiting charge
+//                " ( GREATEST ( (    extract(  epoch from now() - " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TIMESTAMP_STARTED + " ) - (" + tripHistory.getDistanceTravelledForTrip() + " * " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.FREE_MINUTES_PER_KM + " * 60 ) ),0) * (" + CurrentTrip.TABLE_NAME + "." + CurrentTrip.WAIT_CHARGES_PER_MINUTE + " / 60 ) ), " +
+
+
+                // Calculation of trip total
+//                " greatest ( " +
+//                CurrentTrip.TABLE_NAME + "." + CurrentTrip.MIN_TRIP_CHARGES + ","
+//
+//                + " ( "
+//                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.REFERRAL_CHARGES
+//                + " + "
+//                + " ( " + tripHistory.getDistanceTravelledForTrip() + " + " + " GREATEST ( " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + " - " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.FREE_PICKUP_DISTANCE + " , 0 ) )  * " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CHARGES_PER_KM
+//                + " + "
+//                + " GREATEST ( (    extract(  epoch from now() - " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TIMESTAMP_STARTED + " ) - (" + tripHistory.getDistanceTravelledForTrip() + " * " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.FREE_MINUTES_PER_KM + " * 60 ) ),0) * (" + CurrentTrip.TABLE_NAME + "." + CurrentTrip.WAIT_CHARGES_PER_MINUTE + " / 60 )"
+//                + " ) "
+//                + " ) ," +
+//
+
+                // Calculation of taxes
+//                " ( " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TAX_RATE +
+//
+//                " * 0.01 * greatest ( " +
+//                CurrentTrip.TABLE_NAME + "." + CurrentTrip.MIN_TRIP_CHARGES + ","
+//
+//                + " ( "
+//                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.REFERRAL_CHARGES
+//                + " + "
+//                + " ( " + tripHistory.getDistanceTravelledForTrip() + " + " + " GREATEST ( " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.DISTANCE_TRAVELLED_FOR_PICKUP + " - " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.FREE_PICKUP_DISTANCE + " , 0 ) )  * " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CHARGES_PER_KM
+//                + " + "
+//                + " GREATEST ( (    extract(  epoch from now() - " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TIMESTAMP_STARTED + " ) - (" + tripHistory.getDistanceTravelledForTrip() + " * " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.FREE_MINUTES_PER_KM + " * 60 ) ),0) * (" + CurrentTrip.TABLE_NAME + "." + CurrentTrip.WAIT_CHARGES_PER_MINUTE + " / 60 )"
+//                + " ) "
+//                + " ) "
+//                + " ) "
+
+                + " FROM " + CurrentTrip.TABLE_NAME
+                + " INNER JOIN " + Vehicle.TABLE_NAME + " ON " + "(" + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
+                + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ?";
+
+
+
+//        + " WHERE " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_ID + " = ? "
+
+        deleteTripRequest =   " DELETE FROM " + CurrentTrip.TABLE_NAME
+                + " USING " + Vehicle.TABLE_NAME
+                + " WHERE " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID
+                + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ?";
+
+//                            + CurrentTrip.TABLE_NAME
+//                            + " WHERE " + CurrentTrip.CURRENT_TRIP_ID + " = ?";
+
+
+        updateStatus =  " UPDATE " + Vehicle.TABLE_NAME +
+                " SET " + Vehicle.VEHICLE_STATUS + " = ? " +
+                " WHERE " + Vehicle.DRIVER_ID + " = ? ";
+
+
+
+
+        // add trip referral charges to the drivers bill
+
+        updateDUES =  " UPDATE " + User.TABLE_NAME
+                + " SET "
+                + User.TAX_ACCOUNT_BALANCE + " = " + User.TAX_ACCOUNT_BALANCE + " - ? ,"
+                + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " - " + GlobalConstants.taxi_referral_charges + ","
+                + User.TOTAL_SERVICE_CHARGES + " = " + User.TOTAL_SERVICE_CHARGES + " + " + GlobalConstants.taxi_referral_charges + ""
+                + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
+
+//        + TripHistory.TABLE_NAME + "." + TripHistory.TRIP_HISTORY_ID + " = ? "
+//        + " FROM " + TripHistory.TABLE_NAME
+
+
+
+        createTransaction = "INSERT INTO " + Transaction.TABLE_NAME
+                + "("
+
+                + Transaction.USER_ID + ","
+
+                + Transaction.TITLE + ","
+                + Transaction.DESCRIPTION + ","
+
+                + Transaction.TRANSACTION_TYPE + ","
+                + Transaction.TRANSACTION_AMOUNT + ","
+
+                + Transaction.IS_CREDIT + ","
+
+//                            + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
+                + Transaction.SERVICE_BALANCE_AFTER_TRANSACTION + ""
+
+                + ") "
+                + " SELECT "
+
+                + User.TABLE_NAME + "." + User.USER_ID + ","
+                + " '" + Transaction.TITLE_REFERRAL_CHARGE_FOR_TRIP + "',"
+                + " '" + Transaction.DESCRIPTION_REFERRAL_CHARGE_FOR_TRIP + "',"
+
+                + Transaction.TRANSACTION_TYPE_TAXI_REFERRAL_CHARGE + ","
+                + GlobalConstants.taxi_referral_charges + ","
+
+                + " false " + ","
+//                            + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + " - " + GlobalConstants.taxi_referral_charges +  ","
+                + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + ""
+
+                + " FROM " + User.TABLE_NAME
+                + " INNER JOIN " + Vehicle.TABLE_NAME + " ON ( " + Vehicle.TABLE_NAME + "." +  Vehicle.DRIVER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID + " ) "
+                + " INNER JOIN " + TripHistory.TABLE_NAME + " ON ( " + TripHistory.TABLE_NAME + "." + TripHistory.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + " ) "
+                + " WHERE " + TripHistory.TABLE_NAME + "." + TripHistory.TRIP_HISTORY_ID + " = ? "
+                + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
+
+
+
+        try {
+
+            connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
+
+            statementInsert = connection.prepareStatement(insert,PreparedStatement.RETURN_GENERATED_KEYS);
+            int i = 0;
+
+//            statementInsert.setObject(++i,currentTripID);
+            statementInsert.setObject(++i,driverID);
+
+            rowCountItems = statementInsert.executeUpdate();
+            ResultSet rs = statementInsert.getGeneratedKeys();
+            if(rs.next())
+            {
+                idOfInsertedRow = rs.getInt(1);
+            }
+
+
+            if(idOfInsertedRow > 0)
+            {
+                // execute the following statements only if the insert is successful
+
+
+                statementDelete = connection.prepareStatement(deleteTripRequest);
+                i = 0;
+
+                statementDelete.setObject(++i,driverID);
+                rowCountDelete = statementDelete.executeUpdate();
+
+
+
+                statementUpdate = connection.prepareStatement(updateStatus);
+                i = 0;
+
+                statementUpdate.setObject(++i,GlobalConstants.AVIALABLE);
+                statementUpdate.setObject(++i,driverID);
+
+                rowCountUpdateStatus = statementUpdate.executeUpdate();
+
+
+
+
+//                if(rowCountItems == 1)
+//                {
+//
+//                }
+
+
+
+                statementUpdateDUES = connection.prepareStatement(updateDUES);
+                i = 0;
+
+                statementUpdateDUES.setObject(++i,currentTrip.calculateTaxes());
+//                statementUpdateDUES.setObject(++i,idOfInsertedRow);
+                statementUpdateDUES.setObject(++i,driverID);
+                rowCountItems = statementUpdateDUES.executeUpdate();
+
+
+
+//                statementTransaction = connection.prepareStatement(createTransaction);
+//                i = 0;
+//
+//                statementTransaction.setObject(++i,idOfInsertedRow);
+//                statementTransaction.setObject(++i,driverID);
+//                rowCountItems = statementTransaction.executeUpdate();
+
+
+            }
+
+
+
+
+
+
+            connection.commit();
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+            if (connection != null) {
+                try {
+
+                    idOfInsertedRow=-1;
+                    rowCountItems = 0;
+
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        finally
+        {
+
+
+            if (statementInsert != null) {
+                try {
+                    statementInsert.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+
+            if (statementDelete != null) {
+                try {
+                    statementDelete.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            if (statementUpdate != null) {
+                try {
+                    statementUpdate.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+
+            if (statementUpdateDUES != null) {
+                try {
+                    statementUpdateDUES.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (statementTransaction != null) {
+                try {
+                    statementTransaction.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        if(getRowCount)
+        {
+            return rowCountItems;
+        }
+        else
+        {
+            return idOfInsertedRow;
+        }
+    }
+
+
+
+
+
+
+
     public int approve_start_by_driver(CurrentTrip currentTrip, int driverID)
     {
 
         Connection connection = null;
 
         PreparedStatement statementUpdate = null;
-        PreparedStatement statementUpdateDUES = null;
-        PreparedStatement statementInsert = null;
 
         int rowCountItems = -1;
-        int rowCountDUES = -1;
-        int rowCountTransaction = -1;
         int idOfInsertedRow = -1;
 
 
         String update = "";
-        String updateDUES = "";
-        String createTransaction = "";
 
 
         update =  " UPDATE " + CurrentTrip.TABLE_NAME
@@ -1127,57 +1322,55 @@ public class DAOCurrentTrip {
                 + " AND "    + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ? "
                 + " AND "    + CurrentTrip.CURRENT_TRIP_STATUS + " = " + GlobalConstants.START_JOURNEY_REQUESTED_BY_END_USER;
 
-//        + " AND "
-//        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_ID + " = ? "
 
-//                + " WHERE " + CurrentTrip.CURRENT_TRIP_ID + " = ?"
+        // not required to add referral charges because all accounting is done at finish trip
 
-
-
-        // add referral charges to the user bill
-        updateDUES =  " UPDATE " + User.TABLE_NAME
-                    + " SET "
-                    + User.CURRENT_DUES + " = " + User.CURRENT_DUES + " + " + GlobalConstants.taxi_referral_charges + ","
-                    + User.TOTAL_SERVICE_CHARGES + " = " + User.TOTAL_SERVICE_CHARGES + " + " + GlobalConstants.taxi_referral_charges + ""
-                    + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
-
-
-        createTransaction = "INSERT INTO " + Transaction.TABLE_NAME
-                            + "("
-
-                            + Transaction.USER_ID + ","
-
-                            + Transaction.TITLE + ","
-                            + Transaction.DESCRIPTION + ","
-
-                            + Transaction.TRANSACTION_TYPE + ","
-                            + Transaction.TRANSACTION_AMOUNT + ","
-
-                            + Transaction.IS_CREDIT + ","
-
-                            + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
-                            + Transaction.CURRENT_DUES_AFTER_TRANSACTION + ""
-
-                            + ") "
-                            + " SELECT "
-
-                            + User.TABLE_NAME + "." + User.USER_ID + ","
-                            + " '" + Transaction.TITLE_REFERRAL_CHARGE_FOR_TRIP + "',"
-                            + " '" + Transaction.DESCRIPTION_REFERRAL_CHARGE_FOR_TRIP + "',"
-
-                            + Transaction.TRANSACTION_TYPE_TAXI_REFERRAL_CHARGE + ","
-                            + GlobalConstants.taxi_referral_charges + ","
-
-                            + " false " + ","
-
-                            + User.TABLE_NAME + "." + User.CURRENT_DUES + " - " + GlobalConstants.taxi_referral_charges +  ","
-                            + User.TABLE_NAME + "." + User.CURRENT_DUES + ""
-
-                            + " FROM " + User.TABLE_NAME
-                            + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
-
-
-
+//        // add trip referral charges to the drivers bill
+//        updateDUES =  " UPDATE " + User.TABLE_NAME
+//                    + " SET "
+//                    + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " - " + GlobalConstants.taxi_referral_charges + ","
+//                    + User.TOTAL_SERVICE_CHARGES + " = " + User.TOTAL_SERVICE_CHARGES + " + " + GlobalConstants.taxi_referral_charges + ""
+//                    + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
+//
+//
+//
+//
+//        createTransaction = "INSERT INTO " + Transaction.TABLE_NAME
+//                            + "("
+//
+//                            + Transaction.USER_ID + ","
+//
+//                            + Transaction.TITLE + ","
+//                            + Transaction.DESCRIPTION + ","
+//
+//                            + Transaction.TRANSACTION_TYPE + ","
+//                            + Transaction.TRANSACTION_AMOUNT + ","
+//
+//                            + Transaction.IS_CREDIT + ","
+//
+////                            + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
+//                            + Transaction.SERVICE_BALANCE_AFTER_TRANSACTION + ""
+//
+//                            + ") "
+//                            + " SELECT "
+//
+//                            + User.TABLE_NAME + "." + User.USER_ID + ","
+//                            + " '" + Transaction.TITLE_REFERRAL_CHARGE_FOR_TRIP + "',"
+//                            + " '" + Transaction.DESCRIPTION_REFERRAL_CHARGE_FOR_TRIP + "',"
+//
+//                            + Transaction.TRANSACTION_TYPE_TAXI_REFERRAL_CHARGE + ","
+//                            + GlobalConstants.taxi_referral_charges + ","
+//
+//                            + " false " + ","
+//
+////                            + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + " - " + GlobalConstants.taxi_referral_charges +  ","
+//                            + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + ""
+//
+//                            + " FROM " + User.TABLE_NAME
+//                            + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
+//
+//
+//
 
 
         try {
@@ -1199,23 +1392,6 @@ public class DAOCurrentTrip {
             rowCountItems = statementUpdate.executeUpdate();
 
 
-            if(rowCountItems == 1)
-            {
-
-                statementUpdateDUES = connection.prepareStatement(updateDUES);
-                i = 0;
-
-                statementUpdateDUES.setObject(++i,driverID);
-                rowCountItems = statementUpdateDUES.executeUpdate();
-
-
-
-                statementInsert = connection.prepareStatement(createTransaction);
-                i = 0;
-
-                statementInsert.setObject(++i,driverID);
-                rowCountItems = statementInsert.executeUpdate();
-            }
 
 
 
@@ -1252,22 +1428,6 @@ public class DAOCurrentTrip {
                 }
             }
 
-
-            if (statementUpdateDUES != null) {
-                try {
-                    statementUpdateDUES.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if (statementInsert != null) {
-                try {
-                    statementInsert.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
 
 
             try {
@@ -1415,6 +1575,11 @@ public class DAOCurrentTrip {
                 + CurrentTrip.TABLE_NAME + "." + CurrentTrip.MIN_TRIP_CHARGES + ","
                 + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CHARGES_PER_KM + ","
 
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.FREE_START_WAITING_MINUTES + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.FREE_MINUTES_PER_KM + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.WAIT_CHARGES_PER_MINUTE + ","
+                + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TAX_RATE + ","
+
                 + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.PROFILE_IMAGE_URL + ","
@@ -1494,6 +1659,11 @@ public class DAOCurrentTrip {
                 currentTrip.setMinTripCharges(rs.getDouble(CurrentTrip.MIN_TRIP_CHARGES));
                 currentTrip.setChargesPerKm(rs.getDouble(CurrentTrip.CHARGES_PER_KM));
 
+                currentTrip.setFreeStartWaitMinutes(rs.getInt(CurrentTrip.FREE_START_WAITING_MINUTES));
+                currentTrip.setFreeMinutesPerKm(rs.getInt(CurrentTrip.FREE_MINUTES_PER_KM));
+                currentTrip.setWaitingChargePerMinute(rs.getInt(CurrentTrip.WAIT_CHARGES_PER_MINUTE));
+                currentTrip.setTaxRate(rs.getInt(CurrentTrip.TAX_RATE));
+
 
                 Vehicle vehicle = new Vehicle();
 
@@ -1564,6 +1734,7 @@ public class DAOCurrentTrip {
 
         return currentTrip;
     }
+
 
 
 
@@ -1778,6 +1949,11 @@ public class DAOCurrentTrip {
                         + CurrentTrip.TABLE_NAME + "." + CurrentTrip.MIN_TRIP_CHARGES + ","
                         + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CHARGES_PER_KM + ","
 
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.FREE_START_WAITING_MINUTES + ","
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.FREE_MINUTES_PER_KM + ","
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.WAIT_CHARGES_PER_MINUTE + ","
+                        + CurrentTrip.TABLE_NAME + "." + CurrentTrip.TAX_RATE + ","
+
                         + User.TABLE_NAME + "." + User.PHONE + ","
                         + User.TABLE_NAME + "." + User.NAME + ","
                         + User.TABLE_NAME + "." + User.GENDER + ","
@@ -1844,6 +2020,11 @@ public class DAOCurrentTrip {
 
                 currentTrip.setMinTripCharges(rs.getDouble(CurrentTrip.MIN_TRIP_CHARGES));
                 currentTrip.setChargesPerKm(rs.getDouble(CurrentTrip.CHARGES_PER_KM));
+
+                currentTrip.setFreeStartWaitMinutes(rs.getInt(CurrentTrip.FREE_START_WAITING_MINUTES));
+                currentTrip.setFreeMinutesPerKm(rs.getInt(CurrentTrip.FREE_MINUTES_PER_KM));
+                currentTrip.setWaitingChargePerMinute(rs.getInt(CurrentTrip.WAIT_CHARGES_PER_MINUTE));
+                currentTrip.setTaxRate(rs.getInt(CurrentTrip.TAX_RATE));
 
 
                 User endUser = new User();

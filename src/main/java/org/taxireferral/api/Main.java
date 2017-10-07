@@ -14,6 +14,7 @@ import org.taxireferral.api.ModelRoles.User;
 import org.taxireferral.api.ModelSettings.ServiceConfigurationLocal;
 import org.taxireferral.api.WebSocket.SimpleServer;
 
+import javax.ws.rs.core.UriBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -60,8 +61,16 @@ public class Main {
         // exposing the Jersey application at BASE_URI
 //        return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
 
+
         return JettyHttpContainerFactory.createServer(URI.create(BASE_URI),rc);
+
+//        URI baseUri = UriBuilder.fromUri("http://0.0.0.0").port(5500).build();
+//        ResourceConfig config = new ResourceConfig(rc);
+//        return JettyHttpContainerFactory.createServer(baseUri, config);
+
     }
+
+
 
 
 
@@ -107,6 +116,9 @@ public class Main {
 
         return server;
     }
+
+
+
 
 
     void startJettyTLSTwo()
@@ -180,6 +192,9 @@ public class Main {
 
         createTables();
         startJettyServer();
+
+
+        renameTables();
 
 
 //        SimpleServer.main(null);
@@ -264,8 +279,14 @@ public class Main {
 
             statement = connection.createStatement();
 
-            statement.executeUpdate(User.upgradeTableSchema);
+            statement.executeUpdate(CurrentTrip.upgradeTableSchema);
             statement.executeUpdate(TripHistory.upgradeTableSchema);
+            statement.executeUpdate(User.upgradeTableSchema);
+
+
+
+            statement.executeUpdate(User.renameColumns);
+//            statement.executeUpdate(Transaction.renameColumns);
 
 
         } catch (SQLException e) {
@@ -305,6 +326,62 @@ public class Main {
     }
 
 
+
+
+
+
+    private static void renameTables()
+    {
+
+        Connection connection = null;
+        Statement statement = null;
+
+        try {
+
+            connection = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL
+                    ,JDBCContract.CURRENT_USERNAME
+                    ,JDBCContract.CURRENT_PASSWORD);
+
+            statement = connection.createStatement();
+
+
+            statement.executeUpdate(Transaction.renameColumns);
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        finally{
+
+
+            // close the connection and statement accountApproved
+
+            if(statement !=null)
+            {
+
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+            }
+
+
+            if(connection!=null)
+            {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
 
 
 

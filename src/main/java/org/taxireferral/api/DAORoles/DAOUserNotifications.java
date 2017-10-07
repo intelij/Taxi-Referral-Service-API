@@ -10,6 +10,8 @@ import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.ModelNotifications.FirebaseNotification;
 import org.taxireferral.api.ModelNotifications.NotificationData;
 import org.taxireferral.api.ModelRoles.User;
+import org.taxireferral.api.ModelUtility.Location;
+import org.taxireferral.api.ModelUtility.LocationCurrentTrip;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -72,6 +74,25 @@ public class DAOUserNotifications {
     }
 
 
+    public void sendNotificationToEndUser(int userID,
+                                          int notificationType,
+                                          int notificationSubType,
+                                          LocationCurrentTrip locationCurrentTrip
+    )
+    {
+
+        sendNotificationToUser(
+                userID,
+                notificationType,
+                notificationSubType,
+                GlobalConstants.FIREBASE_END_USER_KEY,
+                locationCurrentTrip
+        );
+
+    }
+
+
+
 
 
     public void sendNotificationToDriver(int userID,
@@ -109,6 +130,70 @@ public class DAOUserNotifications {
         NotificationData data = new NotificationData();
         data.setNotificationType(notificationType);
         data.setNotificationSubType(notificationSubType);
+
+        FirebaseNotification firebaseNotification = new FirebaseNotification();
+        firebaseNotification.setTo(user.getFirebaseID());
+        firebaseNotification.setData(data);
+
+
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        Gson gson = gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
+        String json = gson.toJson(firebaseNotification);
+
+        final Request request = new Request.Builder()
+                .url("https://fcm.googleapis.com/fcm/send")
+                .addHeader("Authorization",firebase_server_key)
+                .addHeader("Content-Type","application/json")
+                .post(RequestBody.create(JSON,json))
+                .build();
+
+        System.out.print(json + "\n");
+
+
+        OkHttpClient client = new OkHttpClient();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+
+                System.out.print("Sending notification failed !");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+
+                if(response.isSuccessful())
+                {
+                    System.out.print(response.body().string() + "\n");
+//                    FirebaseResponse firebaseResponse = gson.fromJson(response.body().string(),FirebaseResponse.class);
+                }
+                else
+                {
+                    System.out.print(response.toString()+ "\n");
+                }
+
+            }
+        });
+    }
+
+
+
+    public void sendNotificationToUser(
+            int userID,
+            int notificationType,
+            int notificationSubType,
+            String firebase_server_key,
+            LocationCurrentTrip locationCurrentTrip
+    )
+    {
+        User user = getFirebaseToken(userID);
+
+        NotificationData data = new NotificationData();
+        data.setNotificationType(notificationType);
+        data.setNotificationSubType(notificationSubType);
+        data.setLocationCurrentTrip(locationCurrentTrip);
 
         FirebaseNotification firebaseNotification = new FirebaseNotification();
         firebaseNotification.setTo(user.getFirebaseID());

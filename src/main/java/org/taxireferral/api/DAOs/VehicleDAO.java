@@ -4,11 +4,8 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.Vehicle;
-import org.taxireferral.api.Model.VehicleType;
-import org.taxireferral.api.Model.VehicleTypeVersion;
 import org.taxireferral.api.ModelBilling.Transaction;
 import org.taxireferral.api.ModelEndpoints.VehicleEndPoint;
-import org.taxireferral.api.ModelEndpoints.VehicleTypeEndPoint;
 import org.taxireferral.api.ModelRoles.User;
 import org.taxireferral.api.ModelUtility.Location;
 
@@ -289,10 +286,10 @@ public class VehicleDAO {
 
 
 
-        // add referral charges to the user bill
+        // add referral credit to the referrer if the referrer is not credited
         updateDUES =  " UPDATE " + User.TABLE_NAME
                 + " SET "
-                + User.CURRENT_DUES + " = " + User.CURRENT_DUES + " - ?,"
+                + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " + ?,"
                 + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " + ?"
                 + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ( "
                 + " SELECT " + User.REFERRED_BY
@@ -317,7 +314,7 @@ public class VehicleDAO {
 //                + Transaction.IS_CREDIT + ","
 //
 //                + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
-//                + Transaction.CURRENT_DUES_AFTER_TRANSACTION + ""
+//                + Transaction.SERVICE_BALANCE_AFTER_TRANSACTION + ""
 //
 //                + ") "
 //                + " SELECT "
@@ -331,8 +328,8 @@ public class VehicleDAO {
 //
 //                + " true " + ","
 //
-//                + User.TABLE_NAME + "." + User.CURRENT_DUES + " - ?,"
-//                + User.TABLE_NAME + "." + User.CURRENT_DUES + ""
+//                + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + " - ?,"
+//                + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + ""
 //
 //                + " FROM " + User.TABLE_NAME
 //                + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ( "
@@ -356,8 +353,8 @@ public class VehicleDAO {
 
                 + Transaction.IS_CREDIT + ","
 
-                + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
-                + Transaction.CURRENT_DUES_AFTER_TRANSACTION + ""
+//                + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
+                + Transaction.SERVICE_BALANCE_AFTER_TRANSACTION + ""
 
                 + ") "
                 + " SELECT "
@@ -371,8 +368,8 @@ public class VehicleDAO {
 
                 + " true " + ","
 
-                + "referrer." + User.CURRENT_DUES + " - ?,"
-                + "referrer." + User.CURRENT_DUES + ""
+//                + "referrer." + User.SERVICE_ACCOUNT_BALANCE + " - ?,"
+                + "referrer." + User.SERVICE_ACCOUNT_BALANCE + ""
 
                 + " FROM " + User.TABLE_NAME + " referrer "
                 + " INNER JOIN " + User.TABLE_NAME + " registered " + " ON ( " + "referrer." + User.USER_ID + " = " + "registered." + User.REFERRED_BY + " ) "
@@ -385,8 +382,7 @@ public class VehicleDAO {
 
 
 
-        // add referral charges to the user bill
-
+        // mark referrer credited
         updateRefferCredited =  " UPDATE " + User.TABLE_NAME
                 + " SET " + User.IS_REFERRER_CREDITED + " = TRUE "
                 + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ( "
@@ -432,7 +428,7 @@ public class VehicleDAO {
                 statementCreateTransaction = connection.prepareStatement(createTransaction);
                 i = 0;
 
-                statementCreateTransaction.setObject(++i, GlobalConstants.REFERRAL_CREDIT_FOR_DRIVER_REGISTRATION);
+//                statementCreateTransaction.setObject(++i, GlobalConstants.REFERRAL_CREDIT_FOR_DRIVER_REGISTRATION);
                 statementCreateTransaction.setObject(++i, GlobalConstants.REFERRAL_CREDIT_FOR_DRIVER_REGISTRATION);
 
                 statementCreateTransaction.setObject(++i, vehicleID);
@@ -1023,9 +1019,8 @@ public class VehicleDAO {
                 + " FROM " + User.TABLE_NAME
                 + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = ?"
                 + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID
-                + " AND " + User.TABLE_NAME + "." + User.CURRENT_DUES + " <= " + User.TABLE_NAME + "." + User.EXTENDED_CREDIT_LIMIT + " + " + GlobalConstants.CREDIT_LIMIT_FOR_DRIVER
+                + " AND " + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + " >= " +  GlobalConstants.MIN_SERVICE_ACCOUNT_BALANCE + " - " + User.TABLE_NAME + "." + User.EXTENDED_CREDIT_LIMIT
                 + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.NOT_AVIALABLE;
-
 
 
 
@@ -1280,7 +1275,7 @@ public class VehicleDAO {
                 + User.TABLE_NAME + "." + User.GENDER + ","
                 + User.TABLE_NAME + "." + User.PROFILE_IMAGE_URL + " as user_profile_image,"
 
-                + User.TABLE_NAME + "." + User.CURRENT_DUES + ","
+                + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + ","
                 + User.TABLE_NAME + "." + User.EXTENDED_CREDIT_LIMIT + ""
 
                 + " FROM " + Vehicle.TABLE_NAME
@@ -1353,7 +1348,7 @@ public class VehicleDAO {
                 driver.setGender(rs.getBoolean(User.GENDER));
                 driver.setProfileImagePath(rs.getString("user_profile_image"));
 
-                driver.setCurrentDues(rs.getDouble(User.CURRENT_DUES));
+                driver.setServiceAccountBalance(rs.getDouble(User.SERVICE_ACCOUNT_BALANCE));
                 driver.setExtendedCreditLimit(rs.getDouble(User.EXTENDED_CREDIT_LIMIT));
 
 
@@ -1462,7 +1457,10 @@ public class VehicleDAO {
                 + " INNER JOIN " + User.TABLE_NAME + " ON (" + Vehicle.DRIVER_ID + " = " + User.USER_ID + ")"
                 + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.AVIALABLE
                 + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.ENABLED + " = TRUE "
+                + " AND " + User.TABLE_NAME + "." + User.TAX_ACCOUNT_BALANCE + " > " + GlobalConstants.MIN_TAX_ACCOUNT_BALANCE
+                + " AND " + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + " > " + GlobalConstants.MIN_SERVICE_ACCOUNT_BALANCE
                 + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.ENABLED_UPTO + " > now()";
+
 
 
 

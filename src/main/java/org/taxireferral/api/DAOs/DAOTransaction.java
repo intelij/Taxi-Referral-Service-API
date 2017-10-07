@@ -4,7 +4,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.ModelBilling.Transaction;
 import org.taxireferral.api.ModelEndpoints.TransactionEndpoint;
-import org.taxireferral.api.ModelEndpoints.TripHistoryEndPoint;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -48,8 +47,8 @@ public class DAOTransaction {
                 + Transaction.TABLE_NAME + "." + Transaction.TRANSACTION_AMOUNT + ","
                 + Transaction.TABLE_NAME + "." + Transaction.IS_CREDIT + ","
                 + Transaction.TABLE_NAME + "." + Transaction.TIMESTAMP_OCCURRED + ","
-                + Transaction.TABLE_NAME + "." + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
-                + Transaction.TABLE_NAME + "." + Transaction.CURRENT_DUES_AFTER_TRANSACTION + ""
+//                + Transaction.TABLE_NAME + "." + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
+                + Transaction.TABLE_NAME + "." + Transaction.SERVICE_BALANCE_AFTER_TRANSACTION + ""
 
                 + " FROM " + Transaction.TABLE_NAME
                 + " WHERE " + Transaction.TABLE_NAME + "." + Transaction.USER_ID + " = ? ";
@@ -182,8 +181,8 @@ public class DAOTransaction {
                     transaction.setTransactionAmount(rs.getDouble(Transaction.TRANSACTION_AMOUNT));
                     transaction.setCredit(rs.getBoolean(Transaction.IS_CREDIT));
                     transaction.setTimestampOccurred(rs.getTimestamp(Transaction.TIMESTAMP_OCCURRED));
-                    transaction.setCurrentDuesBeforeTransaction(rs.getDouble(Transaction.CURRENT_DUES_BEFORE_TRANSACTION));
-                    transaction.setCurrentDuesAfterTransaction(rs.getDouble(Transaction.CURRENT_DUES_AFTER_TRANSACTION));
+//                    transaction.setCurrentDuesBeforeTransaction(rs.getDouble(Transaction.CURRENT_DUES_BEFORE_TRANSACTION));
+                    transaction.setServiceBalanceAfterTransaction(rs.getDouble(Transaction.SERVICE_BALANCE_AFTER_TRANSACTION));
 
 
                     itemList.add(transaction);

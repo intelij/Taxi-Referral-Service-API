@@ -48,11 +48,15 @@ public class User {
     public static final String TIMESTAMP_TOKEN_EXPIRES = "TIMESTAMP_TOKEN_EXPIRES";
 
 
+
     // current_due = total_service_charges - total_credits - total_paid
-    public static final String CURRENT_DUES = "CURRENT_DUES";
+    public static final String TAX_ACCOUNT_BALANCE = "TAX_ACCOUNT_BALANCE";
+    public static final String SERVICE_ACCOUNT_BALANCE = "SERVICE_ACCOUNT_BALANCE";
+
     public static final String TOTAL_SERVICE_CHARGES = "TOTAL_SERVICE_CHARGES";
     public static final String TOTAL_CREDITS = "TOTAL_CREDITS";
     public static final String TOTAL_PAID = "TOTAL_PAID";
+
     public static final String EXTENDED_CREDIT_LIMIT = "EXTENDED_CREDIT_LIMIT";
 
     public static final String REFERRED_BY = "REFERRED_BY";
@@ -100,7 +104,8 @@ public class User {
                     + " " + User.TOKEN + "  text,"
                     + " " + User.TIMESTAMP_TOKEN_EXPIRES + "  timestamp with time zone,"
 
-                    + " " + User.CURRENT_DUES + " float NOT NULL default 0,"
+                    + " " + User.TAX_ACCOUNT_BALANCE + " float NOT NULL default 0,"
+                    + " " + User.SERVICE_ACCOUNT_BALANCE + " float NOT NULL default 0,"
                     + " " + User.TOTAL_SERVICE_CHARGES + " float NOT NULL default 0,"
                     + " " + User.TOTAL_CREDITS + " float NOT NULL default 0,"
                     + " " + User.TOTAL_PAID + " float NOT NULL default 0,"
@@ -120,11 +125,33 @@ public class User {
 
 
 
+
     public static final String upgradeTableSchema =
                     " ALTER TABLE IF EXISTS " + User.TABLE_NAME +
                     " ADD COLUMN IF NOT EXISTS " + User.EXTENDED_CREDIT_LIMIT + " float NOT NULL default 0," +
                     " ADD COLUMN IF NOT EXISTS " + " " + User.PASSWORD_RESET_CODE + " text," +
-                    " ADD COLUMN IF NOT EXISTS " + " " + User.RESET_CODE_EXPIRES + " timestamp with time zone";
+                    " ADD COLUMN IF NOT EXISTS " + " " + User.RESET_CODE_EXPIRES + " timestamp with time zone," +
+                    " ADD COLUMN IF NOT EXISTS " + " " + User.TAX_ACCOUNT_BALANCE + " float NOT NULL default 0";
+
+
+
+//                        " DROP COLUMN IF EXISTS " + " TOTAL_SERVICE_CHARGES ," +
+//                                " DROP COLUMN IF EXISTS " + " TOTAL_CREDITS ," +
+//                                " DROP COLUMN IF EXISTS " + " TOTAL_PAID , " +
+//
+
+
+    public static final String renameColumns =
+            " ALTER TABLE IF EXISTS " + User.TABLE_NAME +
+            " RENAME COLUMN " + " CURRENT_DUES " + " TO " + User.SERVICE_ACCOUNT_BALANCE;
+
+
+//
+//    public static final String dropColumns =
+//            " ALTER TABLE IF EXISTS " + User.TABLE_NAME +
+//                    " ADD COLUMN IF NOT EXISTS " + User.EXTENDED_CREDIT_LIMIT + " float NOT NULL default 0," +
+//                    " ADD COLUMN IF NOT EXISTS " + " " + User.PASSWORD_RESET_CODE + " text," +
+//                    " ADD COLUMN IF NOT EXISTS " + " " + User.RESET_CODE_EXPIRES + " timestamp with time zone";
 
 
 
@@ -159,10 +186,12 @@ public class User {
     private String token;
     private Timestamp timestampTokenExpires;
 
-    private double currentDues;
-    private double totalServiceCharges;
-    private double totalCredited;
-    private double totalPaid;
+    private double taxAccountBalance;
+    private double serviceAccountBalance;
+
+//    private double totalServiceCharges;
+//    private double totalCredited;
+//    private double totalPaid;
     private double extendedCreditLimit;
 
     private int referredBy;
@@ -241,36 +270,20 @@ public class User {
         this.port = port;
     }
 
-    public double getCurrentDues() {
-        return currentDues;
+    public double getServiceAccountBalance() {
+        return serviceAccountBalance;
     }
 
-    public void setCurrentDues(double currentDues) {
-        this.currentDues = currentDues;
+    public void setServiceAccountBalance(double serviceAccountBalance) {
+        this.serviceAccountBalance = serviceAccountBalance;
     }
 
-    public double getTotalServiceCharges() {
-        return totalServiceCharges;
+    public double getTaxAccountBalance() {
+        return taxAccountBalance;
     }
 
-    public void setTotalServiceCharges(double totalServiceCharges) {
-        this.totalServiceCharges = totalServiceCharges;
-    }
-
-    public double getTotalCredited() {
-        return totalCredited;
-    }
-
-    public void setTotalCredited(double totalCredited) {
-        this.totalCredited = totalCredited;
-    }
-
-    public double getTotalPaid() {
-        return totalPaid;
-    }
-
-    public void setTotalPaid(double totalPaid) {
-        this.totalPaid = totalPaid;
+    public void setTaxAccountBalance(double taxAccountBalance) {
+        this.taxAccountBalance = taxAccountBalance;
     }
 
     public int getReferredBy() {

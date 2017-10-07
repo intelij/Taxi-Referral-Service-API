@@ -353,7 +353,13 @@ public class DAOTripRequest {
                 + CurrentTrip.REFERRAL_CHARGES + ","
 
                 + CurrentTrip.MIN_TRIP_CHARGES + ","
-                + CurrentTrip.CHARGES_PER_KM + ""
+                + CurrentTrip.CHARGES_PER_KM + ","
+
+                + CurrentTrip.FREE_START_WAITING_MINUTES + ","
+                + CurrentTrip.FREE_MINUTES_PER_KM + ","
+                + CurrentTrip.WAIT_CHARGES_PER_MINUTE + ","
+                + CurrentTrip.TAX_RATE + ""
+
                 + ") "
                 + " SELECT "
                 + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + ","
@@ -376,7 +382,13 @@ public class DAOTripRequest {
                 + GlobalConstants.taxi_referral_charges + ","
 
                 + Vehicle.TABLE_NAME + "." + Vehicle.MIN_TRIP_CHARGES + ","
-                + Vehicle.TABLE_NAME + "." + Vehicle.CHARGES_PER_KM + ""
+                + Vehicle.TABLE_NAME + "." + Vehicle.CHARGES_PER_KM + ","
+
+                + GlobalConstants.free_start_waiting_minutes + ","
+                + GlobalConstants.free_minutes_per_km + ","
+                + GlobalConstants.wait_charges_per_minute + ","
+                + GlobalConstants.tax_rate_in_percent + ""
+
 
                 + " FROM " + TripRequest.TABLE_NAME
                 + " INNER JOIN " + Vehicle.TABLE_NAME + " ON " + "(" + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
