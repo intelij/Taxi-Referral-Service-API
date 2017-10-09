@@ -133,6 +133,7 @@ public class Vehicle {
 
     private double rt_distance;
     private User rt_driver;
+    private double rt_fare_estimate;
 
 
 
@@ -140,6 +141,14 @@ public class Vehicle {
 
     // getter and setters
 
+
+    public double getRt_fare_estimate() {
+        return rt_fare_estimate;
+    }
+
+    public void setRt_fare_estimate(double rt_fare_estimate) {
+        this.rt_fare_estimate = rt_fare_estimate;
+    }
 
     public Timestamp getEnabledUpto() {
         return enabledUpto;

@@ -130,15 +130,11 @@ public class DAOCurrentTrip {
                 " SET "
                 + Vehicle.LAT_CURRENT + "=?,"
                 + Vehicle.LON_CURRENT + "=?,"
-                + Vehicle.TIMESTAMP_LOCATION_UPDATED + "= now()"
+                + Vehicle.TIMESTAMP_LOCATION_UPDATED + " = now()"
 
                 + " FROM " + User.TABLE_NAME
                 + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID
                 + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
-
-
-
-
 
 
         try {

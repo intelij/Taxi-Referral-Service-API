@@ -439,6 +439,7 @@ public class VehicleResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTaxisAvailable(
             @QueryParam("LatPickup") Double latPickUp, @QueryParam("LonPickup") Double lonPickUp,
+            @QueryParam("TripDistance") double tripDistance,
             @QueryParam("DriversGender") Boolean driversGender,
             @QueryParam("AdultMalesCount") Integer adultMalesCount,
             @QueryParam("AdultFemalesCount") Integer adultFemalesCount,
@@ -475,7 +476,7 @@ public class VehicleResource {
 
 
         endPoint = daoVehicle.getTaxisAvailable(
-                latPickUp,lonPickUp,driversGender,sortBy,limit,offset,
+                latPickUp,lonPickUp,tripDistance,driversGender,sortBy,limit,offset,
                 getRowCount,getOnlyMetaData
         );
 

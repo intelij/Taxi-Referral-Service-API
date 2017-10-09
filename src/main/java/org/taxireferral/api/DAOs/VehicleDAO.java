@@ -1403,6 +1403,7 @@ public class VehicleDAO {
 
     public VehicleEndPoint getTaxisAvailable(
             Double latPickUp, Double lonPickUp,
+            Double tripDistance,
             Boolean gender,
             String sortBy,
             Integer limit, Integer offset,
@@ -1424,6 +1425,14 @@ public class VehicleDAO {
                 + latPickUp + ")) * cos( radians(" +  Vehicle.LAT_CURRENT +  ") ) * cos(radians(" + Vehicle.LON_CURRENT +  ") - radians("
                 + lonPickUp + "))"
                 + " + sin( radians(" + latPickUp + ")) * sin(radians(" + Vehicle.LAT_CURRENT + "))) as distance" + ","
+
+
+                + "(  ( Greatest( ( 6371 * acos( cos( radians("
+                + latPickUp + ")) * cos( radians(" +  Vehicle.LAT_CURRENT +  ") ) * cos(radians(" + Vehicle.LON_CURRENT +  ") - radians("
+                + lonPickUp + "))"
+                + " + sin( radians(" + latPickUp + ")) * sin(radians(" + Vehicle.LAT_CURRENT + "))) ) * " + GlobalConstants.SHORTEST_DISTANCE_MULTIPLIER + " - " + GlobalConstants.free_pickup_distance + ", 0 ) + " + tripDistance + " ) * " + Vehicle.CHARGES_PER_KM + " + " + GlobalConstants.taxi_referral_charges + " ) * (1 + 0.01 * " + GlobalConstants.tax_rate_in_percent + ") as fare_estimate,"
+
+
 
 
                 + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ","
@@ -1575,6 +1584,8 @@ public class VehicleDAO {
 
                     vehicle.setRt_distance(rs.getFloat("distance"));
 
+                    vehicle.setRt_fare_estimate(rs.getFloat("fare_estimate"));
+
                     vehicle.setVehicleID(rs.getInt(Vehicle.VEHICLE_ID));
                     vehicle.setDriverID(rs.getInt(Vehicle.DRIVER_ID));
 
@@ -1634,6 +1645,9 @@ public class VehicleDAO {
                     endPoint.setItemCount(resultSetCount.getInt("item_count"));
                 }
             }
+
+
+
 
 
 

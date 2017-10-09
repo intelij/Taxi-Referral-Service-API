@@ -194,7 +194,7 @@ public class Main {
         startJettyServer();
 
 
-        renameTables();
+//        renameTables();
 
 
 //        SimpleServer.main(null);
@@ -285,7 +285,7 @@ public class Main {
 
 
 
-            statement.executeUpdate(User.renameColumns);
+//            statement.executeUpdate(User.renameColumns);
 //            statement.executeUpdate(Transaction.renameColumns);
 
 

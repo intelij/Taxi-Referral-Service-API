@@ -121,4 +121,9 @@ public class GlobalConstants {
     public static final int MIN_SERVICE_ACCOUNT_BALANCE = 0;
 
 
+
+
+    // value to multiply with shortest distance which gives approx real distance
+    public static final double SHORTEST_DISTANCE_MULTIPLIER = 1.6;
+
 }
