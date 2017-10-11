@@ -62,6 +62,7 @@ public class VehicleTypeVersion {
 
 
 
+
     // instance variables
 
     private int versionID;

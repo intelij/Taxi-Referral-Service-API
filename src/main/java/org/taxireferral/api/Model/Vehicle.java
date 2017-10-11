@@ -1,5 +1,6 @@
 package org.taxireferral.api.Model;
 
+import org.taxireferral.api.ModelBilling.Transaction;
 import org.taxireferral.api.ModelRoles.User;
 
 import java.sql.Timestamp;
@@ -38,6 +39,10 @@ public class Vehicle {
 
     public static final String LAT_CURRENT = "LAT_CURRENT";
     public static final String LON_CURRENT = "LON_CURRENT";
+
+    public static final String BEARING = "BEARING";
+    public static final String SPEED = "SPEED";
+
     public static final String TIMESTAMP_LOCATION_UPDATED = "TIMESTAMP_LOCATION_UPDATED";
 
 
@@ -87,6 +92,9 @@ public class Vehicle {
                     + " " + Vehicle.LAT_CURRENT + " float NOT NULL default 0,"
                     + " " + Vehicle.LON_CURRENT + " float NOT NULL default 0,"
 
+                    + " " + Vehicle.BEARING + " float NOT NULL default 0,"
+                    + " " + Vehicle.SPEED + " float NOT NULL default 0,"
+
                     + " " + Vehicle.TIMESTAMP_LOCATION_UPDATED + "  timestamp with time zone NOT NULL DEFAULT now(),"
                     + " " + Vehicle.TIMESTAMP_PROFILE_CREATED + "  timestamp with time zone NOT NULL DEFAULT now(),"
 
@@ -99,6 +107,11 @@ public class Vehicle {
 
 
 
+
+    public static final String addColumns =
+            " ALTER TABLE IF EXISTS " + Vehicle.TABLE_NAME +
+                    " ADD COLUMN IF NOT EXISTS " + Vehicle.BEARING + " float NOT NULL default 0," +
+                    " ADD COLUMN IF NOT EXISTS " + Vehicle.SPEED + " float NOT NULL default 0";
 
 
 
@@ -123,6 +136,8 @@ public class Vehicle {
 
     private double latCurrent;
     private double lonCurrent;
+    private double bearing;
+    private double speed;
 
     private Timestamp locationUpdated;
     private Timestamp profileCreated;
@@ -141,6 +156,24 @@ public class Vehicle {
 
     // getter and setters
 
+
+
+
+    public double getBearing() {
+        return bearing;
+    }
+
+    public void setBearing(double bearing) {
+        this.bearing = bearing;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
 
     public double getRt_fare_estimate() {
         return rt_fare_estimate;

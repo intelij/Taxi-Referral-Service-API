@@ -109,6 +109,8 @@ public class CurrentTrip {
 
 
 
+
+
     public static final String upgradeTableSchema =
                     " ALTER TABLE IF EXISTS " + CurrentTrip.TABLE_NAME +
                     " ADD COLUMN IF NOT EXISTS " + CurrentTrip.FREE_START_WAITING_MINUTES + " float NOT NULL default 0," +
@@ -157,6 +159,8 @@ public class CurrentTrip {
 
     private Vehicle rt_vehicle;
     private User rt_end_user;
+
+
 
 
     // utility functions
@@ -214,11 +218,11 @@ public class CurrentTrip {
 
 
 
+
     public double calculateTripCharges()
     {
         return distanceTravelledForTrip * chargesPerKm;
     }
-
 
 
 

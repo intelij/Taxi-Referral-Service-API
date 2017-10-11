@@ -87,12 +87,10 @@ public class Main {
 //        sslContextFactory.setKeyStorePath("/media/sumeet/data/ataxiRefferal/taxiReferralAPI/keystore.jks");
 
         return JettyHttpContainerFactory.createServer(URI.create(BASE_URI),sslContextFactory,rc);
-
     }
 
 
-
-
+    
 
 
     public static Server startJettyTLS()
@@ -282,6 +280,7 @@ public class Main {
             statement.executeUpdate(CurrentTrip.upgradeTableSchema);
             statement.executeUpdate(TripHistory.upgradeTableSchema);
             statement.executeUpdate(User.upgradeTableSchema);
+            statement.executeUpdate(Transaction.addColumns);
 
 
 

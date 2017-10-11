@@ -9,10 +9,29 @@ public class LocationCurrentTrip {
 
     private double latitude;
     private double longitude;
+    private double bearing;
+    private double speed;
     private double distanceTravelledForPickup;
     private double distanceTravelledForTrip;
     private int rt_end_user_id;
 
+
+
+    public double getBearing() {
+        return bearing;
+    }
+
+    public void setBearing(double bearing) {
+        this.bearing = bearing;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
 
     public int getRt_end_user_id() {
         return rt_end_user_id;

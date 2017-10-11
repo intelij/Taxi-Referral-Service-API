@@ -1,5 +1,6 @@
 package org.taxireferral.api.ModelBilling;
 
+import org.taxireferral.api.Model.CurrentTrip;
 import org.taxireferral.api.ModelRoles.User;
 
 import java.sql.Timestamp;
@@ -68,7 +69,7 @@ public class Transaction {
 
                     + " " + Transaction.TRANSACTION_TYPE + " int,"
                     + " " + Transaction.TRANSACTION_AMOUNT + " float NOT NULL,"
-                    + " " + Transaction.TAX_AMOUNT + " float NOT NULL,"
+                    + " " + Transaction.TAX_AMOUNT + " float NOT NULL default 0,"
 
                     + " " + Transaction.IS_CREDIT + " boolean NOT NULL,"
 
@@ -80,6 +81,14 @@ public class Transaction {
 
                     + " FOREIGN KEY(" + Transaction.USER_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE"
                     + ")";
+
+
+
+
+    public static final String addColumns =
+            " ALTER TABLE IF EXISTS " + Transaction.TABLE_NAME +
+                    " ADD COLUMN IF NOT EXISTS " + Transaction.TAX_AMOUNT + " float NOT NULL default 0," +
+                    " ADD COLUMN IF NOT EXISTS " + Transaction.TAX_BALANCE_AFTER_TRANSACTION + " float NOT NULL";
 
 
 

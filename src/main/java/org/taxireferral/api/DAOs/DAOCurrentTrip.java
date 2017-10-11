@@ -124,17 +124,22 @@ public class DAOCurrentTrip {
 
 
 
-
+        
         updateLocation = " UPDATE " + Vehicle.TABLE_NAME +
 
                 " SET "
                 + Vehicle.LAT_CURRENT + "=?,"
                 + Vehicle.LON_CURRENT + "=?,"
+                + Vehicle.BEARING + "=?,"
+                + Vehicle.SPEED + "=?,"
                 + Vehicle.TIMESTAMP_LOCATION_UPDATED + " = now()"
 
                 + " FROM " + User.TABLE_NAME
                 + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID
                 + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
+
+
+
 
 
         try {
@@ -159,6 +164,8 @@ public class DAOCurrentTrip {
 
             statementLocation.setObject(++i,locationCurrentTrip.getLatitude());
             statementLocation.setObject(++i,locationCurrentTrip.getLongitude());
+            statementLocation.setObject(++i,locationCurrentTrip.getBearing());
+            statementLocation.setObject(++i,locationCurrentTrip.getSpeed());
             statementLocation.setObject(++i,driverID);
 
             rowCountUpdateLocation = statementLocation.executeUpdate();
@@ -221,6 +228,11 @@ public class DAOCurrentTrip {
 
         return (rowCountUpdateLocation + rowCountUpdateDistance);
     }
+
+
+
+
+
 
 
 
@@ -905,11 +917,13 @@ public class DAOCurrentTrip {
             return 0;
         }
 
+
         currentTrip.setTimestampFinished(new Timestamp(System.currentTimeMillis()));
         currentTrip.setLatDestination(tripHistory.getLatDestination());
         currentTrip.setLonDestination(tripHistory.getLonDestination());
         currentTrip.setDistanceTravelledForTrip(tripHistory.getDistanceTravelledForTrip());
         currentTrip.setDestinationAddress(tripHistory.getDestinationAddress());
+
 
 
 
@@ -1093,11 +1107,13 @@ public class DAOCurrentTrip {
 
                 + Transaction.TRANSACTION_TYPE + ","
                 + Transaction.TRANSACTION_AMOUNT + ","
+                + Transaction.TAX_AMOUNT + ","
 
                 + Transaction.IS_CREDIT + ","
 
 //                            + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
-                + Transaction.SERVICE_BALANCE_AFTER_TRANSACTION + ""
+                + Transaction.SERVICE_BALANCE_AFTER_TRANSACTION + ","
+                + Transaction.TAX_BALANCE_AFTER_TRANSACTION + ""
 
                 + ") "
                 + " SELECT "
@@ -1108,16 +1124,19 @@ public class DAOCurrentTrip {
 
                 + Transaction.TRANSACTION_TYPE_TAXI_REFERRAL_CHARGE + ","
                 + GlobalConstants.taxi_referral_charges + ","
+                + currentTrip.calculateTaxes() + ","
 
                 + " false " + ","
 //                            + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + " - " + GlobalConstants.taxi_referral_charges +  ","
-                + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + ""
+                + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + ","
+                + User.TABLE_NAME + "." + User.TAX_ACCOUNT_BALANCE + ""
 
                 + " FROM " + User.TABLE_NAME
                 + " INNER JOIN " + Vehicle.TABLE_NAME + " ON ( " + Vehicle.TABLE_NAME + "." +  Vehicle.DRIVER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID + " ) "
                 + " INNER JOIN " + TripHistory.TABLE_NAME + " ON ( " + TripHistory.TABLE_NAME + "." + TripHistory.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + " ) "
                 + " WHERE " + TripHistory.TABLE_NAME + "." + TripHistory.TRIP_HISTORY_ID + " = ? "
-                + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ?";
+                + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
+
 
 
 
@@ -1153,6 +1172,9 @@ public class DAOCurrentTrip {
 
 
 
+
+
+
                 statementUpdate = connection.prepareStatement(updateStatus);
                 i = 0;
 
@@ -1181,16 +1203,14 @@ public class DAOCurrentTrip {
 
 
 
-//                statementTransaction = connection.prepareStatement(createTransaction);
-//                i = 0;
-//
-//                statementTransaction.setObject(++i,idOfInsertedRow);
-//                statementTransaction.setObject(++i,driverID);
-//                rowCountItems = statementTransaction.executeUpdate();
+                statementTransaction = connection.prepareStatement(createTransaction);
+                i = 0;
 
+                statementTransaction.setObject(++i,idOfInsertedRow);
+                statementTransaction.setObject(++i,driverID);
+                rowCountItems = statementTransaction.executeUpdate();
 
             }
-
 
 
 

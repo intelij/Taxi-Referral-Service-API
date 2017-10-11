@@ -35,8 +35,6 @@ public class VehicleType {
                     + ")";
 
 
-
-
     // + " " + VehicleType.TIMESTAMP_UPDATED + " timestamp with time zone not null default now() ,"
 
 
