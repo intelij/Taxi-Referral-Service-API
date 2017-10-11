@@ -1275,7 +1275,9 @@ public class VehicleDAO {
                 + User.TABLE_NAME + "." + User.GENDER + ","
                 + User.TABLE_NAME + "." + User.PROFILE_IMAGE_URL + " as user_profile_image,"
 
+                + User.TABLE_NAME + "." + User.TAX_ACCOUNT_BALANCE + ","
                 + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + ","
+
                 + User.TABLE_NAME + "." + User.EXTENDED_CREDIT_LIMIT + ""
 
                 + " FROM " + Vehicle.TABLE_NAME
@@ -1348,9 +1350,9 @@ public class VehicleDAO {
                 driver.setGender(rs.getBoolean(User.GENDER));
                 driver.setProfileImagePath(rs.getString("user_profile_image"));
 
+                driver.setTaxAccountBalance(rs.getDouble(User.TAX_ACCOUNT_BALANCE));
                 driver.setServiceAccountBalance(rs.getDouble(User.SERVICE_ACCOUNT_BALANCE));
                 driver.setExtendedCreditLimit(rs.getDouble(User.EXTENDED_CREDIT_LIMIT));
-
 
                 vehicle.setRt_driver(driver);
 

@@ -124,7 +124,7 @@ public class DAOCurrentTrip {
 
 
 
-        
+
         updateLocation = " UPDATE " + Vehicle.TABLE_NAME +
 
                 " SET "
