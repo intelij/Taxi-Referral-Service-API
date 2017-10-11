@@ -192,6 +192,8 @@ public class Main {
         startJettyServer();
 
 
+
+
 //        renameTables();
 
 
@@ -277,11 +279,13 @@ public class Main {
 
             statement = connection.createStatement();
 
+
+            statement.executeUpdate(Vehicle.addColumns);
             statement.executeUpdate(CurrentTrip.upgradeTableSchema);
             statement.executeUpdate(TripHistory.upgradeTableSchema);
             statement.executeUpdate(User.upgradeTableSchema);
             statement.executeUpdate(Transaction.addColumns);
-            statement.executeUpdate(Vehicle.addColumns);
+
 
 
 
