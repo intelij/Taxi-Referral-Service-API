@@ -281,6 +281,9 @@ public class Main {
             statement.executeUpdate(TripHistory.upgradeTableSchema);
             statement.executeUpdate(User.upgradeTableSchema);
             statement.executeUpdate(Transaction.addColumns);
+            statement.executeUpdate(Vehicle.addColumns);
+
+
 
 
 
