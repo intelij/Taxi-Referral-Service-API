@@ -84,12 +84,17 @@ public class Transaction {
 
 
 
-
-
     public static final String addColumns =
             " ALTER TABLE IF EXISTS " + Transaction.TABLE_NAME +
                     " ADD COLUMN IF NOT EXISTS " + Transaction.TAX_AMOUNT + " float NOT NULL default 0," +
                     " ADD COLUMN IF NOT EXISTS " + Transaction.TAX_BALANCE_AFTER_TRANSACTION + " float NOT NULL default 0";
+
+
+
+
+    public static final String dropColumns =
+            " ALTER TABLE IF EXISTS " + Transaction.TABLE_NAME +
+                    " DROP COLUMN IF EXISTS CURRENT_DUES_BEFORE_TRANSACTION";
 
 
 

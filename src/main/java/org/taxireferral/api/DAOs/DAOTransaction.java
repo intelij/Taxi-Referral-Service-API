@@ -45,10 +45,12 @@ public class DAOTransaction {
                 + Transaction.TABLE_NAME + "." + Transaction.DESCRIPTION + ","
                 + Transaction.TABLE_NAME + "." + Transaction.TRANSACTION_TYPE + ","
                 + Transaction.TABLE_NAME + "." + Transaction.TRANSACTION_AMOUNT + ","
+                + Transaction.TABLE_NAME + "." + Transaction.TAX_AMOUNT + ","
                 + Transaction.TABLE_NAME + "." + Transaction.IS_CREDIT + ","
                 + Transaction.TABLE_NAME + "." + Transaction.TIMESTAMP_OCCURRED + ","
 //                + Transaction.TABLE_NAME + "." + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
-                + Transaction.TABLE_NAME + "." + Transaction.SERVICE_BALANCE_AFTER_TRANSACTION + ""
+                + Transaction.TABLE_NAME + "." + Transaction.SERVICE_BALANCE_AFTER_TRANSACTION + ","
+                + Transaction.TABLE_NAME + "." + Transaction.TAX_BALANCE_AFTER_TRANSACTION + ""
 
                 + " FROM " + Transaction.TABLE_NAME
                 + " WHERE " + Transaction.TABLE_NAME + "." + Transaction.USER_ID + " = ? ";
@@ -179,10 +181,12 @@ public class DAOTransaction {
                     transaction.setDescription(rs.getString(Transaction.DESCRIPTION));
                     transaction.setTransactionType(rs.getInt(Transaction.TRANSACTION_TYPE));
                     transaction.setTransactionAmount(rs.getDouble(Transaction.TRANSACTION_AMOUNT));
+                    transaction.setTaxAmount(rs.getDouble(Transaction.TAX_AMOUNT));
                     transaction.setCredit(rs.getBoolean(Transaction.IS_CREDIT));
                     transaction.setTimestampOccurred(rs.getTimestamp(Transaction.TIMESTAMP_OCCURRED));
 //                    transaction.setCurrentDuesBeforeTransaction(rs.getDouble(Transaction.CURRENT_DUES_BEFORE_TRANSACTION));
                     transaction.setServiceBalanceAfterTransaction(rs.getDouble(Transaction.SERVICE_BALANCE_AFTER_TRANSACTION));
+                    transaction.setTaxBalanceAfterTransaction(rs.getDouble(Transaction.TAX_BALANCE_AFTER_TRANSACTION));
 
 
                     itemList.add(transaction);

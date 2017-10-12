@@ -286,8 +286,7 @@ public class Main {
             statement.executeUpdate(User.upgradeTableSchema);
             statement.executeUpdate(Transaction.addColumns);
 
-
-
+            statement.executeUpdate(Transaction.dropColumns);
 
 
 

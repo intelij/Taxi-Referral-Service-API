@@ -1,8 +1,10 @@
 package org.taxireferral.api.DAORoles;
 
 import com.zaxxer.hikari.HikariDataSource;
+import jdk.nashorn.internal.objects.Global;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
+import org.taxireferral.api.Model.Vehicle;
 import org.taxireferral.api.ModelBilling.Transaction;
 import org.taxireferral.api.ModelRoles.EmailVerificationCode;
 import org.taxireferral.api.ModelRoles.PhoneVerificationCode;
@@ -27,6 +29,8 @@ public class DAOUserSignUp {
 
         Connection connection = null;
         PreparedStatement statement = null;
+        PreparedStatement statementInsertVehicle = null;
+
 
         PreparedStatement statementUpdateDUES = null;
         PreparedStatement statementCreateTransaction = null;
@@ -40,6 +44,8 @@ public class DAOUserSignUp {
 
 
         String insertItemSubmission = "";
+
+        String insertVehicle = "";
 
         String updateDUES = "";
         String createTransaction = "";
@@ -77,6 +83,12 @@ public class DAOUserSignUp {
                 + " and "
                 + "(" + EmailVerificationCode.TIMESTAMP_EXPIRES + " > now()" + ")"
                 + ")";
+
+
+
+        insertVehicle = " INSERT INTO " + Vehicle.TABLE_NAME + "(" + Vehicle.DRIVER_ID + "" + ") " +
+                " VALUES( ? )";
+
 
 
 
@@ -140,7 +152,7 @@ public class DAOUserSignUp {
 
 
 
-        // add referral charges to the user bill
+        // add referral credit
         updateDUESReferral =  " UPDATE " + User.TABLE_NAME
                 + " SET "
                 + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " + ?,"
@@ -243,6 +255,24 @@ public class DAOUserSignUp {
             {
                 idOfInsertedRow = rs.getInt(1);
             }
+
+
+
+
+            if(user.getRole()== GlobalConstants.ROLE_DRIVER_CODE)
+            {
+                if (rowCountItems == 1)
+                {
+
+                    statementInsertVehicle = connection.prepareStatement(insertVehicle);
+                    i = 0;
+
+                    statementInsertVehicle.setObject(++i,idOfInsertedRow);
+                    statementInsertVehicle.executeUpdate();
+                }
+            }
+
+
 
 
 
@@ -386,6 +416,16 @@ public class DAOUserSignUp {
             }
 
 
+            if (statementInsertVehicle != null) {
+                try {
+                    statementInsertVehicle.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+
             if (statementUpdateDUES != null) {
                 try {
                     statementUpdateDUES.close();
@@ -449,11 +489,14 @@ public class DAOUserSignUp {
 
 
 
+
+
     public int registerUsingPhone(User user, boolean getRowCount)
     {
 
         Connection connection = null;
         PreparedStatement statement = null;
+        PreparedStatement statementInsertVehicle = null;
 
         // for applying joining credit
         PreparedStatement statementUpdateDUES = null;
@@ -467,6 +510,7 @@ public class DAOUserSignUp {
         int idOfInsertedRow = -1;
         int rowCountItems = -1;
 
+        String insertVehicle = "";
 
         String updateDUES = "";
         String createTransaction = "";
@@ -509,13 +553,20 @@ public class DAOUserSignUp {
 
 
 
+        insertVehicle = " INSERT INTO " + Vehicle.TABLE_NAME + "(" + Vehicle.DRIVER_ID + "" + ") " +
+                        " VALUES( ? )";
 
-        // add referral charges to the user bill
+
+
+
+        // add joining credit
         updateDUES =  " UPDATE " + User.TABLE_NAME
                 + " SET "
-                + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " - ?,"
+                + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " + ?,"
                 + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " + ?"
                 + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
+
+
 
 
         createTransaction = "INSERT INTO " + Transaction.TABLE_NAME
@@ -546,7 +597,7 @@ public class DAOUserSignUp {
 
                 + " true " + ","
 
-                + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + " - ?,"
+//                + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + " - ?,"
                 + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + ""
 
                 + " FROM " + User.TABLE_NAME
@@ -570,10 +621,10 @@ public class DAOUserSignUp {
 
 
 
-        // add referral charges to the user bill
+        // add referral credit to the user
         updateDUESReferral =  " UPDATE " + User.TABLE_NAME
                 + " SET "
-                + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " - ?,"
+                + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " + ?,"
                 + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " + ?"
                 + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
 
@@ -608,7 +659,7 @@ public class DAOUserSignUp {
 
                 + " true " + ","
 
-                + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + " - ?,"
+//                + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + " - ?,"
                 + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + ""
 
                 + " FROM " + User.TABLE_NAME
@@ -621,45 +672,56 @@ public class DAOUserSignUp {
             connection.setAutoCommit(false);
 
 
-            statement = connection.prepareStatement(insertItemSubmission,PreparedStatement.RETURN_GENERATED_KEYS);
+            statement = connection.prepareStatement(insertItemSubmission, PreparedStatement.RETURN_GENERATED_KEYS);
             int i = 0;
 
 //            statement.setString(++i,user.getUsername());
 
-            statement.setString(++i,user.getPassword());
-            statement.setString(++i,user.getPhone());
+            statement.setString(++i, user.getPassword());
+            statement.setString(++i, user.getPhone());
 
-            statement.setString(++i,user.getName());
-            statement.setObject(++i,user.getGender());
+            statement.setString(++i, user.getName());
+            statement.setObject(++i, user.getGender());
 
-            statement.setString(++i,user.getProfileImagePath());
-            statement.setObject(++i,user.getRole());
-            statement.setObject(++i,user.isAccountPrivate());
-            statement.setObject(++i,user.getReferredBy());
+            statement.setString(++i, user.getProfileImagePath());
+            statement.setObject(++i, user.getRole());
+            statement.setObject(++i, user.isAccountPrivate());
+            statement.setObject(++i, user.getReferredBy());
 
-            if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
-            {
-                statement.setObject(++i,true);
+            if (user.getRole() == GlobalConstants.ROLE_END_USER_CODE) {
+                statement.setObject(++i, true);
+            } else {
+                statement.setObject(++i, false);
             }
-            else
-            {
-                statement.setObject(++i,false);
-            }
-            statement.setString(++i,user.getAbout());
+            statement.setString(++i, user.getAbout());
 
 
             // check phone is verified or not to ensure phone belongs to user
-            statement.setString(++i,user.getPhone());
-            statement.setString(++i,user.getRt_phone_verification_code());
+            statement.setString(++i, user.getPhone());
+            statement.setString(++i, user.getRt_phone_verification_code());
 
             rowCountItems = statement.executeUpdate();
 
 
             ResultSet rs = statement.getGeneratedKeys();
 
-            if(rs.next())
-            {
+            if (rs.next()) {
                 idOfInsertedRow = rs.getInt(1);
+            }
+
+
+
+            if(user.getRole()== GlobalConstants.ROLE_DRIVER_CODE)
+            {
+                if (rowCountItems == 1)
+                {
+
+                    statementInsertVehicle = connection.prepareStatement(insertVehicle);
+                    i = 0;
+
+                    statementInsertVehicle.setObject(++i,idOfInsertedRow);
+                    statementInsertVehicle.executeUpdate();
+                }
             }
 
 
@@ -700,19 +762,22 @@ public class DAOUserSignUp {
 
                 if(user.getRole()==GlobalConstants.ROLE_DRIVER_CODE)
                 {
-                    statementCreateTransaction.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_DRIVER);
+//                    statementCreateTransaction.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_DRIVER);
                     statementCreateTransaction.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_DRIVER);
                 }
                 else if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
                 {
-                    statementCreateTransaction.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_END_USER);
+//                    statementCreateTransaction.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_END_USER);
                     statementCreateTransaction.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_END_USER);
                 }
                 else
                 {
-                    statementCreateTransaction.setObject(++i,0);
+//                    statementCreateTransaction.setObject(++i,0);
                     statementCreateTransaction.setObject(++i,0);
                 }
+
+
+
 
                 statementCreateTransaction.setObject(++i,idOfInsertedRow);
                 rowCountItems = statementCreateTransaction.executeUpdate();
@@ -752,12 +817,12 @@ public class DAOUserSignUp {
                     if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
                     {
                         statementTransactionReferral.setObject(++i,GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION);
-                        statementTransactionReferral.setObject(++i,GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION);
+//                        statementTransactionReferral.setObject(++i,GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION);
                     }
                     else
                     {
                         statementTransactionReferral.setObject(++i,0);
-                        statementTransactionReferral.setObject(++i,0);
+//                        statementTransactionReferral.setObject(++i,0);
                     }
 
                     statementTransactionReferral.setObject(++i,user.getReferredBy());
@@ -792,6 +857,15 @@ public class DAOUserSignUp {
             if (statement != null) {
                 try {
                     statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            if (statementInsertVehicle != null) {
+                try {
+                    statementInsertVehicle.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
