@@ -1,5 +1,6 @@
 package org.taxireferral.api.RESTEndpoints;
 
+import jdk.nashorn.internal.objects.Global;
 import net.coobird.thumbnailator.Thumbnails;
 import org.taxireferral.api.DAOs.VehicleDAO;
 import org.taxireferral.api.Globals.GlobalConstants;
@@ -501,6 +502,11 @@ public class VehicleResource {
 
 
 
+
+
+
+
+
     @GET
     @Path("/GetTaxiProfileForAdmin")
     @Produces(MediaType.APPLICATION_JSON)
@@ -511,6 +517,7 @@ public class VehicleResource {
             @QueryParam("RegistrationExpired") Boolean registrationExpired,
             @QueryParam("Status") Integer status,
             @QueryParam("SearchString")String searchString,
+            @QueryParam("SearchByVehicleID")String searchByVehicleID,
             @QueryParam("SortBy") String sortBy,
             @QueryParam("Limit")Integer limit, @QueryParam("Offset")Integer offset,
             @QueryParam("GetRowCount")boolean getRowCount,
@@ -539,9 +546,12 @@ public class VehicleResource {
                 registrationExpired,
                 status,
                 searchString,
+                searchByVehicleID,
                 sortBy,limit,offset,
                 getRowCount,getOnlyMetaData
         );
+
+
 
 
         if(limit!=null)
@@ -582,8 +592,16 @@ public class VehicleResource {
 
         Vehicle vehicle = daoVehicle.getProfileByDriver(user.getUserID(),latCenter,lonCenter);
 
+
+
         if(vehicle!= null)
         {
+
+
+            vehicle.setRt_min_tax_balance(GlobalConstants.MIN_TAX_ACCOUNT_BALANCE);
+            vehicle.setRt_min_service_balance(GlobalConstants.MIN_SERVICE_ACCOUNT_BALANCE);
+
+
             return Response.status(Response.Status.OK)
                     .entity(vehicle)
                     .build();

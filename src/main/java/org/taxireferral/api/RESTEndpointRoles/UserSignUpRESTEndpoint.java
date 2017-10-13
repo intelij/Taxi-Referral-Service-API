@@ -194,7 +194,7 @@ public class UserSignUpRESTEndpoint {
 
 
 
-    
+
 
     @GET
     @Path("/CheckUsernameExists/{username}")

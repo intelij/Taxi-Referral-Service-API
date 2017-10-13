@@ -149,7 +149,8 @@ public class Vehicle {
     private double rt_distance;
     private User rt_driver;
     private double rt_fare_estimate;
-
+    private double rt_min_tax_balance;
+    private double rt_min_service_balance;
 
 
 
@@ -157,7 +158,21 @@ public class Vehicle {
     // getter and setters
 
 
+    public double getRt_min_tax_balance() {
+        return rt_min_tax_balance;
+    }
 
+    public void setRt_min_tax_balance(double rt_min_tax_balance) {
+        this.rt_min_tax_balance = rt_min_tax_balance;
+    }
+
+    public double getRt_min_service_balance() {
+        return rt_min_service_balance;
+    }
+
+    public void setRt_min_service_balance(double rt_min_service_balance) {
+        this.rt_min_service_balance = rt_min_service_balance;
+    }
 
     public double getBearing() {
         return bearing;

@@ -7,6 +7,7 @@ import org.taxireferral.api.Model.CurrentTrip;
 import org.taxireferral.api.Model.TripHistory;
 import org.taxireferral.api.Model.Vehicle;
 import org.taxireferral.api.ModelBilling.Transaction;
+import org.taxireferral.api.ModelBilling.TransactionTaxAccount;
 import org.taxireferral.api.ModelRoles.User;
 import org.taxireferral.api.ModelUtility.LocationCurrentTrip;
 
@@ -887,6 +888,8 @@ public class DAOCurrentTrip {
 
         PreparedStatement statementUpdateDUES = null;
         PreparedStatement statementTransaction = null;
+        PreparedStatement statementTransactionTax = null;
+
 
 
         int idOfInsertedRow = -1;
@@ -907,6 +910,8 @@ public class DAOCurrentTrip {
 
         String updateDUES = "";
         String createTransaction = "";
+        String createTransactionTax = "";
+
 
 
 
@@ -1096,6 +1101,9 @@ public class DAOCurrentTrip {
 //        + " FROM " + TripHistory.TABLE_NAME
 
 
+//        + currentTrip.calculateTaxes() + ","
+
+
 
         createTransaction = "INSERT INTO " + Transaction.TABLE_NAME
                 + "("
@@ -1107,13 +1115,10 @@ public class DAOCurrentTrip {
 
                 + Transaction.TRANSACTION_TYPE + ","
                 + Transaction.TRANSACTION_AMOUNT + ","
-                + Transaction.TAX_AMOUNT + ","
 
                 + Transaction.IS_CREDIT + ","
 
-//                            + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
-                + Transaction.SERVICE_BALANCE_AFTER_TRANSACTION + ","
-                + Transaction.TAX_BALANCE_AFTER_TRANSACTION + ""
+                + Transaction.SERVICE_BALANCE_AFTER_TRANSACTION + ""
 
                 + ") "
                 + " SELECT "
@@ -1124,11 +1129,48 @@ public class DAOCurrentTrip {
 
                 + Transaction.TRANSACTION_TYPE_TAXI_REFERRAL_CHARGE + ","
                 + GlobalConstants.taxi_referral_charges + ","
+
+                + " false " + ","
+                + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + ""
+
+                + " FROM " + User.TABLE_NAME
+                + " INNER JOIN " + Vehicle.TABLE_NAME + " ON ( " + Vehicle.TABLE_NAME + "." +  Vehicle.DRIVER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID + " ) "
+                + " INNER JOIN " + TripHistory.TABLE_NAME + " ON ( " + TripHistory.TABLE_NAME + "." + TripHistory.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + " ) "
+                + " WHERE " + TripHistory.TABLE_NAME + "." + TripHistory.TRIP_HISTORY_ID + " = ? "
+                + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
+
+
+
+
+
+//        " || ' | User ID : ' || registered." + User.USER_ID
+
+        createTransactionTax = "INSERT INTO " + TransactionTaxAccount.TABLE_NAME
+                + "("
+
+                + TransactionTaxAccount.USER_ID + ","
+
+                + TransactionTaxAccount.TITLE + ","
+                + TransactionTaxAccount.DESCRIPTION + ","
+
+                + TransactionTaxAccount.TRANSACTION_TYPE + ","
+                + TransactionTaxAccount.TAX_AMOUNT + ","
+
+                + TransactionTaxAccount.IS_CREDIT + ","
+
+                + TransactionTaxAccount.TAX_BALANCE_AFTER_TRANSACTION + ""
+
+                + ") "
+                + " SELECT "
+
+                + User.TABLE_NAME + "." + User.USER_ID + ","
+                + " ' Tax amount : ' ,"
+                + " ' Tax amount for trip taken at '" +  " || " + TripHistory.TABLE_NAME + "." +  TripHistory.TIMESTAMP_FINISHED + "::text " + ","
+
+                + Transaction.TRANSACTION_TYPE_TAXI_REFERRAL_CHARGE + ","
                 + currentTrip.calculateTaxes() + ","
 
                 + " false " + ","
-//                            + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + " - " + GlobalConstants.taxi_referral_charges +  ","
-                + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + ","
                 + User.TABLE_NAME + "." + User.TAX_ACCOUNT_BALANCE + ""
 
                 + " FROM " + User.TABLE_NAME
@@ -1136,6 +1178,7 @@ public class DAOCurrentTrip {
                 + " INNER JOIN " + TripHistory.TABLE_NAME + " ON ( " + TripHistory.TABLE_NAME + "." + TripHistory.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + " ) "
                 + " WHERE " + TripHistory.TABLE_NAME + "." + TripHistory.TRIP_HISTORY_ID + " = ? "
                 + " AND " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
+
 
 
 
@@ -1210,8 +1253,15 @@ public class DAOCurrentTrip {
                 statementTransaction.setObject(++i,driverID);
                 rowCountItems = statementTransaction.executeUpdate();
 
-            }
 
+
+                statementTransactionTax = connection.prepareStatement(createTransactionTax);
+                i = 0;
+                statementTransactionTax.setObject(++i,idOfInsertedRow);
+                statementTransactionTax.setObject(++i,driverID);
+                rowCountItems = statementTransactionTax.executeUpdate();
+
+            }
 
 
 
@@ -1278,6 +1328,16 @@ public class DAOCurrentTrip {
             if (statementTransaction != null) {
                 try {
                     statementTransaction.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+
+            if (statementTransactionTax != null) {
+                try {
+                    statementTransactionTax.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

@@ -117,9 +117,8 @@ public class GlobalConstants {
     public static final int wait_charges_per_minute = 2;
     public static final int tax_rate_in_percent = 5;
 
-    public static final int MIN_TAX_ACCOUNT_BALANCE = 0;
+    public static final int MIN_TAX_ACCOUNT_BALANCE = -50;
     public static final int MIN_SERVICE_ACCOUNT_BALANCE = 0;
-
 
 
 

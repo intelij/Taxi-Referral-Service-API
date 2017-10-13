@@ -2,6 +2,7 @@ package org.taxireferral.api.RESTEndpoints;
 
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
+import org.taxireferral.api.ModelEndpoints.TaxTransactionEndpoint;
 import org.taxireferral.api.ModelEndpoints.TransactionEndpoint;
 import org.taxireferral.api.ModelEndpoints.TripHistoryEndPoint;
 import org.taxireferral.api.ModelRoles.User;
@@ -54,6 +55,67 @@ public class TransactionRESTEndpoint {
 
 
         TransactionEndpoint endpoint = Globals.daoTransaction.getTransactions(
+                ((User) Globals.accountApproved).getUserID(),isCredit,transactionType,
+                sortBy,limit,offset,getRowCount,getOnlyMetaData
+        );
+
+
+
+//
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+
+
+        //Marker
+        return Response.status(Response.Status.OK)
+                .entity(endpoint)
+                .build();
+    }
+
+
+
+
+
+
+
+
+
+    @GET
+    @Path("/TaxTransactions")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_END_USER,GlobalConstants.ROLE_DRIVER})
+    public Response getTaxTransactions(
+            @QueryParam("IsCredit") Boolean isCredit,
+            @QueryParam("TransactionType") Integer transactionType,
+            @QueryParam("SortBy") String sortBy,
+            @QueryParam("Limit")Integer limit, @QueryParam("Offset")Integer offset,
+            @QueryParam("GetRowCount")boolean getRowCount,
+            @QueryParam("MetadataOnly")boolean getOnlyMetaData)
+    {
+
+
+
+        if(limit!=null)
+        {
+            if(limit >= GlobalConstants.max_limit)
+            {
+                limit = GlobalConstants.max_limit;
+            }
+
+            if(offset==null)
+            {
+                offset = 0;
+            }
+        }
+
+
+
+
+        TaxTransactionEndpoint endpoint = Globals.daoTransaction.getTransactionsTax(
                 ((User) Globals.accountApproved).getUserID(),isCredit,transactionType,
                 sortBy,limit,offset,getRowCount,getOnlyMetaData
         );

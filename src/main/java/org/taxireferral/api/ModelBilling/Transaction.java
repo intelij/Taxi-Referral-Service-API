@@ -43,7 +43,7 @@ public class Transaction {
     public static final String TRANSACTION_TYPE = "TRANSACTION_TYPE";
 
     public static final String TRANSACTION_AMOUNT = "TRANSACTION_AMOUNT";
-    public static final String TAX_AMOUNT = "TAX_AMOUNT";
+//    public static final String TAX_AMOUNT = "TAX_AMOUNT";
 
     public static final String IS_CREDIT = "IS_CREDIT"; // indicates whether transaction is credit or debit
 
@@ -51,7 +51,7 @@ public class Transaction {
 
 //    public static final String CURRENT_DUES_BEFORE_TRANSACTION = "CURRENT_DUES_BEFORE_TRANSACTION";
     public static final String SERVICE_BALANCE_AFTER_TRANSACTION = "SERVICE_BALANCE_AFTER_TRANSACTION";
-    public static final String TAX_BALANCE_AFTER_TRANSACTION = "TAX_BALANCE_AFTER_TRANSACTION";
+//    public static final String TAX_BALANCE_AFTER_TRANSACTION = "TAX_BALANCE_AFTER_TRANSACTION";
 
 
 
@@ -69,7 +69,7 @@ public class Transaction {
 
                     + " " + Transaction.TRANSACTION_TYPE + " int,"
                     + " " + Transaction.TRANSACTION_AMOUNT + " float NOT NULL,"
-                    + " " + Transaction.TAX_AMOUNT + " float NOT NULL default 0,"
+//                    + " " + Transaction.TAX_AMOUNT + " float NOT NULL default 0,"
 
                     + " " + Transaction.IS_CREDIT + " boolean NOT NULL,"
 
@@ -77,18 +77,18 @@ public class Transaction {
 
 //                    + " " + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + " float NOT NULL,"
                     + " " + Transaction.SERVICE_BALANCE_AFTER_TRANSACTION + " float NOT NULL,"
-                    + " " + Transaction.TAX_BALANCE_AFTER_TRANSACTION + " float NOT NULL,"
+//                    + " " + Transaction.TAX_BALANCE_AFTER_TRANSACTION + " float NOT NULL,"
 
                     + " FOREIGN KEY(" + Transaction.USER_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE"
                     + ")";
 
 
-
-    public static final String addColumns =
-            " ALTER TABLE IF EXISTS " + Transaction.TABLE_NAME +
-                    " ADD COLUMN IF NOT EXISTS " + Transaction.TAX_AMOUNT + " float NOT NULL default 0," +
-                    " ADD COLUMN IF NOT EXISTS " + Transaction.TAX_BALANCE_AFTER_TRANSACTION + " float NOT NULL default 0";
-
+//
+//    public static final String addColumns =
+//            " ALTER TABLE IF EXISTS " + Transaction.TABLE_NAME +
+//                    " ADD COLUMN IF NOT EXISTS " + Transaction.TAX_AMOUNT + " float NOT NULL default 0," +
+//                    " ADD COLUMN IF NOT EXISTS " + Transaction.TAX_BALANCE_AFTER_TRANSACTION + " float NOT NULL default 0";
+//
 
 
 
@@ -115,7 +115,7 @@ public class Transaction {
 
     private int transactionType;
 
-    private double taxAmount;
+//    private double taxAmount;
     private double transactionAmount;
     private boolean isCredit;
 
@@ -123,7 +123,9 @@ public class Transaction {
 
 //    private double currentDuesBeforeTransaction;
     private double serviceBalanceAfterTransaction;
-    private double taxBalanceAfterTransaction;
+//    private double taxBalanceAfterTransaction;
+
+
 
 
 
@@ -131,22 +133,6 @@ public class Transaction {
 
     // getter and setters
 
-
-    public double getTaxAmount() {
-        return taxAmount;
-    }
-
-    public void setTaxAmount(double taxAmount) {
-        this.taxAmount = taxAmount;
-    }
-
-    public double getTaxBalanceAfterTransaction() {
-        return taxBalanceAfterTransaction;
-    }
-
-    public void setTaxBalanceAfterTransaction(double taxBalanceAfterTransaction) {
-        this.taxBalanceAfterTransaction = taxBalanceAfterTransaction;
-    }
 
     public int getTransactionID() {
         return transactionID;

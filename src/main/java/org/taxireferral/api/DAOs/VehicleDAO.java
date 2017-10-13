@@ -284,8 +284,6 @@ public class VehicleDAO {
                 + " WHERE " + Vehicle.VEHICLE_ID + " = ?";
 
 
-
-
         // add referral credit to the referrer if the referrer is not credited
         updateDUES =  " UPDATE " + User.TABLE_NAME
                 + " SET "
@@ -702,6 +700,7 @@ public class VehicleDAO {
         int rowCountItems = -1;
 
         String update = "";
+
 
 //
 //
@@ -1468,7 +1467,7 @@ public class VehicleDAO {
                 + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.AVIALABLE
                 + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.ENABLED + " = TRUE "
                 + " AND " + User.TABLE_NAME + "." + User.TAX_ACCOUNT_BALANCE + " > " + GlobalConstants.MIN_TAX_ACCOUNT_BALANCE
-                + " AND " + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + " > " + GlobalConstants.MIN_SERVICE_ACCOUNT_BALANCE
+                + " AND " + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + " > " + GlobalConstants.MIN_SERVICE_ACCOUNT_BALANCE + " - " + User.TABLE_NAME + "." + User.EXTENDED_CREDIT_LIMIT
                 + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.ENABLED_UPTO + " > now()";
 
 
@@ -1730,6 +1729,7 @@ public class VehicleDAO {
             Boolean registrationExpired,
             Integer status,
             String searchString,
+            String searchStringVehicleID,
             String sortBy,
             Integer limit, Integer offset,
             boolean getRowCount,
@@ -1833,12 +1833,20 @@ public class VehicleDAO {
 //                    + " or " + Shop.TABLE_NAME + "." + Shop.LONG_DESCRIPTION + " ilike '%" + searchString + "%'"
 //                    + " or " + Shop.TABLE_NAME + "." + Shop.SHOP_ADDRESS + " ilike '%" + searchString + "%'"
 
-            String queryPartSearch = " AND CAST ( " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + " AS text )" + " ilike '%" + searchString + "%'" + " ";
+            String queryPartSearch = " AND CAST ( " + User.TABLE_NAME + "." + User.USER_ID + " AS text )" + " ilike '%" + searchString + "%'" + " ";
 
             queryJoin = queryJoin + queryPartSearch;
         }
 
 //
+
+
+        if(searchStringVehicleID !=null) {
+
+            String queryPartSearch = " AND CAST ( " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + " AS text )" + " ilike '%" + searchString + "%'" + " ";
+
+            queryJoin = queryJoin + queryPartSearch;
+        }
 
 
 

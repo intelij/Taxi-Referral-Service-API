@@ -7,6 +7,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.*;
 import org.taxireferral.api.ModelBilling.Transaction;
+import org.taxireferral.api.ModelBilling.TransactionTaxAccount;
 import org.taxireferral.api.ModelRoles.EmailVerificationCode;
 import org.taxireferral.api.ModelRoles.PhoneVerificationCode;
 import org.taxireferral.api.ModelRoles.StaffPermissions;
@@ -284,9 +285,10 @@ public class Main {
             statement.executeUpdate(CurrentTrip.upgradeTableSchema);
             statement.executeUpdate(TripHistory.upgradeTableSchema);
             statement.executeUpdate(User.upgradeTableSchema);
-            statement.executeUpdate(Transaction.addColumns);
-
+//            statement.executeUpdate(Transaction.addColumns);
             statement.executeUpdate(Transaction.dropColumns);
+
+
 
 
 
@@ -389,11 +391,7 @@ public class Main {
     }
 
 
-
-
-
-
-
+    
 
 
 
@@ -425,13 +423,11 @@ public class Main {
             statement.executeUpdate(VehicleType.createTablePostgres);
             statement.executeUpdate(VehicleTypeVersion.createTablePostgres);
             statement.executeUpdate(Transaction.createTablePostgres);
+            statement.executeUpdate(TransactionTaxAccount.createTablePostgres);
 
 
             statement.executeUpdate(ServiceConfigurationLocal.createTablePostgres);
             System.out.println("Tables Created ... !");
-
-
-
 
 
 

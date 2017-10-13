@@ -3,6 +3,8 @@ package org.taxireferral.api.DAOs;
 import com.zaxxer.hikari.HikariDataSource;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.ModelBilling.Transaction;
+import org.taxireferral.api.ModelBilling.TransactionTaxAccount;
+import org.taxireferral.api.ModelEndpoints.TaxTransactionEndpoint;
 import org.taxireferral.api.ModelEndpoints.TransactionEndpoint;
 
 import java.sql.Connection;
@@ -17,6 +19,8 @@ import java.util.ArrayList;
 public class DAOTransaction {
 
     private HikariDataSource dataSource = Globals.getDataSource();
+
+
 
 
 
@@ -45,12 +49,9 @@ public class DAOTransaction {
                 + Transaction.TABLE_NAME + "." + Transaction.DESCRIPTION + ","
                 + Transaction.TABLE_NAME + "." + Transaction.TRANSACTION_TYPE + ","
                 + Transaction.TABLE_NAME + "." + Transaction.TRANSACTION_AMOUNT + ","
-                + Transaction.TABLE_NAME + "." + Transaction.TAX_AMOUNT + ","
                 + Transaction.TABLE_NAME + "." + Transaction.IS_CREDIT + ","
                 + Transaction.TABLE_NAME + "." + Transaction.TIMESTAMP_OCCURRED + ","
-//                + Transaction.TABLE_NAME + "." + Transaction.CURRENT_DUES_BEFORE_TRANSACTION + ","
-                + Transaction.TABLE_NAME + "." + Transaction.SERVICE_BALANCE_AFTER_TRANSACTION + ","
-                + Transaction.TABLE_NAME + "." + Transaction.TAX_BALANCE_AFTER_TRANSACTION + ""
+                + Transaction.TABLE_NAME + "." + Transaction.SERVICE_BALANCE_AFTER_TRANSACTION + ""
 
                 + " FROM " + Transaction.TABLE_NAME
                 + " WHERE " + Transaction.TABLE_NAME + "." + Transaction.USER_ID + " = ? ";
@@ -181,12 +182,9 @@ public class DAOTransaction {
                     transaction.setDescription(rs.getString(Transaction.DESCRIPTION));
                     transaction.setTransactionType(rs.getInt(Transaction.TRANSACTION_TYPE));
                     transaction.setTransactionAmount(rs.getDouble(Transaction.TRANSACTION_AMOUNT));
-                    transaction.setTaxAmount(rs.getDouble(Transaction.TAX_AMOUNT));
                     transaction.setCredit(rs.getBoolean(Transaction.IS_CREDIT));
                     transaction.setTimestampOccurred(rs.getTimestamp(Transaction.TIMESTAMP_OCCURRED));
-//                    transaction.setCurrentDuesBeforeTransaction(rs.getDouble(Transaction.CURRENT_DUES_BEFORE_TRANSACTION));
                     transaction.setServiceBalanceAfterTransaction(rs.getDouble(Transaction.SERVICE_BALANCE_AFTER_TRANSACTION));
-                    transaction.setTaxBalanceAfterTransaction(rs.getDouble(Transaction.TAX_BALANCE_AFTER_TRANSACTION));
 
 
                     itemList.add(transaction);
@@ -293,6 +291,270 @@ public class DAOTransaction {
 
 
 
+
+
+
+
+    public TaxTransactionEndpoint getTransactionsTax(
+            Integer userID,
+            Boolean isCredit,
+            Integer transactionType,
+            String sortBy,
+            Integer limit, Integer offset,
+            boolean getRowCount,
+            boolean getOnlyMetadata)
+    {
+
+
+        boolean isfirst = true;
+
+        String queryCount = "";
+
+
+        String queryJoin = "SELECT DISTINCT "
+
+                + TransactionTaxAccount.TABLE_NAME + "." + TransactionTaxAccount.TRANSACTION_ID + ","
+                + TransactionTaxAccount.TABLE_NAME + "." + TransactionTaxAccount.USER_ID + ","
+                + TransactionTaxAccount.TABLE_NAME + "." + TransactionTaxAccount.TITLE + ","
+                + TransactionTaxAccount.TABLE_NAME + "." + TransactionTaxAccount.DESCRIPTION + ","
+                + TransactionTaxAccount.TABLE_NAME + "." + TransactionTaxAccount.TRANSACTION_TYPE + ","
+                + TransactionTaxAccount.TABLE_NAME + "." + TransactionTaxAccount.TAX_AMOUNT + ","
+                + TransactionTaxAccount.TABLE_NAME + "." + TransactionTaxAccount.IS_CREDIT + ","
+                + TransactionTaxAccount.TABLE_NAME + "." + TransactionTaxAccount.TIMESTAMP_OCCURRED + ","
+                + TransactionTaxAccount.TABLE_NAME + "." + TransactionTaxAccount.TAX_BALANCE_AFTER_TRANSACTION + ""
+
+                + " FROM " + TransactionTaxAccount.TABLE_NAME
+                + " WHERE " + TransactionTaxAccount.TABLE_NAME + "." + TransactionTaxAccount.USER_ID + " = ? ";
+
+
+
+
+        if(isCredit != null)
+        {
+            queryJoin = queryJoin + " AND " + TransactionTaxAccount.TABLE_NAME + "." + TransactionTaxAccount.IS_CREDIT + " = ?";
+        }
+
+
+        if(transactionType != null)
+        {
+            queryJoin = queryJoin + " AND " + TransactionTaxAccount.TABLE_NAME + "." + TransactionTaxAccount.TRANSACTION_TYPE + " = ?";
+        }
+
+
+
+        // all the non-aggregate columns which are present in select must be present in group by also.
+        queryJoin = queryJoin
+                + " group by "
+                + TransactionTaxAccount.TABLE_NAME + "." + TransactionTaxAccount.TRANSACTION_ID ;
+
+
+        queryCount = queryJoin;
+
+
+
+        if(sortBy!=null)
+        {
+            if(!sortBy.equals(""))
+            {
+                String queryPartSortBy = " ORDER BY " + sortBy;
+
+//				queryNormal = queryNormal + queryPartSortBy;
+                queryJoin = queryJoin + queryPartSortBy;
+            }
+        }
+
+
+
+        if(limit != null)
+        {
+
+            String queryPartLimitOffset = "";
+
+            if(offset!=null)
+            {
+                queryPartLimitOffset = " LIMIT " + limit + " " + " OFFSET " + offset;
+
+            }else
+            {
+                queryPartLimitOffset = " LIMIT " + limit + " " + " OFFSET " + 0;
+            }
+
+
+//			queryNormal = queryNormal + queryPartLimitOffset;
+            queryJoin = queryJoin + queryPartLimitOffset;
+        }
+
+
+
+
+
+
+		/*
+
+		Applying filters Ends
+
+		 */
+
+        // Applying filters
+
+
+
+
+        queryCount = "SELECT COUNT(*) as item_count FROM (" + queryCount + ") AS temp";
+
+
+        TaxTransactionEndpoint endPoint = new TaxTransactionEndpoint();
+
+        ArrayList<TransactionTaxAccount> itemList = new ArrayList<>();
+        Connection connection = null;
+
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+        PreparedStatement statementCount = null;
+        ResultSet resultSetCount = null;
+
+        try {
+
+            connection = dataSource.getConnection();
+
+            int i = 0;
+
+
+            if(!getOnlyMetadata)
+            {
+                statement = connection.prepareStatement(queryJoin);
+
+                statement.setObject(++i,userID);
+
+                if(isCredit != null)
+                {
+                    statement.setObject(++i,isCredit);
+                }
+
+                if(transactionType!=null)
+                {
+                    statement.setObject(++i,transactionType);
+                }
+
+
+
+                rs = statement.executeQuery();
+
+                while(rs.next())
+                {
+
+                    TransactionTaxAccount transaction = new TransactionTaxAccount();
+
+                    transaction.setTransactionID(rs.getInt(TransactionTaxAccount.TRANSACTION_ID));
+                    transaction.setUserID(rs.getInt(TransactionTaxAccount.USER_ID));
+                    transaction.setTitle(rs.getString(TransactionTaxAccount.TITLE));
+                    transaction.setDescription(rs.getString(TransactionTaxAccount.DESCRIPTION));
+                    transaction.setTransactionType(rs.getInt(TransactionTaxAccount.TRANSACTION_TYPE));
+                    transaction.setTaxAmount(rs.getDouble(TransactionTaxAccount.TAX_AMOUNT));
+                    transaction.setCredit(rs.getBoolean(TransactionTaxAccount.IS_CREDIT));
+                    transaction.setTimestampOccurred(rs.getTimestamp(TransactionTaxAccount.TIMESTAMP_OCCURRED));
+                    transaction.setTaxBalanceAfterTransaction(rs.getDouble(TransactionTaxAccount.TAX_BALANCE_AFTER_TRANSACTION));
+
+
+                    itemList.add(transaction);
+                }
+
+
+                endPoint.setResults(itemList);
+
+            }
+
+
+            if(getRowCount)
+            {
+                statementCount = connection.prepareStatement(queryCount);
+
+                i = 0;
+
+                statementCount.setObject(++i,userID);
+
+                if(isCredit != null)
+                {
+                    statementCount.setObject(++i,isCredit);
+                }
+
+                if(transactionType!=null)
+                {
+                    statementCount.setObject(++i,transactionType);
+                }
+
+
+
+                resultSetCount = statementCount.executeQuery();
+
+                while(resultSetCount.next())
+                {
+                    endPoint.setItemCount(resultSetCount.getInt("item_count"));
+                }
+            }
+
+
+
+        }
+        catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
+        finally
+
+        {
+
+            try {
+                if(rs!=null)
+                {rs.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(statement!=null)
+                {statement.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+
+
+            try {
+                if(resultSetCount!=null)
+                {resultSetCount.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(statementCount!=null)
+                {statementCount.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return endPoint;
+    }
 
 
 
