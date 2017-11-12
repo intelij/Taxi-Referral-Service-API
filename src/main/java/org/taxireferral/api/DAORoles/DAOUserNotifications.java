@@ -68,9 +68,10 @@ public class DAOUserNotifications {
                 userID,
                 notificationType,
                 notificationSubType,
-                GlobalConstants.FIREBASE_END_USER_KEY
+                Globals.getFirebaseEndUserKey()
         );
 
+//        GlobalConstants.FIREBASE_END_USER_KEY
     }
 
 
@@ -85,10 +86,11 @@ public class DAOUserNotifications {
                 userID,
                 notificationType,
                 notificationSubType,
-                GlobalConstants.FIREBASE_END_USER_KEY,
+                Globals.getFirebaseEndUserKey(),
                 locationCurrentTrip
         );
 
+//        GlobalConstants.FIREBASE_END_USER_KEY,
     }
 
 
@@ -104,9 +106,11 @@ public class DAOUserNotifications {
                 userID,
                 notificationType,
                 notificationSubType,
-                GlobalConstants.FIREBASE_DRIVER_KEY
+                Globals.getFirebaseDriverKey()
         );
 
+
+//        GlobalConstants.FIREBASE_DRIVER_KEY
     }
 
 

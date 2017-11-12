@@ -8,9 +8,6 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import net.coobird.thumbnailator.Thumbnails;
 import net.sargue.mailgun.Mail;
-import org.glassfish.jersey.media.sse.EventOutput;
-import org.glassfish.jersey.media.sse.SseBroadcaster;
-import org.glassfish.jersey.media.sse.SseFeature;
 import org.taxireferral.api.DAORoles.DAOUserNew;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
@@ -92,28 +89,28 @@ public class UserLoginRESTEndpoint {
     }
 
 
-    @GET
-    @Path("/Notifications/{UserID}")
-    @Produces(SseFeature.SERVER_SENT_EVENTS)
-    public EventOutput listenToBroadcast(@PathParam("UserID")int userID) {
-
-        final EventOutput eventOutput = new EventOutput();
-
-        if(Globals.broadcasterMapEndUser.get(userID)!=null)
-        {
-            SseBroadcaster broadcasterOne = Globals.broadcasterMapEndUser.get(userID);
-            broadcasterOne.add(eventOutput);
-        }
-        else
-        {
-            SseBroadcaster broadcasterTwo = new SseBroadcaster();
-            broadcasterTwo.add(eventOutput);
-            Globals.broadcasterMapEndUser.put(userID,broadcasterTwo);
-        }
-
-        return eventOutput;
-    }
-
+//    @GET
+//    @Path("/Notifications/{UserID}")
+//    @Produces(SseFeature.SERVER_SENT_EVENTS)
+//    public EventOutput listenToBroadcast(@PathParam("UserID")int userID) {
+//
+//        final EventOutput eventOutput = new EventOutput();
+//
+//        if(Globals.broadcasterMapEndUser.get(userID)!=null)
+//        {
+//            SseBroadcaster broadcasterOne = Globals.broadcasterMapEndUser.get(userID);
+//            broadcasterOne.add(eventOutput);
+//        }
+//        else
+//        {
+//            SseBroadcaster broadcasterTwo = new SseBroadcaster();
+//            broadcasterTwo.add(eventOutput);
+//            Globals.broadcasterMapEndUser.put(userID,broadcasterTwo);
+//        }
+//
+//        return eventOutput;
+//    }
+//
 
 
 

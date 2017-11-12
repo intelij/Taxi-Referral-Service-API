@@ -25,11 +25,8 @@ public class TransactionTaxAccount {
     public static final String TRANSACTION_TYPE = "TRANSACTION_TYPE";
 
     public static final String TAX_AMOUNT = "TAX_AMOUNT";
-
     public static final String IS_CREDIT = "IS_CREDIT"; // indicates whether transaction is credit or debit
-
     public static final String TIMESTAMP_OCCURRED = "TIMESTAMP_OCCURRED";
-
     public static final String TAX_BALANCE_AFTER_TRANSACTION = "TAX_BALANCE_AFTER_TRANSACTION";
 
 
@@ -50,9 +47,7 @@ public class TransactionTaxAccount {
                     + " " + TransactionTaxAccount.TAX_AMOUNT + " float NOT NULL default 0,"
 
                     + " " + TransactionTaxAccount.IS_CREDIT + " boolean NOT NULL,"
-
                     + " " + TransactionTaxAccount.TIMESTAMP_OCCURRED + " timestamp with time zone NOT NULL default now(),"
-
                     + " " + TransactionTaxAccount.TAX_BALANCE_AFTER_TRANSACTION + " float NOT NULL,"
 
                     + " FOREIGN KEY(" + TransactionTaxAccount.USER_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE"

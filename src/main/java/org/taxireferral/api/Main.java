@@ -1,9 +1,12 @@
 package org.taxireferral.api;
 
+import org.apache.commons.configuration2.Configuration;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.taxireferral.api.Globals.ConfigurationKeys;
+import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.*;
 import org.taxireferral.api.ModelBilling.Transaction;
@@ -12,10 +15,8 @@ import org.taxireferral.api.ModelRoles.EmailVerificationCode;
 import org.taxireferral.api.ModelRoles.PhoneVerificationCode;
 import org.taxireferral.api.ModelRoles.StaffPermissions;
 import org.taxireferral.api.ModelRoles.User;
-import org.taxireferral.api.ModelSettings.ServiceConfigurationLocal;
-import org.taxireferral.api.WebSocket.SimpleServer;
+import org.taxireferral.api.ModelSettings.ServiceConfiguration;
 
-import javax.ws.rs.core.UriBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -35,7 +36,6 @@ import java.sql.Statement;
 public class Main {
 
     // Base URI the Grizzly HTTP server will listen on
-    public static final String BASE_URI = "http://0.0.0.0:5500";
 
     /**
      * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
@@ -53,7 +53,7 @@ public class Main {
 
 
 
-    public static Server startJettyServer() {
+    public static void startJettyServer() {
         // create a resource config that scans for JAX-RS resources and providers
         // in org.taxireferral.api package
         final ResourceConfig rc = new ResourceConfig().packages("org.taxireferral.api");
@@ -63,12 +63,29 @@ public class Main {
 //        return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
 
 
-        return JettyHttpContainerFactory.createServer(URI.create(BASE_URI),rc);
+
+//        Configuration configuration = Globals.getConfiguration();
+//
+//
+//        if(configuration==null)
+//        {
+//            System.out.println("Configuration is null !");
+//
+//            return;
+//        }
+
+//        GlobalConstants.BASE_URI = configuration.getString(ConfigurationKeys.BASE_URL);
+
+        System.out.println("Base URL : " + GlobalConstants.BASE_URI);
+        JettyHttpContainerFactory.createServer(URI.create(GlobalConstants.BASE_URI),rc);
+
+
+
+
 
 //        URI baseUri = UriBuilder.fromUri("http://0.0.0.0").port(5500).build();
 //        ResourceConfig config = new ResourceConfig(rc);
 //        return JettyHttpContainerFactory.createServer(baseUri, config);
-
     }
 
 
@@ -85,9 +102,9 @@ public class Main {
         sslContextFactory.setKeyStorePassword("123456");
         sslContextFactory.setKeyManagerPassword("123456");
 
-//        sslContextFactory.setKeyStorePath("/media/sumeet/data/ataxiRefferal/taxiReferralAPI/keystore.jks");
+//        return JettyHttpContainerFactory.createServer(URI.create(BASE_URI),sslContextFactory,rc);
 
-        return JettyHttpContainerFactory.createServer(URI.create(BASE_URI),sslContextFactory,rc);
+        return null;
     }
 
 
@@ -172,37 +189,23 @@ public class Main {
     }
 
 
-    /**
-     * Main method.
-     * @param args
-     * @throws IOException
-     */
+
+
+
+
+
     public static void main(String[] args) throws IOException {
 
-//        final HttpServer server = startServer();
-//        System.out.println(String.format("Jersey app started with WADL available at "
-//                + "%sapplication.wadl\nHit enter to stop it...", BASE_URI));
-//        System.in.read();
-//        server.stop();
 
+        Globals.loadGlobalConfiguration();
 
         createDB();
         upgradeTables();
 
         createTables();
         startJettyServer();
-
-
-
-
-//        renameTables();
-
-
-//        SimpleServer.main(null);
-
-
-//        startJettyServerThree();
     }
+
 
 
 
@@ -213,11 +216,31 @@ public class Main {
         Connection conn = null;
         Statement stmt = null;
 
+
+
+        Configuration configuration = Globals.getConfiguration();
+
+
+        if(configuration==null)
+        {
+            System.out.println("Configuration is null : create DB !");
+
+            return;
+        }
+
+
+        String connection_url = configuration.getString(ConfigurationKeys.CONNECTION_URL_CREATE_DB);
+        String username = configuration.getString(ConfigurationKeys.POSTGRES_USERNAME);
+        String password = configuration.getString(ConfigurationKeys.POSTGRES_PASSWORD);
+
+
         try {
 
-            conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres"
-                    ,JDBCContract.CURRENT_USERNAME
-                    ,JDBCContract.CURRENT_PASSWORD);
+//            conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres",
+//                    JDBCContract.CURRENT_USERNAME,
+//                    JDBCContract.CURRENT_PASSWORD);
+
+            conn = DriverManager.getConnection(connection_url, username, password);
 
             stmt = conn.createStatement();
 
@@ -272,28 +295,34 @@ public class Main {
         Connection connection = null;
         Statement statement = null;
 
+
+        Configuration configuration = Globals.getConfiguration();
+
+
+        if(configuration==null)
+        {
+            System.out.println("Configuration is null : Upgrade Tables !");
+
+            return;
+        }
+
+
+        String connection_url = configuration.getString(ConfigurationKeys.CONNECTION_URL);
+        String username = configuration.getString(ConfigurationKeys.POSTGRES_USERNAME);
+        String password = configuration.getString(ConfigurationKeys.POSTGRES_PASSWORD);
+
+
         try {
 
-            connection = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL
-                    ,JDBCContract.CURRENT_USERNAME
-                    ,JDBCContract.CURRENT_PASSWORD);
+            connection = DriverManager.getConnection(connection_url, username,password);
 
             statement = connection.createStatement();
-
 
             statement.executeUpdate(Vehicle.addColumns);
             statement.executeUpdate(CurrentTrip.upgradeTableSchema);
             statement.executeUpdate(TripHistory.upgradeTableSchema);
             statement.executeUpdate(User.upgradeTableSchema);
-//            statement.executeUpdate(Transaction.addColumns);
             statement.executeUpdate(Transaction.dropColumns);
-
-
-
-
-
-//            statement.executeUpdate(User.renameColumns);
-//            statement.executeUpdate(Transaction.renameColumns);
 
 
         } catch (SQLException e) {
@@ -343,15 +372,31 @@ public class Main {
         Connection connection = null;
         Statement statement = null;
 
+
+
+        Configuration configuration = Globals.getConfiguration();
+
+
+        if(configuration==null)
+        {
+            System.out.println("Configuration is null : Upgrade Tables !");
+
+            return;
+        }
+
+
+        String connection_url = configuration.getString(ConfigurationKeys.CONNECTION_URL);
+        String username = configuration.getString(ConfigurationKeys.POSTGRES_USERNAME);
+        String password = configuration.getString(ConfigurationKeys.POSTGRES_PASSWORD);
+
+
+
+
         try {
 
-            connection = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL
-                    ,JDBCContract.CURRENT_USERNAME
-                    ,JDBCContract.CURRENT_PASSWORD);
+            connection = DriverManager.getConnection(connection_url, username, password);
 
             statement = connection.createStatement();
-
-
             statement.executeUpdate(Transaction.renameColumns);
 
         } catch (SQLException e) {
@@ -395,16 +440,39 @@ public class Main {
 
 
 
+
+
     private static void createTables()
     {
 
         Connection connection = null;
         Statement statement = null;
 
+
+
+        Configuration configuration = Globals.getConfiguration();
+
+
+        if(configuration==null)
+        {
+            System.out.println("Configuration is null : createTables()  !");
+
+            return;
+        }
+
+
+//        String connection_url = configuration.getString(ConfigurationKeys.CONNECTION_URL);
+//        String username = configuration.getString(ConfigurationKeys.POSTGRES_USERNAME);
+//        String password = configuration.getString(ConfigurationKeys.POSTGRES_PASSWORD);
+
+
+
+
         try {
 
-            connection = DriverManager.getConnection(JDBCContract.CURRENT_CONNECTION_URL,
-                    JDBCContract.CURRENT_USERNAME, JDBCContract.CURRENT_PASSWORD);
+            connection = DriverManager.getConnection(GlobalConstants.CONNECTION_URL_CREATE_DB,
+                    GlobalConstants.POSTGRES_USERNAME, GlobalConstants.POSTGRES_PASSWORD);
+
 
 
             statement = connection.createStatement();
@@ -421,14 +489,16 @@ public class Main {
             statement.executeUpdate(PhoneVerificationCode.createTablePostgres);
 
             statement.executeUpdate(VehicleType.createTablePostgres);
-            statement.executeUpdate(VehicleTypeVersion.createTablePostgres);
+//            statement.executeUpdate(VehicleTypeVersion.createTablePostgres);
             statement.executeUpdate(Transaction.createTablePostgres);
             statement.executeUpdate(TransactionTaxAccount.createTablePostgres);
 
+            statement.executeUpdate(ServiceConfiguration.createTablePostgres);
 
-            statement.executeUpdate(ServiceConfigurationLocal.createTablePostgres);
+
+            
+
             System.out.println("Tables Created ... !");
-
 
 
             // developers Note: whenever adding a table please check that its dependencies are already created.

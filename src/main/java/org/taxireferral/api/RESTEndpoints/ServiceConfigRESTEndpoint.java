@@ -4,7 +4,7 @@ import net.coobird.thumbnailator.Thumbnails;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.ModelImages.Image;
-import org.taxireferral.api.ModelSettings.ServiceConfigurationLocal;
+import org.taxireferral.api.ModelSettings.ServiceConfiguration;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
@@ -30,7 +30,7 @@ public class ServiceConfigRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed(GlobalConstants.ROLE_ADMIN)
-    public Response insertConfig(ServiceConfigurationLocal serviceConfig)
+    public Response insertConfig(ServiceConfiguration serviceConfig)
     {
 
         int idOfInsertedRow = -1;
@@ -69,13 +69,13 @@ public class ServiceConfigRESTEndpoint {
 
 
 //        User profileValidated = (User) Globals.accountApproved;
-        ServiceConfigurationLocal serviceConfig = Globals.daoServiceConfig.getServiceConfig();
+        ServiceConfiguration serviceConfig = Globals.daoServiceConfig.getServiceConfig();
 
 
         if(serviceConfig==null)
         {
             Globals.daoServiceConfig.updateServiceConfig(
-              ServiceConfigurationLocal.getDefaultConfig()
+              ServiceConfiguration.getDefaultConfig()
             );
 
 

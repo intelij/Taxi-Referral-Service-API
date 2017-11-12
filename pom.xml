@@ -20,6 +20,8 @@
     </repositories>
 
 
+
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -72,17 +74,6 @@
         </dependency>
 
 
-        <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.containers/jersey-container-jetty-http -->
-        <!--<dependency>-->
-            <!--<groupId>org.glassfish.jersey.containers</groupId>-->
-            <!--<artifactId>jersey-container-jetty-http</artifactId>-->
-            <!--<version>2.26</version>-->
-        <!--</dependency>-->
-
-
-
-
-
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -99,11 +90,11 @@
 
 
         <!--Library for websockets-->
-        <dependency>
-            <groupId>org.java-websocket</groupId>
-            <artifactId>java-websocket</artifactId>
-            <version>1.3.2</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.java-websocket</groupId>-->
+            <!--<artifactId>java-websocket</artifactId>-->
+            <!--<version>1.3.2</version>-->
+        <!--</dependency>-->
 
 
 
@@ -139,10 +130,10 @@
 
         <!-- Enable Server Sent Events (SSE) Support -->
 
-        <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-sse</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.glassfish.jersey.media</groupId>-->
+            <!--<artifactId>jersey-media-sse</artifactId>-->
+        <!--</dependency>-->
 
         <!-- Enable Server Sent Events (SSE) Support -->
 
@@ -150,9 +141,10 @@
 
         <dependency>
             <groupId>net.coobird</groupId>
-            <artifactId>thumbnailator</artifactId>
+                <artifactId>thumbnailator</artifactId>
             <version>0.4.8</version>
         </dependency>
+
 
         <dependency>
             <groupId>joda-time</groupId>
@@ -180,6 +172,48 @@
             <groupId>org.glassfish.jersey.inject</groupId>
             <artifactId>jersey-hk2</artifactId>
         </dependency>
+
+
+        <!-- Dependencies for apache commons configuration : Begins -->
+
+
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-configuration2 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-configuration2</artifactId>
+            <version>2.2</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.6</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>4.3.9.RELEASE</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.9.3</version>
+        </dependency>
+
+
+        <!-- Dependencies for apache commons configuration : Ends -->
 
 
     </dependencies>

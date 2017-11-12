@@ -30,7 +30,7 @@ public class SendSMS {
 
 
         String urlOTP = "https://control.msg91.com/api/sendotp.php?authkey=" +
-                GlobalConstants.MSG91_SMS_SERVICE_API_KEY +
+                Globals.getMsg91APIKey() +
                 "&mobile=91" +
                 phone +
                 "&message=Your%20one time password (OTP) for Taxi Referral Service is " +
@@ -96,7 +96,7 @@ public class SendSMS {
 
 
         String urlMessage = "http://api.msg91.com/api/sendhttp.php?authkey=" +
-                GlobalConstants.MSG91_SMS_SERVICE_API_KEY +
+                Globals.getMsg91APIKey() +
                 "&mobiles=" +
                 "91" +
                 phone +

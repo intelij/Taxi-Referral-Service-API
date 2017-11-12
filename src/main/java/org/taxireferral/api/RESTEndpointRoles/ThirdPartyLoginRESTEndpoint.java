@@ -157,7 +157,7 @@ public class ThirdPartyLoginRESTEndpoint {
                 userChecked.setUserID(idOfInsertedRow);
 
                 // send an email notifying the user about new account creation and also giving him the password
-                Mail.using(Globals.configurationMailgun)
+                Mail.using(Globals.getMailgunConfiguration())
                         .body()
                         .h1("Taxi Referral : Account Registered via Google Profile")
                         .p("Your account has been Created.")

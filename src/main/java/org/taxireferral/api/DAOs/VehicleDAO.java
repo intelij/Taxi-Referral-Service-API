@@ -3,6 +3,7 @@ package org.taxireferral.api.DAOs;
 import com.zaxxer.hikari.HikariDataSource;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
+import org.taxireferral.api.Model.TripHistory;
 import org.taxireferral.api.Model.Vehicle;
 import org.taxireferral.api.ModelBilling.Transaction;
 import org.taxireferral.api.ModelEndpoints.VehicleEndPoint;
@@ -517,6 +518,9 @@ public class VehicleDAO {
 
         return rowCountItems;
     }
+
+
+
 
 
 
@@ -1402,7 +1406,6 @@ public class VehicleDAO {
 
 
 
-
     public VehicleEndPoint getTaxisAvailable(
             Double latPickUp, Double lonPickUp,
             Double tripDistance,
@@ -1427,6 +1430,7 @@ public class VehicleDAO {
                 + latPickUp + ")) * cos( radians(" +  Vehicle.LAT_CURRENT +  ") ) * cos(radians(" + Vehicle.LON_CURRENT +  ") - radians("
                 + lonPickUp + "))"
                 + " + sin( radians(" + latPickUp + ")) * sin(radians(" + Vehicle.LAT_CURRENT + "))) as distance" + ","
+
 
 
                 + "(  ( Greatest( ( 6371 * acos( cos( radians("
@@ -1456,19 +1460,27 @@ public class VehicleDAO {
 
                 + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_REGISTRATION_NUMBER + ","
 
+                +  "avg(" + TripHistory.TABLE_NAME + "." + TripHistory.RATING_BY_END_USER + ") as avg_rating" + ","
+                +  "count( " + TripHistory.TABLE_NAME + "." + TripHistory.RATING_BY_END_USER + ") as rating_count" + ","
 
                 + User.TABLE_NAME + "." + User.PHONE + ","
                 + User.TABLE_NAME + "." + User.NAME + ","
                 + User.TABLE_NAME + "." + User.GENDER + ","
                 + User.TABLE_NAME + "." + User.PROFILE_IMAGE_URL + ""
 
-                + " FROM " + Vehicle.TABLE_NAME
-                + " INNER JOIN " + User.TABLE_NAME + " ON (" + Vehicle.DRIVER_ID + " = " + User.USER_ID + ")"
+                + " FROM " + User.TABLE_NAME
+                + " INNER JOIN " + Vehicle.TABLE_NAME + " ON (" + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID + ")"
+                + " LEFT OUTER JOIN " + TripHistory.TABLE_NAME + " ON ( " + TripHistory.TABLE_NAME + "." + TripHistory.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
                 + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.AVIALABLE
                 + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.ENABLED + " = TRUE "
                 + " AND " + User.TABLE_NAME + "." + User.TAX_ACCOUNT_BALANCE + " > " + GlobalConstants.MIN_TAX_ACCOUNT_BALANCE
                 + " AND " + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + " > " + GlobalConstants.MIN_SERVICE_ACCOUNT_BALANCE + " - " + User.TABLE_NAME + "." + User.EXTENDED_CREDIT_LIMIT
                 + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.ENABLED_UPTO + " > now()";
+
+
+
+
+
 
 
 
@@ -1583,7 +1595,6 @@ public class VehicleDAO {
                     Vehicle vehicle = new Vehicle();
 
                     vehicle.setRt_distance(rs.getFloat("distance"));
-
                     vehicle.setRt_fare_estimate(rs.getFloat("fare_estimate"));
 
                     vehicle.setVehicleID(rs.getInt(Vehicle.VEHICLE_ID));
@@ -1607,6 +1618,12 @@ public class VehicleDAO {
                     vehicle.setRegistrationNumber(rs.getString(Vehicle.VEHICLE_REGISTRATION_NUMBER));
 //                    vehicle.setInsuranceID(rs.getString(Vehicle.VEHICLE_INSURANCE_NUMBER));
 //                    vehicle.setPollutionCertificateID(rs.getString(Vehicle.VEHICLE_PUC_ID));
+
+                    vehicle.setRt_rating_avg(rs.getDouble("avg_rating"));
+                    vehicle.setRt_rating_count(rs.getInt("rating_count"));
+
+
+
 
                     User driver = new User();
 
@@ -1645,11 +1662,6 @@ public class VehicleDAO {
                     endPoint.setItemCount(resultSetCount.getInt("item_count"));
                 }
             }
-
-
-
-
-
 
 
 
@@ -1722,11 +1734,14 @@ public class VehicleDAO {
 
 
 
+
     public VehicleEndPoint getTaxiProfileForAdmin(
             Double latPickUp, Double lonPickUp,
             Boolean gender,
             Boolean isEnabled,
             Boolean registrationExpired,
+            boolean taxBalanceExhausted,
+            boolean serviceBalanceExhausted,
             Integer status,
             String searchString,
             String searchStringVehicleID,
@@ -1779,13 +1794,20 @@ public class VehicleDAO {
                 + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_INSURANCE_NUMBER + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_PUC_ID + ","
 
+                +  "avg(" + TripHistory.TABLE_NAME + "." + TripHistory.RATING_BY_END_USER + ") as avg_rating" + ","
+                +  "count( " + TripHistory.TABLE_NAME + "." + TripHistory.RATING_BY_END_USER + ") as rating_count" + ","
+
+
                 + User.TABLE_NAME + "." + User.PHONE + ","
                 + User.TABLE_NAME + "." + User.NAME + ","
                 + User.TABLE_NAME + "." + User.GENDER + ","
-                + User.TABLE_NAME + "." + User.PROFILE_IMAGE_URL + ""
+                + User.TABLE_NAME + "." + User.PROFILE_IMAGE_URL + ","
+                + User.TABLE_NAME + "." + User.TAX_ACCOUNT_BALANCE + ","
+                + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + ""
 
                 + " FROM " + Vehicle.TABLE_NAME
                 + " INNER JOIN " + User.TABLE_NAME + " ON (" + Vehicle.DRIVER_ID + " = " + User.USER_ID + ")"
+                + " LEFT OUTER JOIN " + TripHistory.TABLE_NAME + " ON ( " + TripHistory.TABLE_NAME + "." + TripHistory.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
                 + " WHERE TRUE ";
 
 
@@ -1794,6 +1816,7 @@ public class VehicleDAO {
         {
             queryJoin = queryJoin + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + " = ?";
         }
+
 
 
 
@@ -1815,6 +1838,21 @@ public class VehicleDAO {
                 queryJoin = queryJoin + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.ENABLED_UPTO + " > now()";
             }
         }
+
+
+        if(taxBalanceExhausted)
+        {
+            queryJoin = queryJoin + " AND " + User.TABLE_NAME + "." + User.TAX_ACCOUNT_BALANCE + " <= " + GlobalConstants.MIN_TAX_ACCOUNT_BALANCE;
+        }
+
+
+
+
+        if(serviceBalanceExhausted)
+        {
+            queryJoin = queryJoin + " AND " + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + " <= " + GlobalConstants.MIN_SERVICE_ACCOUNT_BALANCE;
+        }
+
 
 
 
@@ -1893,6 +1931,9 @@ public class VehicleDAO {
 //			queryNormal = queryNormal + queryPartLimitOffset;
             queryJoin = queryJoin + queryPartLimitOffset;
         }
+
+
+
 
 
 
@@ -1986,6 +2027,9 @@ public class VehicleDAO {
                     vehicle.setInsuranceID(rs.getString(Vehicle.VEHICLE_INSURANCE_NUMBER));
                     vehicle.setPollutionCertificateID(rs.getString(Vehicle.VEHICLE_PUC_ID));
 
+                    vehicle.setRt_rating_avg(rs.getDouble("avg_rating"));
+                    vehicle.setRt_rating_count(rs.getInt("rating_count"));
+
 
                     User driver = new User();
 
@@ -1994,6 +2038,9 @@ public class VehicleDAO {
                     driver.setName(rs.getString(User.NAME));
                     driver.setGender(rs.getBoolean(User.GENDER));
                     driver.setProfileImagePath(rs.getString(User.PROFILE_IMAGE_URL));
+
+                    driver.setTaxAccountBalance(rs.getDouble(User.TAX_ACCOUNT_BALANCE));
+                    driver.setServiceAccountBalance(rs.getDouble(User.SERVICE_ACCOUNT_BALANCE));
 
                     vehicle.setRt_driver(driver);
 

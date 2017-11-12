@@ -21,8 +21,13 @@ public class TripHistory {
     public static final String RATING_BY_DRIVER = "RATING_BY_DRIVER";
     public static final String RATING_BY_END_USER = "RATING_BY_END_USER";
 
+    public static final String RATING_BY_END_USER_CLEANLINESS = "RATING_BY_END_USER_CLEANLINESS";
+
+
     public static final String FEEDBACK_BY_DRIVER = "FEEDBACK_BY_DRIVER";
+    public static final String FEEDBACK_BY_DRIVER_TITLE = "FEEDBACK_BY_DRIVER_TITLE";
     public static final String FEEDBACK_BY_END_USER = "FEEDBACK_BY_END_USER";
+    public static final String FEEDBACK_BY_END_USER_TITLE = "FEEDBACK_BY_END_USER_TITLE";
 
     public static final String IS_CANCELLED = "IS_CANCELLED";
     public static final String IS_CANCELLED_BY_END_USER = "IS_CANCELLED_BY_USER";
@@ -50,8 +55,8 @@ public class TripHistory {
     public static final String FREE_PICKUP_DISTANCE = "FREE_PICKUP_DISTANCE";
     public static final String REFERRAL_CHARGES = "REFERRAL_CHARGES";
 
-    public static final String MIN_TRIP_CHARGES = "MIN_TRIP_CHARGES";
-    public static final String CHARGES_PER_KM = "CHARGES_PER_KM";
+    public static final String MIN_TRIP_CHARGES = "MIN_TRIP_CHARGES_TR";
+    public static final String CHARGES_PER_KM = "CHARGES_PER_KM_TR";
 
 
     public static final String FREE_START_WAITING_MINUTES = "FREE_START_WAITING_MINUTES";
@@ -88,7 +93,9 @@ public class TripHistory {
                     + " " + TripHistory.RATING_BY_END_USER + " int," // can be null
 
                     + " " + TripHistory.FEEDBACK_BY_DRIVER + " text,"
+                    + " " + TripHistory.FEEDBACK_BY_DRIVER_TITLE + " text,"
                     + " " + TripHistory.FEEDBACK_BY_END_USER + " text,"
+                    + " " + TripHistory.FEEDBACK_BY_END_USER_TITLE + " text,"
 
                     + " " + TripHistory.IS_CANCELLED + " boolean NOT NULL default 'f',"
                     + " " + TripHistory.IS_CANCELLED_BY_END_USER + " boolean NOT NULL default 'f',"
@@ -168,7 +175,9 @@ public class TripHistory {
     private int ratingByEndUser;
 
     private String feedbackByDriver;
+    private String feedbackByDriverTitle;
     private String feedbackByEndUser;
+    private String feedbackByEndUserTitle;
 
     private boolean isCancelled;
     private boolean isCancelledByUser;
@@ -215,6 +224,22 @@ public class TripHistory {
 
     // getter and setters
 
+
+    public String getFeedbackByDriverTitle() {
+        return feedbackByDriverTitle;
+    }
+
+    public void setFeedbackByDriverTitle(String feedbackByDriverTitle) {
+        this.feedbackByDriverTitle = feedbackByDriverTitle;
+    }
+
+    public String getFeedbackByEndUserTitle() {
+        return feedbackByEndUserTitle;
+    }
+
+    public void setFeedbackByEndUserTitle(String feedbackByEndUserTitle) {
+        this.feedbackByEndUserTitle = feedbackByEndUserTitle;
+    }
 
     public double getFreeStartWaitMinutes() {
         return freeStartWaitMinutes;
@@ -472,9 +497,11 @@ public class TripHistory {
         this.referralCharges = referralCharges;
     }
 
+
     public double getMinTripCharges() {
         return minTripCharges;
     }
+
 
     public void setMinTripCharges(double minTripCharges) {
         this.minTripCharges = minTripCharges;
@@ -487,4 +514,9 @@ public class TripHistory {
     public void setChargesPerKm(double chargesPerKm) {
         this.chargesPerKm = chargesPerKm;
     }
+
+
+
+
+
 }

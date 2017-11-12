@@ -151,12 +151,32 @@ public class Vehicle {
     private double rt_fare_estimate;
     private double rt_min_tax_balance;
     private double rt_min_service_balance;
+    private double rt_rating_avg;
+    private int rt_rating_count;
+
+
 
 
 
 
     // getter and setters
 
+
+    public double getRt_rating_avg() {
+        return rt_rating_avg;
+    }
+
+    public void setRt_rating_avg(double rt_rating_avg) {
+        this.rt_rating_avg = rt_rating_avg;
+    }
+
+    public int getRt_rating_count() {
+        return rt_rating_count;
+    }
+
+    public void setRt_rating_count(int rt_rating_count) {
+        this.rt_rating_count = rt_rating_count;
+    }
 
     public double getRt_min_tax_balance() {
         return rt_min_tax_balance;

@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 /**
  * Created by sumeet on 19/6/16.
  */
-public class ServiceConfigurationGlobal {
+public class ServiceConfiguration {
 
 
     // Table Name
@@ -20,6 +20,7 @@ public class ServiceConfigurationGlobal {
 
     public static final String SERVICE_NAME = "SERVICE_NAME";
     public static final String HELPLINE_NUMBER = "HELPLINE_NUMBER";
+
 
     public static final String DESCRIPTION_SHORT = "DESCRIPTION_SHORT";
     public static final String DESCRIPTION_LONG = "DESCRIPTION_LONG";
@@ -43,67 +44,59 @@ public class ServiceConfigurationGlobal {
 
     public static final String SERVICE_RANGE = "SERVICE_RANGE";
 
+    public static final String CREATED = "CREATED";
+    public static final String UPDATED = "UPDATED";
+
+    public static final String STYLE_URL = "STYLE_URL";
+
     // to be taken out to global Service Configuration
     public static final String IS_OFFICIAL_SERVICE_PROVIDER = "IS_OFFICIAL_SERVICE_PROVIDER";
     public static final String IS_VERIFIED = "IS_VERIFIED";
     public static final String AVAILABLE_ON_PLAYSTORE = "AVAILABLE_ON_PLAYSTORE";
     public static final String SERVICE_URL = "SERVICE_URL";
 
-    public static final String CREATED = "CREATED";
-    public static final String UPDATED = "UPDATED";
-
-
-    // Consider Revising : Are these fields Required ?
-//    public static final String LAT_MAX = "LAT_MAX";
-//    public static final String LON_MAX = "LON_MAX";
-//    public static final String LAT_MIN = "LAT_MIN";
-//    public static final String LON_MIN = "LON_MIN";
-
-
 
 
     // Create Table Statement
-    public static final String createTableServiceConfigurationPostgres
-            = "CREATE TABLE IF NOT EXISTS " + ServiceConfigurationGlobal.TABLE_NAME + "("
+    public static final String createTablePostgres
+            = "CREATE TABLE IF NOT EXISTS " + ServiceConfiguration.TABLE_NAME + "("
+            + " " + ServiceConfiguration.SERVICE_CONFIGURATION_ID + " SERIAL PRIMARY KEY,"
 
-            + " " + ServiceConfigurationGlobal.SERVICE_CONFIGURATION_ID + " SERIAL PRIMARY KEY,"
+//            + " " + ServiceConfiguration.IMAGE_PATH + " text,"
+            + " " + ServiceConfiguration.LOGO_IMAGE_PATH + " text,"
+            + " " + ServiceConfiguration.BACKDROP_IMAGE_PATH + " text,"
 
-//            + " " + ServiceConfigurationLocal.IMAGE_PATH + " text,"
-            + " " + ServiceConfigurationGlobal.LOGO_IMAGE_PATH + " text,"
-            + " " + ServiceConfigurationGlobal.BACKDROP_IMAGE_PATH + " text,"
+            + " " + ServiceConfiguration.SERVICE_NAME + " text,"
+            + " " + ServiceConfiguration.HELPLINE_NUMBER + " text,"
 
-            + " " + ServiceConfigurationGlobal.SERVICE_NAME + " text,"
-            + " " + ServiceConfigurationGlobal.HELPLINE_NUMBER + " text,"
+            + " " + ServiceConfiguration.DESCRIPTION_SHORT + " text,"
+            + " " + ServiceConfiguration.DESCRIPTION_LONG + " text,"
 
-            + " " + ServiceConfigurationGlobal.DESCRIPTION_SHORT + " text,"
-            + " " + ServiceConfigurationGlobal.DESCRIPTION_LONG + " text,"
+            + " " + ServiceConfiguration.ADDRESS + " text,"
+            + " " + ServiceConfiguration.CITY + " text,"
+            + " " + ServiceConfiguration.PINCODE + " BIGINT,"
+            + " " + ServiceConfiguration.LANDMARK + " text,"
+            + " " + ServiceConfiguration.STATE + " text,"
+            + " " + ServiceConfiguration.COUNTRY + " text,"
 
-            + " " + ServiceConfigurationGlobal.ADDRESS + " text,"
-            + " " + ServiceConfigurationGlobal.CITY + " text,"
-            + " " + ServiceConfigurationGlobal.PINCODE + " BIGINT,"
-            + " " + ServiceConfigurationGlobal.LANDMARK + " text,"
-            + " " + ServiceConfigurationGlobal.STATE + " text,"
-            + " " + ServiceConfigurationGlobal.COUNTRY + " text,"
+            + " " + ServiceConfiguration.ISO_COUNTRY_CODE + " text,"
+            + " " + ServiceConfiguration.ISO_LANGUAGE_CODE + " text,"
+            + " " + ServiceConfiguration.ISO_CURRENCY_CODE + " text,"
 
-            + " " + ServiceConfigurationGlobal.ISO_COUNTRY_CODE + " text,"
-            + " " + ServiceConfigurationGlobal.ISO_LANGUAGE_CODE + " text,"
-            + " " + ServiceConfigurationGlobal.ISO_CURRENCY_CODE + " text,"
+            + " " + ServiceConfiguration.SERVICE_TYPE + " INT,"
+//            + " " + ServiceConfiguration.SERVICE_LEVEL + " INT,"
 
-            + " " + ServiceConfigurationGlobal.SERVICE_TYPE + " INT,"
-//            + " " + ServiceConfigurationGlobal.SERVICE_LEVEL + " INT,"
+            + " " + ServiceConfiguration.LAT_CENTER + " FLOAT,"
+            + " " + ServiceConfiguration.LON_CENTER + " FLOAT,"
+            + " " + ServiceConfiguration.SERVICE_RANGE + " FLOAT,"
 
-            + " " + ServiceConfigurationGlobal.LAT_CENTER + " FLOAT,"
-            + " " + ServiceConfigurationGlobal.LON_CENTER + " FLOAT,"
-            + " " + ServiceConfigurationGlobal.SERVICE_RANGE + " FLOAT,"
+            + " " + ServiceConfiguration.UPDATED + " timestamp with time zone,"
+            + " " + ServiceConfiguration.CREATED + " timestamp with time zone NOT NULL DEFAULT now(),"
 
-            + " " + ServiceConfigurationGlobal.IS_OFFICIAL_SERVICE_PROVIDER + " boolean,"
-            + " " + ServiceConfigurationGlobal.IS_VERIFIED + " boolean,"
-            + " " + ServiceConfigurationGlobal.AVAILABLE_ON_PLAYSTORE + " boolean NOT NULL default 'f',"
-            + " " + ServiceConfigurationGlobal.SERVICE_URL + " text UNIQUE NOT NULL,"
-
-            + " " + ServiceConfigurationGlobal.UPDATED + " timestamp with time zone,"
-            + " " + ServiceConfigurationGlobal.CREATED + " timestamp with time zone NOT NULL DEFAULT now()"
+            + " " + ServiceConfiguration.STYLE_URL + " text"
             + ")";
+
+
 
 
 
@@ -141,24 +134,63 @@ public class ServiceConfigurationGlobal {
     private Integer serviceRange;
 //    private Integer shopDeliveryRangeMax;
 
-    private Boolean isOfficial;
-    private Boolean isVerified;
-    private String serviceURL;
-
     private Timestamp created;
     private Timestamp updated;
 
-
-    // Consider Revising : Are these variables needed or not ?
-//    private Double latMax;
-//    private Double lonMax;
-//    private Double latMin;
-//    private Double lonMin;
-
+    private String styleURL;
 
     // real time variables : the values of these variables are generated in real time.
     private Double rt_distance;
 
+
+
+
+
+
+    public static ServiceConfiguration getDefaultConfig()
+    {
+        ServiceConfiguration serviceConfig = new ServiceConfiguration();
+
+        serviceConfig.setServiceID(1);
+        serviceConfig.setServiceName("Service name not set !");
+        serviceConfig.setHelplineNumber("0-0000-0000");
+        serviceConfig.setDescriptionShort("Short Description not provided.");
+        serviceConfig.setDescriptionLong("long description not provided.");
+        serviceConfig.setAddress("address");
+        serviceConfig.setCity("city");
+        serviceConfig.setPincode(123456l);
+        serviceConfig.setLandmark("landmark");
+        serviceConfig.setState("state");
+        serviceConfig.setCountry("country");
+
+        serviceConfig.setISOCountryCode("country code not provided");
+        serviceConfig.setISOCurrencyCode("currency code not provided");
+        serviceConfig.setISOLanguageCode("language code not provided");
+
+        serviceConfig.setLatCenter(17.5343);
+        serviceConfig.setLonCenter(78.3432);
+        serviceConfig.setServiceRange(234);
+
+        serviceConfig.setStyleURL("https://example.com");
+
+
+        return serviceConfig;
+    }
+
+
+
+
+
+    //    Getter and Setters
+
+
+    public String getStyleURL() {
+        return styleURL;
+    }
+
+    public void setStyleURL(String styleURL) {
+        this.styleURL = styleURL;
+    }
 
     public String getDescriptionShort() {
         return descriptionShort;
@@ -174,30 +206,6 @@ public class ServiceConfigurationGlobal {
 
     public void setDescriptionLong(String descriptionLong) {
         this.descriptionLong = descriptionLong;
-    }
-
-    public Boolean getOfficial() {
-        return isOfficial;
-    }
-
-    public void setOfficial(Boolean official) {
-        isOfficial = official;
-    }
-
-    public Boolean getVerified() {
-        return isVerified;
-    }
-
-    public void setVerified(Boolean verified) {
-        isVerified = verified;
-    }
-
-    public String getServiceURL() {
-        return serviceURL;
-    }
-
-    public void setServiceURL(String serviceURL) {
-        this.serviceURL = serviceURL;
     }
 
     public String getISOCurrencyCode() {
@@ -378,6 +386,35 @@ public class ServiceConfigurationGlobal {
         this.serviceRange = serviceRange;
     }
 
-
-
+//    public Double getLatMax() {
+//        return latMax;
+//    }
+//
+//    public void setLatMax(Double latMax) {
+//        this.latMax = latMax;
+//    }
+//
+//    public Double getLonMax() {
+//        return lonMax;
+//    }
+//
+//    public void setLonMax(Double lonMax) {
+//        this.lonMax = lonMax;
+//    }
+//
+//    public Double getLatMin() {
+//        return latMin;
+//    }
+//
+//    public void setLatMin(Double latMin) {
+//        this.latMin = latMin;
+//    }
+//
+//    public Double getLonMin() {
+//        return lonMin;
+//    }
+//
+//    public void setLonMin(Double lonMin) {
+//        this.lonMin = lonMin;
+//    }
 }

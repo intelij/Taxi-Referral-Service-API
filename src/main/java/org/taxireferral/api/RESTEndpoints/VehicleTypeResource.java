@@ -1,8 +1,7 @@
 package org.taxireferral.api.RESTEndpoints;
 
-import jdk.nashorn.internal.objects.Global;
 import net.coobird.thumbnailator.Thumbnails;
-import org.taxireferral.api.DAOs.VehicleTypeDAONew;
+import org.taxireferral.api.DAOs.VehicleTypeDAOVersions;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.VehicleTypeVersion;
@@ -46,7 +45,7 @@ public class VehicleTypeResource {
      */
 
 
-    private VehicleTypeDAONew vehicleTypeDAONew = Globals.daoVehicleTypeNew;
+    private VehicleTypeDAOVersions vehicleTypeDAONew = Globals.daoVehicleTypeNew;
 
 
 

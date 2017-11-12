@@ -168,7 +168,7 @@ public class ResetPasswordRESTEndpoint {
 
                 if(user.getRt_registration_mode()==User.REGISTRATION_MODE_EMAIL)
                 {
-                    Mail.using(Globals.configurationMailgun)
+                    Mail.using(Globals.getMailgunConfiguration())
                             .body()
                             .h1("Your E-mail Verification Code is given below")
                             .p("You have requested to verify your e-mail. If you did not request the e-mail verification please ignore this e-mail message.")
@@ -202,7 +202,7 @@ public class ResetPasswordRESTEndpoint {
 
             if(user.getRt_registration_mode()==User.REGISTRATION_MODE_EMAIL)
             {
-                Mail.using(Globals.configurationMailgun)
+                Mail.using(Globals.getMailgunConfiguration())
                         .body()
                         .h1("Your E-mail Verification Code is given below")
                         .p("You have requested to verify your e-mail. If you did not request the e-mail verification please ignore this e-mail message.")

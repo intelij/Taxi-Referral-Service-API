@@ -436,6 +436,7 @@ public class VehicleResource {
 
 
 
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTaxisAvailable(
@@ -515,6 +516,8 @@ public class VehicleResource {
             @QueryParam("DriversGender") Boolean driversGender,
             @QueryParam("IsEnabled") Boolean isEnabled,
             @QueryParam("RegistrationExpired") Boolean registrationExpired,
+            @QueryParam("TaxBalanceExhausted") boolean taxBalanceExhausted,
+            @QueryParam("ServiceBalanceExhausted") boolean serviceBalanceExhausted,
             @QueryParam("Status") Integer status,
             @QueryParam("SearchString")String searchString,
             @QueryParam("SearchByVehicleID")String searchByVehicleID,
@@ -544,6 +547,8 @@ public class VehicleResource {
                 latPickUp,lonPickUp,
                 driversGender,isEnabled,
                 registrationExpired,
+                taxBalanceExhausted,
+                serviceBalanceExhausted,
                 status,
                 searchString,
                 searchByVehicleID,

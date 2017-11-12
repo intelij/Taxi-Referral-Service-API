@@ -1,10 +1,9 @@
 package org.taxireferral.api.DAOSettings;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
-import org.taxireferral.api.ModelRoles.StaffPermissions;
-import org.taxireferral.api.ModelRoles.User;
-import org.taxireferral.api.ModelSettings.ServiceConfigurationLocal;
+import org.taxireferral.api.ModelSettings.ServiceConfiguration;
 
 import java.sql.*;
 
@@ -18,7 +17,7 @@ public class DAOServiceConfig {
 
     /* Service Configuration : Begin */
 
-//    updateServiceConfiguration(ServiceConfigurationLocal serviceConfig);
+//    updateServiceConfiguration(ServiceConfiguration serviceConfig);
 //    getServiceConfiguration();
 
     /* Service Configuration : End */
@@ -26,71 +25,73 @@ public class DAOServiceConfig {
 
 
 
-    public int updateServiceConfig(ServiceConfigurationLocal serviceConfig)
+    public int updateServiceConfig(ServiceConfiguration serviceConfig)
     {
 
 
         String insertUpdateServiceConfig =
 
-                "INSERT INTO " + ServiceConfigurationLocal.TABLE_NAME
+                "INSERT INTO " + ServiceConfiguration.TABLE_NAME
                         + "("
-                        + ServiceConfigurationLocal.SERVICE_CONFIGURATION_ID + ","
-                        + ServiceConfigurationLocal.LOGO_IMAGE_PATH + ","
-                        + ServiceConfigurationLocal.BACKDROP_IMAGE_PATH + ","
+                        + ServiceConfiguration.SERVICE_CONFIGURATION_ID + ","
+                        + ServiceConfiguration.LOGO_IMAGE_PATH + ","
+                        + ServiceConfiguration.BACKDROP_IMAGE_PATH + ","
 
-                        + ServiceConfigurationLocal.SERVICE_NAME + ","
-                        + ServiceConfigurationLocal.HELPLINE_NUMBER + ","
+                        + ServiceConfiguration.SERVICE_NAME + ","
+                        + ServiceConfiguration.HELPLINE_NUMBER + ","
 
-                        + ServiceConfigurationLocal.DESCRIPTION_SHORT + ","
-                        + ServiceConfigurationLocal.DESCRIPTION_LONG + ","
+                        + ServiceConfiguration.DESCRIPTION_SHORT + ","
+                        + ServiceConfiguration.DESCRIPTION_LONG + ","
 
-                        + ServiceConfigurationLocal.ADDRESS + ","
-                        + ServiceConfigurationLocal.CITY + ","
-                        + ServiceConfigurationLocal.PINCODE + ","
-                        + ServiceConfigurationLocal.LANDMARK + ","
-                        + ServiceConfigurationLocal.STATE + ","
-                        + ServiceConfigurationLocal.COUNTRY + ","
+                        + ServiceConfiguration.ADDRESS + ","
+                        + ServiceConfiguration.CITY + ","
+                        + ServiceConfiguration.PINCODE + ","
+                        + ServiceConfiguration.LANDMARK + ","
+                        + ServiceConfiguration.STATE + ","
+                        + ServiceConfiguration.COUNTRY + ","
 
-                        + ServiceConfigurationLocal.ISO_COUNTRY_CODE + ","
-                        + ServiceConfigurationLocal.ISO_LANGUAGE_CODE + ","
-                        + ServiceConfigurationLocal.ISO_CURRENCY_CODE + ","
+                        + ServiceConfiguration.ISO_COUNTRY_CODE + ","
+                        + ServiceConfiguration.ISO_LANGUAGE_CODE + ","
+                        + ServiceConfiguration.ISO_CURRENCY_CODE + ","
 
-                        + ServiceConfigurationLocal.LAT_CENTER + ","
-                        + ServiceConfigurationLocal.LON_CENTER + ","
-                        + ServiceConfigurationLocal.SERVICE_RANGE + ","
+                        + ServiceConfiguration.LAT_CENTER + ","
+                        + ServiceConfiguration.LON_CENTER + ","
+                        + ServiceConfiguration.SERVICE_RANGE + ","
 
-                        + ServiceConfigurationLocal.UPDATED + ""
-                        + ") values(?,?,? ,?,?  ,?,? ,?,?,?,?,?,? ,?,?,? ,?,?,? ,?)"
-                        + " ON CONFLICT (" + ServiceConfigurationLocal.SERVICE_CONFIGURATION_ID + ")"
+                        + ServiceConfiguration.UPDATED + ","
+                        + ServiceConfiguration.STYLE_URL + ""
+                        + ") values(?,?,? ,?,?  ,?,? ,?,?,?,?,?,? ,?,?,? ,?,?,? ,?,?)"
+                        + " ON CONFLICT (" + ServiceConfiguration.SERVICE_CONFIGURATION_ID + ")"
                         + " DO UPDATE "
                         + " SET "
-                        + ServiceConfigurationLocal.SERVICE_CONFIGURATION_ID + "= excluded." + ServiceConfigurationLocal.SERVICE_CONFIGURATION_ID + " , "
-                        + ServiceConfigurationLocal.LOGO_IMAGE_PATH + "= excluded." + ServiceConfigurationLocal.LOGO_IMAGE_PATH + " , "
-                        + ServiceConfigurationLocal.BACKDROP_IMAGE_PATH + "= excluded." + ServiceConfigurationLocal.BACKDROP_IMAGE_PATH + " , "
+                        + ServiceConfiguration.SERVICE_CONFIGURATION_ID + "= excluded." + ServiceConfiguration.SERVICE_CONFIGURATION_ID + " , "
+                        + ServiceConfiguration.LOGO_IMAGE_PATH + "= excluded." + ServiceConfiguration.LOGO_IMAGE_PATH + " , "
+                        + ServiceConfiguration.BACKDROP_IMAGE_PATH + "= excluded." + ServiceConfiguration.BACKDROP_IMAGE_PATH + " , "
 
-                        + ServiceConfigurationLocal.SERVICE_NAME + "= excluded." + ServiceConfigurationLocal.SERVICE_NAME + " , "
-                        + ServiceConfigurationLocal.HELPLINE_NUMBER + "= excluded." + ServiceConfigurationLocal.HELPLINE_NUMBER + " , "
+                        + ServiceConfiguration.SERVICE_NAME + "= excluded." + ServiceConfiguration.SERVICE_NAME + " , "
+                        + ServiceConfiguration.HELPLINE_NUMBER + "= excluded." + ServiceConfiguration.HELPLINE_NUMBER + " , "
 
-                        + ServiceConfigurationLocal.DESCRIPTION_SHORT + "= excluded." + ServiceConfigurationLocal.DESCRIPTION_SHORT + " , "
-                        + ServiceConfigurationLocal.DESCRIPTION_LONG + "= excluded." + ServiceConfigurationLocal.DESCRIPTION_LONG + " , "
+                        + ServiceConfiguration.DESCRIPTION_SHORT + "= excluded." + ServiceConfiguration.DESCRIPTION_SHORT + " , "
+                        + ServiceConfiguration.DESCRIPTION_LONG + "= excluded." + ServiceConfiguration.DESCRIPTION_LONG + " , "
 
-                        + ServiceConfigurationLocal.ADDRESS + "= excluded." + ServiceConfigurationLocal.ADDRESS + " , "
-                        + ServiceConfigurationLocal.CITY + "= excluded." + ServiceConfigurationLocal.CITY + " , "
-                        + ServiceConfigurationLocal.PINCODE + "= excluded." + ServiceConfigurationLocal.PINCODE + " , "
-                        + ServiceConfigurationLocal.LANDMARK + "= excluded." + ServiceConfigurationLocal.LANDMARK + " , "
-                        + ServiceConfigurationLocal.STATE + "= excluded." + ServiceConfigurationLocal.STATE + " , "
-                        + ServiceConfigurationLocal.COUNTRY + "= excluded." + ServiceConfigurationLocal.COUNTRY + " , "
+                        + ServiceConfiguration.ADDRESS + "= excluded." + ServiceConfiguration.ADDRESS + " , "
+                        + ServiceConfiguration.CITY + "= excluded." + ServiceConfiguration.CITY + " , "
+                        + ServiceConfiguration.PINCODE + "= excluded." + ServiceConfiguration.PINCODE + " , "
+                        + ServiceConfiguration.LANDMARK + "= excluded." + ServiceConfiguration.LANDMARK + " , "
+                        + ServiceConfiguration.STATE + "= excluded." + ServiceConfiguration.STATE + " , "
+                        + ServiceConfiguration.COUNTRY + "= excluded." + ServiceConfiguration.COUNTRY + " , "
 
 
-                        + ServiceConfigurationLocal.ISO_COUNTRY_CODE + "= excluded." + ServiceConfigurationLocal.ISO_COUNTRY_CODE + " , "
-                        + ServiceConfigurationLocal.ISO_LANGUAGE_CODE + "= excluded." + ServiceConfigurationLocal.ISO_LANGUAGE_CODE + " , "
-                        + ServiceConfigurationLocal.ISO_CURRENCY_CODE + "= excluded." + ServiceConfigurationLocal.ISO_CURRENCY_CODE + " , "
+                        + ServiceConfiguration.ISO_COUNTRY_CODE + "= excluded." + ServiceConfiguration.ISO_COUNTRY_CODE + " , "
+                        + ServiceConfiguration.ISO_LANGUAGE_CODE + "= excluded." + ServiceConfiguration.ISO_LANGUAGE_CODE + " , "
+                        + ServiceConfiguration.ISO_CURRENCY_CODE + "= excluded." + ServiceConfiguration.ISO_CURRENCY_CODE + " , "
 
-                        + ServiceConfigurationLocal.LAT_CENTER + "= excluded." + ServiceConfigurationLocal.LAT_CENTER + " , "
-                        + ServiceConfigurationLocal.LON_CENTER + "= excluded." + ServiceConfigurationLocal.LON_CENTER + " , "
-                        + ServiceConfigurationLocal.SERVICE_RANGE + "= excluded." + ServiceConfigurationLocal.SERVICE_RANGE + " , "
+                        + ServiceConfiguration.LAT_CENTER + "= excluded." + ServiceConfiguration.LAT_CENTER + " , "
+                        + ServiceConfiguration.LON_CENTER + "= excluded." + ServiceConfiguration.LON_CENTER + " , "
+                        + ServiceConfiguration.SERVICE_RANGE + "= excluded." + ServiceConfiguration.SERVICE_RANGE + " , "
 
-                        + ServiceConfigurationLocal.UPDATED + "= excluded." + ServiceConfigurationLocal.UPDATED + "";
+                        + ServiceConfiguration.UPDATED + "= excluded." + ServiceConfiguration.UPDATED + ","
+                        + ServiceConfiguration.STYLE_URL + "= excluded." + ServiceConfiguration.STYLE_URL + "";
 
 
 
@@ -140,6 +141,7 @@ public class DAOServiceConfig {
 
             statement.setTimestamp(++i,new Timestamp(System.currentTimeMillis()));
 
+            statement.setObject(++i,serviceConfig.getStyleURL());
 
             rowCountUpdated = statement.executeUpdate();
             System.out.println("Total rows updated: " + rowCountUpdated);
@@ -197,41 +199,43 @@ public class DAOServiceConfig {
 
 
 
-    public ServiceConfigurationLocal getServiceConfig()
+    public ServiceConfiguration getServiceConfig()
     {
 
         String query = "SELECT "
 
-                + ServiceConfigurationLocal.SERVICE_CONFIGURATION_ID + ","
-                + ServiceConfigurationLocal.LOGO_IMAGE_PATH + ","
-                + ServiceConfigurationLocal.BACKDROP_IMAGE_PATH + ","
+                + ServiceConfiguration.SERVICE_CONFIGURATION_ID + ","
+                + ServiceConfiguration.LOGO_IMAGE_PATH + ","
+                + ServiceConfiguration.BACKDROP_IMAGE_PATH + ","
 
-                + ServiceConfigurationLocal.SERVICE_NAME + ","
-                + ServiceConfigurationLocal.HELPLINE_NUMBER + ","
+                + ServiceConfiguration.SERVICE_NAME + ","
+                + ServiceConfiguration.HELPLINE_NUMBER + ","
 
-                + ServiceConfigurationLocal.DESCRIPTION_SHORT + ","
-                + ServiceConfigurationLocal.DESCRIPTION_LONG + ","
+                + ServiceConfiguration.DESCRIPTION_SHORT + ","
+                + ServiceConfiguration.DESCRIPTION_LONG + ","
 
-                + ServiceConfigurationLocal.ADDRESS + ","
-                + ServiceConfigurationLocal.CITY + ","
-                + ServiceConfigurationLocal.PINCODE + ","
-                + ServiceConfigurationLocal.LANDMARK + ","
-                + ServiceConfigurationLocal.STATE + ","
-                + ServiceConfigurationLocal.COUNTRY + ","
+                + ServiceConfiguration.ADDRESS + ","
+                + ServiceConfiguration.CITY + ","
+                + ServiceConfiguration.PINCODE + ","
+                + ServiceConfiguration.LANDMARK + ","
+                + ServiceConfiguration.STATE + ","
+                + ServiceConfiguration.COUNTRY + ","
 
-                + ServiceConfigurationLocal.ISO_COUNTRY_CODE + ","
-                + ServiceConfigurationLocal.ISO_LANGUAGE_CODE + ","
-                + ServiceConfigurationLocal.ISO_CURRENCY_CODE + ","
+                + ServiceConfiguration.ISO_COUNTRY_CODE + ","
+                + ServiceConfiguration.ISO_LANGUAGE_CODE + ","
+                + ServiceConfiguration.ISO_CURRENCY_CODE + ","
 
-                + ServiceConfigurationLocal.LAT_CENTER + ","
-                + ServiceConfigurationLocal.LON_CENTER + ","
-                + ServiceConfigurationLocal.SERVICE_RANGE + ","
+                + ServiceConfiguration.LAT_CENTER + ","
+                + ServiceConfiguration.LON_CENTER + ","
+                + ServiceConfiguration.SERVICE_RANGE + ","
 
-                + ServiceConfigurationLocal.CREATED + ","
-                + ServiceConfigurationLocal.UPDATED + ""
+                + ServiceConfiguration.CREATED + ","
+                + ServiceConfiguration.UPDATED + ","
 
-                + " FROM " + ServiceConfigurationLocal.TABLE_NAME
-                + " WHERE " + ServiceConfigurationLocal.SERVICE_CONFIGURATION_ID  + " = 1 ";
+                + ServiceConfiguration.STYLE_URL + ""
+
+                + " FROM " + ServiceConfiguration.TABLE_NAME
+                + " WHERE " + ServiceConfiguration.SERVICE_CONFIGURATION_ID  + " = 1 ";
 
 
 
@@ -241,7 +245,7 @@ public class DAOServiceConfig {
 
 
         //Distributor distributor = null;
-        ServiceConfigurationLocal serviceConfig = null;
+        ServiceConfiguration serviceConfig = null;
 
         try {
 
@@ -258,40 +262,44 @@ public class DAOServiceConfig {
 
             while(rs.next())
             {
-                serviceConfig = new ServiceConfigurationLocal();
+                serviceConfig = new ServiceConfiguration();
 
-//                serviceConfig.setServiceID(rs.getInt(ServiceConfigurationLocal.SERVICE_CONFIGURATION_ID));
-//                serviceConfig.setLogoImagePath(rs.getString(ServiceConfigurationLocal.LOGO_IMAGE_PATH));
+//                serviceConfig.setServiceID(rs.getInt(ServiceConfiguration.SERVICE_CONFIGURATION_ID));
+//                serviceConfig.setLogoImagePath(rs.getString(ServiceConfiguration.LOGO_IMAGE_PATH));
 //                serviceConfig.setRt_distance(rs.getDouble("distance"));
 
 
-                serviceConfig.setServiceID(rs.getInt(ServiceConfigurationLocal.SERVICE_CONFIGURATION_ID));
-                serviceConfig.setLogoImagePath(rs.getString(ServiceConfigurationLocal.LOGO_IMAGE_PATH));
-                serviceConfig.setBackdropImagePath(rs.getString(ServiceConfigurationLocal.BACKDROP_IMAGE_PATH));
+                serviceConfig.setServiceID(rs.getInt(ServiceConfiguration.SERVICE_CONFIGURATION_ID));
+                serviceConfig.setLogoImagePath(rs.getString(ServiceConfiguration.LOGO_IMAGE_PATH));
+                serviceConfig.setBackdropImagePath(rs.getString(ServiceConfiguration.BACKDROP_IMAGE_PATH));
 
-                serviceConfig.setServiceName(rs.getString(ServiceConfigurationLocal.SERVICE_NAME));
-                serviceConfig.setHelplineNumber(rs.getString(ServiceConfigurationLocal.HELPLINE_NUMBER));
+                serviceConfig.setServiceName(rs.getString(ServiceConfiguration.SERVICE_NAME));
+                serviceConfig.setHelplineNumber(rs.getString(ServiceConfiguration.HELPLINE_NUMBER));
 
-                serviceConfig.setDescriptionShort(rs.getString(ServiceConfigurationLocal.DESCRIPTION_SHORT));
-                serviceConfig.setDescriptionLong(rs.getString(ServiceConfigurationLocal.DESCRIPTION_LONG));
+                serviceConfig.setDescriptionShort(rs.getString(ServiceConfiguration.DESCRIPTION_SHORT));
+                serviceConfig.setDescriptionLong(rs.getString(ServiceConfiguration.DESCRIPTION_LONG));
 
-                serviceConfig.setAddress(rs.getString(ServiceConfigurationLocal.ADDRESS));
-                serviceConfig.setCity(rs.getString(ServiceConfigurationLocal.CITY));
-                serviceConfig.setPincode(rs.getLong(ServiceConfigurationLocal.PINCODE));
-                serviceConfig.setLandmark(rs.getString(ServiceConfigurationLocal.LANDMARK));
-                serviceConfig.setState(rs.getString(ServiceConfigurationLocal.STATE));
-                serviceConfig.setCountry(rs.getString(ServiceConfigurationLocal.COUNTRY));
+                serviceConfig.setAddress(rs.getString(ServiceConfiguration.ADDRESS));
+                serviceConfig.setCity(rs.getString(ServiceConfiguration.CITY));
+                serviceConfig.setPincode(rs.getLong(ServiceConfiguration.PINCODE));
+                serviceConfig.setLandmark(rs.getString(ServiceConfiguration.LANDMARK));
+                serviceConfig.setState(rs.getString(ServiceConfiguration.STATE));
+                serviceConfig.setCountry(rs.getString(ServiceConfiguration.COUNTRY));
 
-                serviceConfig.setISOCountryCode(rs.getString(ServiceConfigurationLocal.ISO_COUNTRY_CODE));
-                serviceConfig.setISOLanguageCode(rs.getString(ServiceConfigurationLocal.ISO_LANGUAGE_CODE));
-                serviceConfig.setISOCurrencyCode(rs.getString(ServiceConfigurationLocal.ISO_CURRENCY_CODE));
+                serviceConfig.setISOCountryCode(rs.getString(ServiceConfiguration.ISO_COUNTRY_CODE));
+                serviceConfig.setISOLanguageCode(rs.getString(ServiceConfiguration.ISO_LANGUAGE_CODE));
+                serviceConfig.setISOCurrencyCode(rs.getString(ServiceConfiguration.ISO_CURRENCY_CODE));
 
-                serviceConfig.setLatCenter(rs.getDouble(ServiceConfigurationLocal.LAT_CENTER));
-                serviceConfig.setLonCenter(rs.getDouble(ServiceConfigurationLocal.LON_CENTER));
-                serviceConfig.setServiceRange(rs.getInt(ServiceConfigurationLocal.SERVICE_RANGE));
+                serviceConfig.setLatCenter(rs.getDouble(ServiceConfiguration.LAT_CENTER));
+                serviceConfig.setLonCenter(rs.getDouble(ServiceConfiguration.LON_CENTER));
+                serviceConfig.setServiceRange(rs.getInt(ServiceConfiguration.SERVICE_RANGE));
 
-                serviceConfig.setCreated(rs.getTimestamp(ServiceConfigurationLocal.CREATED));
-                serviceConfig.setUpdated(rs.getTimestamp(ServiceConfigurationLocal.UPDATED));
+                serviceConfig.setCreated(rs.getTimestamp(ServiceConfiguration.CREATED));
+                serviceConfig.setUpdated(rs.getTimestamp(ServiceConfiguration.UPDATED));
+
+
+//                serviceConfig.setStyleURL(rs.getString(ServiceConfiguration.STYLE_URL));
+                serviceConfig.setStyleURL(GlobalConstants.TILESERVER_GL_STYLE_URL);
             }
 
 

@@ -13,7 +13,6 @@ public class StaffPermissions {
     // Table Name for User
     public static final String TABLE_NAME = "STAFF_PERMISSIONS";
 
-
     // Column names
     public static final String PERMISSION_ID = "PERMISSION_ID";
     public static final String STAFF_ID = "STAFF_ID";
@@ -22,7 +21,6 @@ public class StaffPermissions {
     public static final String LON_CURRENT = "LON_CURRENT";
     public static final String PERMIT_TAXI_REGISTRATION_AND_RENEWAL = "PERMIT_TAXI_REGISTRATION_AND_RENEWAL";
     public static final String PERMIT_TAXI_PROFILE_UPDATE = "PERMIT_TAXI_PROFILE_UPDATE";
-
 
 
     // Create Table CurrentServiceConfiguration Provider

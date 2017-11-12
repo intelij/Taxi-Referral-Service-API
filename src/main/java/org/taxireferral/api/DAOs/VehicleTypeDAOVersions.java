@@ -10,7 +10,7 @@ import java.sql.*;
 /**
  * Created by sumeet on 25/4/17.
  */
-public class VehicleTypeDAONew {
+public class VehicleTypeDAOVersions {
 
 
     private HikariDataSource dataSource = Globals.getDataSource();

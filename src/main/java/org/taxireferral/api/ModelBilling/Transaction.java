@@ -115,15 +115,11 @@ public class Transaction {
 
     private int transactionType;
 
-//    private double taxAmount;
     private double transactionAmount;
     private boolean isCredit;
 
     private Timestamp timestampOccurred;
-
-//    private double currentDuesBeforeTransaction;
     private double serviceBalanceAfterTransaction;
-//    private double taxBalanceAfterTransaction;
 
 
 

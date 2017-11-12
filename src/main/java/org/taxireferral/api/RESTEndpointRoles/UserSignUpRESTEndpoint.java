@@ -109,7 +109,7 @@ public class UserSignUpRESTEndpoint {
             if(idOfInsertedRow>=1)
             {
                 // registration successful therefore send email to notify the user
-                Mail.using(Globals.configurationMailgun)
+                Mail.using(Globals.getMailgunConfiguration())
                         .body()
                         .h1("Registration successful for your account")
                         .p("Your account has been Created.")
@@ -313,7 +313,7 @@ public class UserSignUpRESTEndpoint {
                 // saved successfully
 
 
-                Mail.using(Globals.configurationMailgun)
+                Mail.using(Globals.getMailgunConfiguration())
                         .body()
                         .h1("Your E-mail Verification Code is given below")
                         .p("You have requested to verify your e-mail. If you did not request the e-mail verification please ignore this e-mail message.")
@@ -335,7 +335,7 @@ public class UserSignUpRESTEndpoint {
 
             System.out.println("Email Verification Code : " + verificationCode.getVerificationCode());
 
-            Mail.using(Globals.configurationMailgun)
+            Mail.using(Globals.getMailgunConfiguration())
                     .body()
                     .h1("Your E-mail Verification Code is given below")
                     .p("You have requested to verify your e-mail. If you did not request the e-mail verification please ignore this e-mail message.")

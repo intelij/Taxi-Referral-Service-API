@@ -31,7 +31,191 @@ public class DAOTripHistory {
     // rateAndReviewForDriver()
     // rateAndReviewForEndUser()
 
-    
+
+
+
+    public int reviewTripByDriver(TripHistory tripHistory)
+    {
+
+
+        Connection connection = null;
+        PreparedStatement statementUpdate = null;
+
+        int rowCountItems = -1;
+
+        String update = "";
+
+
+
+
+        update =  " UPDATE " + TripHistory.TABLE_NAME
+                + " SET "    + TripHistory.RATING_BY_DRIVER  + "=?,"
+                             + TripHistory.FEEDBACK_BY_DRIVER_TITLE + " = ?,"
+                             + TripHistory.FEEDBACK_BY_DRIVER      + "=?"
+                + " WHERE "  + TripHistory.TRIP_HISTORY_ID         + " = ?";
+
+
+
+
+
+        try {
+
+            connection = dataSource.getConnection();
+//            connection.setAutoCommit(false);
+
+
+            statementUpdate = connection.prepareStatement(update,PreparedStatement.RETURN_GENERATED_KEYS);
+            int i = 0;
+
+            statementUpdate.setObject(++i,tripHistory.getRatingByDriver());
+            statementUpdate.setObject(++i,tripHistory.getFeedbackByDriverTitle());
+            statementUpdate.setObject(++i,tripHistory.getFeedbackByDriver());
+            statementUpdate.setObject(++i,tripHistory.getTripHistoryID());
+
+            rowCountItems = statementUpdate.executeUpdate();
+
+//            connection.commit();
+
+        } catch (SQLException e) {
+
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+//            if (connection != null) {
+//                try {
+//
+//                    idOfInsertedRow=-1;
+//                    rowCountItems = 0;
+//
+//                    connection.rollback();
+//                } catch (SQLException e1) {
+//                    e1.printStackTrace();
+//                }
+//            }
+        }
+        finally
+        {
+
+            if (statementUpdate != null) {
+                try {
+                    statementUpdate.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+
+
+        return rowCountItems;
+    }
+
+
+
+
+
+    public int reviewTripByEndUser(TripHistory tripHistory)
+    {
+
+
+        Connection connection = null;
+        PreparedStatement statementUpdate = null;
+
+        int rowCountItems = -1;
+
+        String update = "";
+
+
+
+
+        update =  " UPDATE " + TripHistory.TABLE_NAME
+                + " SET "    + TripHistory.RATING_BY_END_USER  + "=?,"
+                             + TripHistory.FEEDBACK_BY_END_USER_TITLE + " = ?,"
+                             + TripHistory.FEEDBACK_BY_END_USER      + "=?"
+                + " WHERE "  + TripHistory.TRIP_HISTORY_ID         + " = ?";
+
+
+
+
+
+        try {
+
+            connection = dataSource.getConnection();
+//            connection.setAutoCommit(false);
+
+
+            statementUpdate = connection.prepareStatement(update,PreparedStatement.RETURN_GENERATED_KEYS);
+            int i = 0;
+
+            statementUpdate.setObject(++i,tripHistory.getRatingByEndUser());
+            statementUpdate.setObject(++i,tripHistory.getFeedbackByEndUserTitle());
+            statementUpdate.setObject(++i,tripHistory.getFeedbackByEndUser());
+            statementUpdate.setObject(++i,tripHistory.getTripHistoryID());
+
+            rowCountItems = statementUpdate.executeUpdate();
+
+//            connection.commit();
+
+        } catch (SQLException e) {
+
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+//            if (connection != null) {
+//                try {
+//
+//                    idOfInsertedRow=-1;
+//                    rowCountItems = 0;
+//
+//                    connection.rollback();
+//                } catch (SQLException e1) {
+//                    e1.printStackTrace();
+//                }
+//            }
+        }
+        finally
+        {
+
+            if (statementUpdate != null) {
+                try {
+                    statementUpdate.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+
+
+        return rowCountItems;
+    }
+
+
+
+
+
+
+
 
     public TripHistoryEndPoint getTripHistoryForEndUser(
             Integer endUserID,
@@ -496,7 +680,9 @@ public class DAOTripHistory {
                 + TripHistory.TABLE_NAME + "." + TripHistory.RATING_BY_END_USER + ","
 
                 + TripHistory.TABLE_NAME + "." + TripHistory.FEEDBACK_BY_DRIVER + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.FEEDBACK_BY_DRIVER_TITLE + ","
                 + TripHistory.TABLE_NAME + "." + TripHistory.FEEDBACK_BY_END_USER + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.FEEDBACK_BY_END_USER_TITLE + ","
 
                 + TripHistory.TABLE_NAME + "." + TripHistory.IS_CANCELLED + ","
                 + TripHistory.TABLE_NAME + "." + TripHistory.IS_CANCELLED_BY_END_USER + ","
@@ -702,8 +888,11 @@ public class DAOTripHistory {
                     tripHistory.setRatingByEndUser(rs.getInt(TripHistory.RATING_BY_END_USER));
 
                     tripHistory.setFeedbackByDriver(rs.getString(TripHistory.FEEDBACK_BY_DRIVER));
+                    tripHistory.setFeedbackByDriverTitle(rs.getString(TripHistory.FEEDBACK_BY_DRIVER_TITLE));
                     tripHistory.setFeedbackByEndUser(rs.getString(TripHistory.FEEDBACK_BY_END_USER));
+                    tripHistory.setFeedbackByEndUserTitle(rs.getString(TripHistory.FEEDBACK_BY_END_USER_TITLE));
 
+                    
                     tripHistory.setCancelled(rs.getBoolean(TripHistory.IS_CANCELLED));
                     tripHistory.setCancelledByUser(rs.getBoolean(TripHistory.IS_CANCELLED_BY_END_USER));
                     tripHistory.setReasonForCancellation(rs.getString(TripHistory.REASON_FOR_CANCELLATION));

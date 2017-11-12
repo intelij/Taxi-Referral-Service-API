@@ -2,15 +2,14 @@ package org.taxireferral.api.RESTEndpoints;
 
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
+import org.taxireferral.api.Model.TripHistory;
+import org.taxireferral.api.Model.Vehicle;
 import org.taxireferral.api.ModelEndpoints.TripHistoryEndPoint;
 import org.taxireferral.api.ModelEndpoints.TripRequestEndPoint;
 import org.taxireferral.api.ModelRoles.User;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -21,6 +20,68 @@ import javax.ws.rs.core.Response;
 
 @Path("/api/v1/TripHistory")
 public class TripHistoryRESTEndpoint {
+
+
+
+
+    @PUT
+    @Path("/ReviewByDriver")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_DRIVER})
+    public Response reviewByDriver(TripHistory tripHistory)
+    {
+
+        int rowCount = Globals.daoTripHistory.reviewTripByDriver(tripHistory);
+
+        if(rowCount >= 1)
+        {
+
+            return Response.status(Response.Status.OK)
+                    .build();
+        }
+        else if(rowCount <= 0)
+        {
+
+            return Response.status(Response.Status.NOT_MODIFIED)
+                    .build();
+        }
+
+        return null;
+    }
+
+
+
+
+
+
+    @PUT
+    @Path("/ReviewByEndUser")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_END_USER})
+    public Response reviewByEndUser(TripHistory tripHistory)
+    {
+
+        int rowCount = Globals.daoTripHistory.reviewTripByEndUser(tripHistory);
+
+        if(rowCount >= 1)
+        {
+
+            return Response.status(Response.Status.OK)
+                    .build();
+        }
+        else if(rowCount <= 0)
+        {
+
+            return Response.status(Response.Status.NOT_MODIFIED)
+                    .build();
+        }
+
+        return null;
+    }
+
+
+
+
 
 
 
