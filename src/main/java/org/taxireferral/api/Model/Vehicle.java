@@ -19,6 +19,8 @@ public class Vehicle {
     // Column names
     public static final String VEHICLE_ID = "VEHICLE_ID"; // primary key
     public static final String DRIVER_ID = "DRIVER_ID"; // foreign key
+    public static final String OWNED_BY = "OWNED_BY"; // foreign key
+
 //    public static final String VEHICLE_MODEL = "VEHICLE_MODEL"; // foreign key
 
     public static final String VEHICLE_MODEL_NAME = "VEHICLE_MODEL_NAME";
@@ -52,7 +54,6 @@ public class Vehicle {
 
 //    public static final String MAX_FREE_PICKUP_DISTANCE = "MAX_FREE_PICKUP_DISTANCE";
 
-
     // timestamp at which the vehicle profile was created
     public static final String TIMESTAMP_PROFILE_CREATED = "TIMESTAMP_PROFILE_CREATED";
     public static final String VEHICLE_REGISTRATION_NUMBER = "VEHICLE_REGISTRATION_NUMBER";
@@ -72,7 +73,8 @@ public class Vehicle {
             "CREATE TABLE IF NOT EXISTS "
                     + Vehicle.TABLE_NAME + "("
                     + " " + Vehicle.VEHICLE_ID + " SERIAL PRIMARY KEY,"
-                    + " " + Vehicle.DRIVER_ID + " int UNIQUE NOT NULL ,"
+                    + " " + Vehicle.DRIVER_ID + " int UNIQUE ,"
+                    + " " + Vehicle.OWNED_BY + " int UNIQUE NOT NULL ,"
 
                     + " " + Vehicle.VEHICLE_MODEL_NAME + " text,"
                     + " " + Vehicle.SEATING_CAPACITY + " int NOT NULL DEFAULT 0,"
@@ -102,7 +104,8 @@ public class Vehicle {
                     + " " + Vehicle.VEHICLE_INSURANCE_NUMBER + " text,"
                     + " " + Vehicle.VEHICLE_PUC_ID + " text,"
 
-                    + " FOREIGN KEY(" + Vehicle.DRIVER_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE"
+                    + " FOREIGN KEY(" + Vehicle.DRIVER_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE , "
+                    + " FOREIGN KEY(" + Vehicle.OWNED_BY +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE"
                     + ")";
 
 
@@ -114,6 +117,7 @@ public class Vehicle {
                     " ADD COLUMN IF NOT EXISTS " + Vehicle.SPEED + " float NOT NULL default 0";
 
 
+    
 
 
     // instance variables
@@ -159,8 +163,8 @@ public class Vehicle {
 
 
 
-    // getter and setters
 
+    // getter and setters
 
     public double getRt_rating_avg() {
         return rt_rating_avg;

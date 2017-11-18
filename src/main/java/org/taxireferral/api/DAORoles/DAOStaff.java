@@ -371,7 +371,8 @@ public class DAOStaff {
 
                 + StaffPermissions.STAFF_ID + ","
                 + StaffPermissions.PERMIT_TAXI_REGISTRATION_AND_RENEWAL + ","
-                + StaffPermissions.PERMIT_TAXI_PROFILE_UPDATE + ""
+                + StaffPermissions.PERMIT_TAXI_PROFILE_UPDATE + ","
+                + StaffPermissions.PERMIT_ACCEPT_PAYMENTS + ""
 
                 + " FROM "  + StaffPermissions.TABLE_NAME
                 + " WHERE " + StaffPermissions.STAFF_ID  + " = ? ";
@@ -406,6 +407,7 @@ public class DAOStaff {
                 permissions.setStaffUserID(rs.getInt(StaffPermissions.STAFF_ID));
                 permissions.setPermitTaxiRegistrationAndRenewal(rs.getBoolean(StaffPermissions.PERMIT_TAXI_REGISTRATION_AND_RENEWAL));
                 permissions.setPermitTaxiProfileUpdate(rs.getBoolean(StaffPermissions.PERMIT_TAXI_PROFILE_UPDATE));
+                permissions.setPermitAcceptPayments(rs.getBoolean(StaffPermissions.PERMIT_ACCEPT_PAYMENTS));
             }
 
 

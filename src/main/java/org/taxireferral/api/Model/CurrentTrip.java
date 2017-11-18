@@ -10,12 +10,14 @@ import java.sql.Timestamp;
 public class CurrentTrip {
 
 
+
     // Table Name
     public static final String TABLE_NAME = "CURRENT_TRIP";
 
     // Column names
     public static final String CURRENT_TRIP_ID = "CURRENT_TRIP_ID"; // primary key
     public static final String VEHICLE_ID = "VEHICLE_ID"; // foreign key unique
+//    public static final String DRIVER_ID = "DRIVER_ID"; // foreign key unique
     public static final String END_USER_ID = "END_USER_ID"; // foreign key unique
 
     public static final String CURRENT_TRIP_STATUS = "CURRENT_TRIP_STATUS";
@@ -70,7 +72,7 @@ public class CurrentTrip {
 
                     + " " + CurrentTrip.CURRENT_TRIP_ID + " SERIAL PRIMARY KEY,"
                     + " " + CurrentTrip.VEHICLE_ID + " int UNIQUE NOT NULL,"
-                    + " " + CurrentTrip.END_USER_ID + " int UNIQUE NOT NULL,"
+                    + " " + CurrentTrip.END_USER_ID + " int NOT NULL,"
 
                     + " " + CurrentTrip.CURRENT_TRIP_STATUS + " int NOT NULL,"
 
@@ -312,6 +314,9 @@ public class CurrentTrip {
     public void setWaitingChargePerMinute(double waitingChargePerMinute) {
         this.waitingChargePerMinute = waitingChargePerMinute;
     }
+
+
+
 
     public Vehicle getRt_vehicle() {
         return rt_vehicle;

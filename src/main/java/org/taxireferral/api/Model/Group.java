@@ -21,6 +21,7 @@ public class Group {
 
     public static final String TRIP_STATUS = "TRIP_STATUS";
 
+    // null means asap
     public static final String START_TIME = "START_TIME";
 
     public static final String START_RADIUS = "START_RADIUS";
@@ -36,6 +37,7 @@ public class Group {
 
     public static final String MIN_CHARGE_PER_HEAD = "MIN_CHARGE_PER_HEAD"; // minimum charge for single person
     public static final String MAX_CHARGE_PER_HEAD = "MAX_CHARGE_PER_HEAD"; // maximum charge for single person
+    public static final String MINIMUM_PASSENGERS_REQUIRED = "MINIMUM_PASSENGERS_REQUIRED";
 
 
 

@@ -21,6 +21,8 @@ public class StaffPermissions {
     public static final String LON_CURRENT = "LON_CURRENT";
     public static final String PERMIT_TAXI_REGISTRATION_AND_RENEWAL = "PERMIT_TAXI_REGISTRATION_AND_RENEWAL";
     public static final String PERMIT_TAXI_PROFILE_UPDATE = "PERMIT_TAXI_PROFILE_UPDATE";
+    public static final String PERMIT_ACCEPT_PAYMENTS = "PERMIT_ACCEPT_PAYMENTS";
+
 
 
     // Create Table CurrentServiceConfiguration Provider
@@ -35,6 +37,7 @@ public class StaffPermissions {
                     + " " + StaffPermissions.LON_CURRENT + " float not null default 0,"
                     + " " + StaffPermissions.PERMIT_TAXI_REGISTRATION_AND_RENEWAL + " boolean NOT NULL default 'f',"
                     + " " + StaffPermissions.PERMIT_TAXI_PROFILE_UPDATE + " boolean NOT NULL default 'f',"
+                    + " " + StaffPermissions.PERMIT_ACCEPT_PAYMENTS + " boolean NOT NULL default 'f',"
                     + " FOREIGN KEY(" + StaffPermissions.STAFF_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE "
                     + ")";
 
@@ -48,13 +51,22 @@ public class StaffPermissions {
     private double lonCurrent;
     private boolean permitTaxiRegistrationAndRenewal;
     private boolean permitTaxiProfileUpdate;
+    private boolean permitAcceptPayments;
     private double rt_distance;
+
 
 
 
 
     // getter and setters
 
+    public boolean isPermitAcceptPayments() {
+        return permitAcceptPayments;
+    }
+
+    public void setPermitAcceptPayments(boolean permitAcceptPayments) {
+        this.permitAcceptPayments = permitAcceptPayments;
+    }
 
     public boolean isPermitTaxiProfileUpdate() {
         return permitTaxiProfileUpdate;

@@ -1797,7 +1797,6 @@ public class VehicleDAO {
                 +  "avg(" + TripHistory.TABLE_NAME + "." + TripHistory.RATING_BY_END_USER + ") as avg_rating" + ","
                 +  "count( " + TripHistory.TABLE_NAME + "." + TripHistory.RATING_BY_END_USER + ") as rating_count" + ","
 
-
                 + User.TABLE_NAME + "." + User.PHONE + ","
                 + User.TABLE_NAME + "." + User.NAME + ","
                 + User.TABLE_NAME + "." + User.GENDER + ","
@@ -1809,6 +1808,7 @@ public class VehicleDAO {
                 + " INNER JOIN " + User.TABLE_NAME + " ON (" + Vehicle.DRIVER_ID + " = " + User.USER_ID + ")"
                 + " LEFT OUTER JOIN " + TripHistory.TABLE_NAME + " ON ( " + TripHistory.TABLE_NAME + "." + TripHistory.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
                 + " WHERE TRUE ";
+
 
 
 

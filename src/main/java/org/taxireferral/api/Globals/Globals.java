@@ -9,6 +9,7 @@ import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.taxireferral.api.DAOBilling.DAOUPIPayments;
 import org.taxireferral.api.DAORoles.*;
 import org.taxireferral.api.DAORoles.deprecated.DAOUser;
 import org.taxireferral.api.DAOSettings.DAOServiceConfig;
@@ -46,6 +47,7 @@ public class Globals {
     public static DAOTripHistory daoTripHistory = new DAOTripHistory();
 
     public static DAOTransaction daoTransaction = new DAOTransaction();
+    public static DAOUPIPayments daoupiPayments = new DAOUPIPayments();
 
 
     public static DAOEmailVerificationCodes daoEmailVerificationCodes = new DAOEmailVerificationCodes();

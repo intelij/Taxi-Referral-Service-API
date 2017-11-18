@@ -40,6 +40,8 @@ public class UPIPaymentRequest {
     public static final String TIMESTAMP_APPROVED = "TIMESTAMP_APPROVED";
     public static final String APPROVED_BY_STAFF_ID = "APPROVED_BY_STAFF_ID";
 
+    public static final String IS_CREDITED = "IS_CREDITED";
+
 
 
 
@@ -64,11 +66,12 @@ public class UPIPaymentRequest {
                     + " " + UPIPaymentRequest.TIMESTAMP_APPROVED + " timestamp with time zone,"
                     + " " + UPIPaymentRequest.APPROVED_BY_STAFF_ID + " int,"
 
-                    + " FOREIGN KEY(" + UPIPaymentRequest.USER_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE SET NULL,"
-                    + " FOREIGN KEY(" + UPIPaymentRequest.APPROVED_BY_STAFF_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE SET NULL"
+                    + " " + UPIPaymentRequest.IS_CREDITED + " boolean NOT NULL default 'f',"
+
+                    + " FOREIGN KEY(" + UPIPaymentRequest.USER_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE SET NULL"
                     + ")";
 
-
+    //+ " FOREIGN KEY(" + UPIPaymentRequest.APPROVED_BY_STAFF_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE SET NULL"
 
 
 
@@ -86,12 +89,43 @@ public class UPIPaymentRequest {
 
     private boolean isApproved;
     private String remarksAndFeedback;
+    private Timestamp timestampApproved;
+    private int approvedBy;
+
+    private boolean isCredited;
+
+
+
 
 
 
 
     // getter and setters
 
+
+    public boolean isCredited() {
+        return isCredited;
+    }
+
+    public void setCredited(boolean credited) {
+        isCredited = credited;
+    }
+
+    public Timestamp getTimestampApproved() {
+        return timestampApproved;
+    }
+
+    public void setTimestampApproved(Timestamp timestampApproved) {
+        this.timestampApproved = timestampApproved;
+    }
+
+    public int getApprovedBy() {
+        return approvedBy;
+    }
+
+    public void setApprovedBy(int approvedBy) {
+        this.approvedBy = approvedBy;
+    }
 
     public Timestamp getTimestampCreated() {
         return timestampCreated;

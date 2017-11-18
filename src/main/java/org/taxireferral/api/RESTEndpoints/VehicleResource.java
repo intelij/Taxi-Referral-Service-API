@@ -486,6 +486,8 @@ public class VehicleResource {
 
 
 
+
+
 //		try {
 //			Thread.sleep(1000);
 //		} catch (InterruptedException e) {
@@ -506,11 +508,10 @@ public class VehicleResource {
 
 
 
-
-
     @GET
     @Path("/GetTaxiProfileForAdmin")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_STAFF,GlobalConstants.ROLE_ADMIN})
     public Response getTaxisForAdmin(
             @QueryParam("LatPickup") Double latPickUp, @QueryParam("LonPickup") Double lonPickUp,
             @QueryParam("DriversGender") Boolean driversGender,

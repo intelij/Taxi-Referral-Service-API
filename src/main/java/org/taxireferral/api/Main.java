@@ -1,8 +1,6 @@
 package org.taxireferral.api;
 
 import org.apache.commons.configuration2.Configuration;
-import org.eclipse.jetty.server.*;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.taxireferral.api.Globals.ConfigurationKeys;
@@ -11,6 +9,8 @@ import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.*;
 import org.taxireferral.api.ModelBilling.Transaction;
 import org.taxireferral.api.ModelBilling.TransactionTaxAccount;
+import org.taxireferral.api.ModelBilling.UPIPaymentRequest;
+import org.taxireferral.api.ModelImages.TaxiImage;
 import org.taxireferral.api.ModelRoles.EmailVerificationCode;
 import org.taxireferral.api.ModelRoles.PhoneVerificationCode;
 import org.taxireferral.api.ModelRoles.StaffPermissions;
@@ -33,6 +33,7 @@ import java.sql.Statement;
 
 
 
+
 public class Main {
 
     // Base URI the Grizzly HTTP server will listen on
@@ -50,6 +51,10 @@ public class Main {
 //        // exposing the Jersey application at BASE_URI
 //        return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
 //    }
+
+
+
+
 
 
 
@@ -93,102 +98,102 @@ public class Main {
 
 
 
-    public static Server startJettyServerThree() {
-
-        final ResourceConfig rc = new ResourceConfig().packages("org.taxireferral.api");
-
-        SslContextFactory sslContextFactory = new SslContextFactory();
-        sslContextFactory.setKeyStorePath("./keystore.jks");
-        sslContextFactory.setKeyStorePassword("123456");
-        sslContextFactory.setKeyManagerPassword("123456");
-
-//        return JettyHttpContainerFactory.createServer(URI.create(BASE_URI),sslContextFactory,rc);
-
-        return null;
-    }
+//    public static Server startJettyServerThree() {
+//
+//        final ResourceConfig rc = new ResourceConfig().packages("org.taxireferral.api");
+//
+//        SslContextFactory sslContextFactory = new SslContextFactory();
+//        sslContextFactory.setKeyStorePath("./keystore.jks");
+//        sslContextFactory.setKeyStorePassword("123456");
+//        sslContextFactory.setKeyManagerPassword("123456");
+//
+////        return JettyHttpContainerFactory.createServer(URI.create(BASE_URI),sslContextFactory,rc);
+//
+//        return null;
+//    }
 
 
     
 
 
-    public static Server startJettyTLS()
-    {
-//        final ResourceConfig rc = new ResourceConfig().packages("org.taxireferral.api");
-
-        Server server = new Server();
-        ServerConnector connector = new ServerConnector(server);
-        connector.setPort(9999);
-        HttpConfiguration https = new HttpConfiguration();
-        https.addCustomizer(new SecureRequestCustomizer());
-        SslContextFactory sslContextFactory = new SslContextFactory();
-        sslContextFactory.setKeyStorePath("/media/sumeet/data/ataxiRefferal/taxiReferralAPI/keystore.jks");
-        sslContextFactory.setKeyStorePassword("123456");
-        sslContextFactory.setKeyManagerPassword("123456");
-        ServerConnector sslConnector = new ServerConnector(server,
-                new SslConnectionFactory(sslContextFactory, "http/1.1"),
-                new HttpConnectionFactory(https));
-        sslConnector.setPort(9998);
-        server.setConnectors(new Connector[] { connector, sslConnector });
-
-        return server;
-    }
-
-
+//    public static Server startJettyTLS()
+//    {
+////        final ResourceConfig rc = new ResourceConfig().packages("org.taxireferral.api");
+//
+//        Server server = new Server();
+//        ServerConnector connector = new ServerConnector(server);
+//        connector.setPort(9999);
+//        HttpConfiguration https = new HttpConfiguration();
+//        https.addCustomizer(new SecureRequestCustomizer());
+//        SslContextFactory sslContextFactory = new SslContextFactory();
+//        sslContextFactory.setKeyStorePath("/media/sumeet/data/ataxiRefferal/taxiReferralAPI/keystore.jks");
+//        sslContextFactory.setKeyStorePassword("123456");
+//        sslContextFactory.setKeyManagerPassword("123456");
+//        ServerConnector sslConnector = new ServerConnector(server,
+//                new SslConnectionFactory(sslContextFactory, "http/1.1"),
+//                new HttpConnectionFactory(https));
+//        sslConnector.setPort(9998);
+//        server.setConnectors(new Connector[] { connector, sslConnector });
+//
+//        return server;
+//    }
 
 
 
-    void startJettyTLSTwo()
-    {
-        Server server = new Server();
-        // Creating the web application context
-
-//        WebAppContext webapp = new WebAppContext();
-//        webapp.setResourceBase("src/main/webapp");
-//        server.setHandler(webapp);
 
 
-
-        // HTTP Configuration
-
-        HttpConfiguration http = new HttpConfiguration();
-        http.addCustomizer(new SecureRequestCustomizer());
-
-
-        // Configuration for HTTPS redirect
-        http.setSecurePort(8443);
-        http.setSecureScheme("https");
-        ServerConnector connector = new ServerConnector(server);
-        connector.addConnectionFactory(new HttpConnectionFactory(http));
-
-        // Setting HTTP port
-        connector.setPort(8080);
-
-        // HTTPS configuration
-        HttpConfiguration https = new HttpConfiguration();
-        https.addCustomizer(new SecureRequestCustomizer());
-
-        // Configuring SSL
-        SslContextFactory sslContextFactory = new SslContextFactory();
-
-        // Defining keystore path and passwords
-        sslContextFactory.setKeyStorePath(Main.class.getResource("keystore").toExternalForm());
-        sslContextFactory.setKeyStorePassword("javacodegeeks");
-        sslContextFactory.setKeyManagerPassword("javacodegeeks");
-
-        // Configuring the connector
-        ServerConnector sslConnector = new ServerConnector(server, new SslConnectionFactory(sslContextFactory, "http/1.1"), new HttpConnectionFactory(https));
-        sslConnector.setPort(8443);
-
-
-        // Setting HTTP and HTTPS connectors
-        server.setConnectors(new Connector[]{connector, sslConnector});
-
-        // Starting the Server
-//        server.start();
-//        server.join();
-    }
-
-
+//    void startJettyTLSTwo()
+//    {
+//        Server server = new Server();
+//        // Creating the web application context
+//
+////        WebAppContext webapp = new WebAppContext();
+////        webapp.setResourceBase("src/main/webapp");
+////        server.setHandler(webapp);
+//
+//
+//
+//        // HTTP Configuration
+//
+//        HttpConfiguration http = new HttpConfiguration();
+//        http.addCustomizer(new SecureRequestCustomizer());
+//
+//
+//        // Configuration for HTTPS redirect
+//        http.setSecurePort(8443);
+//        http.setSecureScheme("https");
+//        ServerConnector connector = new ServerConnector(server);
+//        connector.addConnectionFactory(new HttpConnectionFactory(http));
+//
+//        // Setting HTTP port
+//        connector.setPort(8080);
+//
+//        // HTTPS configuration
+//        HttpConfiguration https = new HttpConfiguration();
+//        https.addCustomizer(new SecureRequestCustomizer());
+//
+//        // Configuring SSL
+//        SslContextFactory sslContextFactory = new SslContextFactory();
+//
+//        // Defining keystore path and passwords
+//        sslContextFactory.setKeyStorePath(Main.class.getResource("keystore").toExternalForm());
+//        sslContextFactory.setKeyStorePassword("javacodegeeks");
+//        sslContextFactory.setKeyManagerPassword("javacodegeeks");
+//
+//        // Configuring the connector
+//        ServerConnector sslConnector = new ServerConnector(server, new SslConnectionFactory(sslContextFactory, "http/1.1"), new HttpConnectionFactory(https));
+//        sslConnector.setPort(8443);
+//
+//
+//        // Setting HTTP and HTTPS connectors
+//        server.setConnectors(new Connector[]{connector, sslConnector});
+//
+//        // Starting the Server
+////        server.start();
+////        server.join();
+//    }
+//
+//
 
 
 
@@ -325,6 +330,7 @@ public class Main {
             statement.executeUpdate(Transaction.dropColumns);
 
 
+
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -360,6 +366,8 @@ public class Main {
         }
 
     }
+
+
 
 
 
@@ -468,19 +476,25 @@ public class Main {
 
 
 
+
+
+
+
         try {
 
-            connection = DriverManager.getConnection(GlobalConstants.CONNECTION_URL_CREATE_DB,
+            connection = DriverManager.getConnection(GlobalConstants.POSTGRES_CONNECTION_URL,
                     GlobalConstants.POSTGRES_USERNAME, GlobalConstants.POSTGRES_PASSWORD);
 
 
-
             statement = connection.createStatement();
+
+            statement.executeUpdate(UPIPaymentRequest.createTablePostgres);
 
             statement.executeUpdate(User.createTableUsernamesPostgres);
             statement.executeUpdate(StaffPermissions.createTablePostgres);
 
             statement.executeUpdate(Vehicle.createTableVehiclePostgres);
+            statement.executeUpdate(TaxiImage.createTablePostgres);
             statement.executeUpdate(TripRequest.createTablePostgres);
             statement.executeUpdate(CurrentTrip.createTablePostgres);
             statement.executeUpdate(TripHistory.createTablePostgres);
@@ -496,8 +510,6 @@ public class Main {
             statement.executeUpdate(ServiceConfiguration.createTablePostgres);
 
 
-            
-
             System.out.println("Tables Created ... !");
 
 
@@ -506,25 +518,26 @@ public class Main {
             // Insert the default administrator if it does not exit
 
 
-            User admin = new User();
-            admin.setUsername("admin");
-            admin.setRole(1);
-            admin.setPassword("password");
-
-            try
-            {
-                int rowCount = Globals.daoUserSignUp.registerUsingUsername(admin,true);
-
-                if(rowCount==1)
-                {
-                    System.out.println("Admin Account created !");
-                }
-            }
-            catch (Exception ex)
-            {
-                System.out.println(ex.toString());
-            }
-
+//
+//            User admin = new User();
+//            admin.setUsername("admin");
+//            admin.setRole(1);
+//            admin.setPassword("password");
+//
+//            try
+//            {
+//                int rowCount = Globals.daoUserSignUp.registerUsingUsername(admin,true);
+//
+//                if(rowCount==1)
+//                {
+//                    System.out.println("Admin Account created !");
+//                }
+//            }
+//            catch (Exception ex)
+//            {
+//                System.out.println(ex.toString());
+//            }
+//
 
 
 

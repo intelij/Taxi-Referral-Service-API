@@ -5,6 +5,8 @@ import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.CurrentTrip;
 import org.taxireferral.api.Model.TripHistory;
+import org.taxireferral.api.ModelEndpoints.CurrentTripEndpoint;
+import org.taxireferral.api.ModelEndpoints.VehicleEndPoint;
 import org.taxireferral.api.ModelNotifications.NotificationData;
 import org.taxireferral.api.ModelRoles.User;
 import org.taxireferral.api.ModelUtility.LocationCurrentTrip;
@@ -161,6 +163,13 @@ public class CurrentTripRESTEndpoint {
 
 
 
+
+
+    
+
+
+
+
     @PUT
     @Path("/CancelTripByEndUser")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -176,6 +185,7 @@ public class CurrentTripRESTEndpoint {
                 ((User) Globals.accountApproved).getUserID(),
                 true,tripHistory
         );
+
 
 
 
@@ -233,16 +243,23 @@ public class CurrentTripRESTEndpoint {
 
 
 
+
+
+
+
+
+
+
     @PUT
-    @Path("/StartTripByEndUser/{DriverID}")
+    @Path("/StartTripByEndUser/{DriverID}/{CurrentTripID}")
     @RolesAllowed({GlobalConstants.ROLE_END_USER})
-    public Response startTripByEndUser(@PathParam("DriverID")int driverID)
+    public Response startTripByEndUser(@PathParam("DriverID")int driverID,@PathParam("CurrentTripID")int currentTripID)
     {
 
 //        /{CurrentTripID}
 //        @PathParam("CurrentTripID")int currentTripID
 
-        int rowCount = daoCurrentTrip.start_trip_by_end_user(((User) Globals.accountApproved).getUserID());
+        int rowCount = daoCurrentTrip.start_trip_by_end_user(((User) Globals.accountApproved).getUserID(),currentTripID);
 
         if(rowCount >= 1)
         {
@@ -332,45 +349,110 @@ public class CurrentTripRESTEndpoint {
 
 
 
+
+
+
+
     @GET
     @Path("/GetCurrentTripForEndUser")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({GlobalConstants.ROLE_END_USER,ROLE_DRIVER,ROLE_STAFF,ROLE_ADMIN})
-    public Response getCurrentTripForEndUser()
+    public Response getCurrentTripForEndUser(
+            @QueryParam("SortBy") String sortBy,
+            @QueryParam("Limit")Integer limit, @QueryParam("Offset")Integer offset,
+            @QueryParam("GetRowCount")boolean getRowCount,
+            @QueryParam("MetadataOnly")boolean getOnlyMetaData)
     {
 
-        // Roles allowed not used for this method due to performance and effeciency requirements. Also
-        // this endpoint doesnt required to be secured as it does not expose any confidential information
 
-
-        User user = (User) Globals.accountApproved;
-
-        CurrentTrip result = daoCurrentTrip.getCurrentTripForEndUser(user.getUserID());
-
-//        System.out.println(email);
-
-
-//        try {
-//            Thread.sleep(400);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-
-
-        if(result!=null)
+        if(limit!=null)
         {
-            return Response.status(Response.Status.OK)
-                    .entity(result)
-                    .build();
+            if(limit >= GlobalConstants.max_limit)
+            {
+                limit = GlobalConstants.max_limit;
+            }
 
-        }
-        else
-        {
-            return Response.status(Response.Status.NO_CONTENT)
-                    .build();
+            if(offset==null)
+            {
+                offset = 0;
+            }
         }
 
+
+
+        CurrentTripEndpoint endPoint = Globals.daoCurrentTrip.getCurrentTripForEnduserNew(
+                ((User) Globals.accountApproved).getUserID(),
+                sortBy,limit,offset,
+                getRowCount,getOnlyMetaData
+        );
+
+
+
+
+        if(limit!=null)
+        {
+            endPoint.setLimit(limit);
+            endPoint.setOffset(offset);
+            endPoint.setMax_limit(GlobalConstants.max_limit);
+        }
+
+
+
+
+        //Marker
+        return Response.status(Response.Status.OK)
+                .entity(endPoint)
+                .build();
     }
+
+
+
+
+
+
+
+
+//    @GET
+//    @Path("/GetCurrentTripForEndUser")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @RolesAllowed({GlobalConstants.ROLE_END_USER,ROLE_DRIVER,ROLE_STAFF,ROLE_ADMIN})
+//    public Response getCurrentTripForEndUser()
+//    {
+//
+//        // Roles allowed not used for this method due to performance and effeciency requirements. Also
+//        // this endpoint doesnt required to be secured as it does not expose any confidential information
+//
+//
+//        User user = (User) Globals.accountApproved;
+//
+//        CurrentTrip result = daoCurrentTrip.getCurrentTripForEndUser(user.getUserID());
+//
+////        System.out.println(email);
+//
+//
+////        try {
+////            Thread.sleep(400);
+////        } catch (InterruptedException e) {
+////            e.printStackTrace();
+////        }
+//
+//
+//        if(result!=null)
+//        {
+//            return Response.status(Response.Status.OK)
+//                    .entity(result)
+//                    .build();
+//
+//        }
+//        else
+//        {
+//            return Response.status(Response.Status.NO_CONTENT)
+//                    .build();
+//        }
+//
+//    }
+
+
 
 
 
@@ -465,11 +547,14 @@ public class CurrentTripRESTEndpoint {
 
 
 
+
+
+
     @GET
-    @Path("/GetCurrentTripStatusForEndUser")
+    @Path("/GetCurrentTripStatusForEndUser/{CurrentTripID}")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({ROLE_END_USER})
-    public Response getCurrentTripStatusForEndUser()
+    public Response getCurrentTripStatusForEndUser(@PathParam("CurrentTripID")int currentTripID)
     {
 
         // Roles allowed not used for this method due to performance and effeciency requirements. Also
@@ -478,7 +563,7 @@ public class CurrentTripRESTEndpoint {
 
         User user = (User) Globals.accountApproved;
 
-        CurrentTrip result = daoCurrentTrip.getCurrentTripStatusForEndUser(user.getUserID());
+        CurrentTrip result = daoCurrentTrip.getCurrentTripStatusForEndUser(user.getUserID(),currentTripID);
 
 //        System.out.println(email);
 
