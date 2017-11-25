@@ -1972,7 +1972,7 @@ public class DAOCurrentTrip {
 
 
 
-    public CurrentTrip getCurrentTripForEndUser(int endUserID)
+    public CurrentTrip getCurrentTripForEndUser(int endUserID, int currentTripID)
     {
 
         String query = " SELECT "
@@ -2032,7 +2032,8 @@ public class DAOCurrentTrip {
                 + " FROM "   + CurrentTrip.TABLE_NAME
                 + " INNER JOIN " + Vehicle.TABLE_NAME + " ON (" + CurrentTrip.TABLE_NAME + "." + CurrentTrip.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
                 + " INNER JOIN " + User.TABLE_NAME + " ON (" + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID + ")"
-                + " WHERE "  + CurrentTrip.TABLE_NAME + "." + CurrentTrip.END_USER_ID + " = ? ";
+                + " WHERE "  + CurrentTrip.TABLE_NAME + "." + CurrentTrip.END_USER_ID + " = ? "
+                + " AND " + CurrentTrip.TABLE_NAME + "." + CurrentTrip.CURRENT_TRIP_ID + " = ? ";
 
 
 
@@ -2058,6 +2059,7 @@ public class DAOCurrentTrip {
 
             int i = 0;
             statement.setObject(++i,endUserID);
+            statement.setObject(++i,currentTripID);
 
 
             rs = statement.executeQuery();

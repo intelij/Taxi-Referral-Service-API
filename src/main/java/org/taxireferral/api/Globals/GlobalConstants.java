@@ -6,6 +6,7 @@ package org.taxireferral.api.Globals;
 public class GlobalConstants {
 
 
+
     public static String BASE_URI = "http://0.0.0.0:5500";
 
 	public static String POSTGRES_CONNECTION_URL;
@@ -15,6 +16,7 @@ public class GlobalConstants {
 
 //    public static final int NOTIFICATION_TYPE_TRIP_REQUESTS = 1;
 //    public static final int NOTIFICATION_TYPE_CURRENT_TRIP = 2;
+
 
 
 

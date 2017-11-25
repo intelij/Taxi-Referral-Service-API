@@ -81,6 +81,15 @@ public class CurrentTripRESTEndpoint {
 
 
 
+
+
+
+
+
+
+
+
+
     @PUT
     @Path("/FinishTrip")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -118,6 +127,10 @@ public class CurrentTripRESTEndpoint {
 
         return null;
     }
+
+
+
+
 
 
 
@@ -162,10 +175,6 @@ public class CurrentTripRESTEndpoint {
 
 
 
-
-
-
-    
 
 
 
@@ -406,51 +415,98 @@ public class CurrentTripRESTEndpoint {
     }
 
 
+    @GET
+    @Path("/GetCurrentTripListForEndUser")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_END_USER,ROLE_DRIVER,ROLE_STAFF,ROLE_ADMIN})
+    public Response getCurrentTripsForEndUser(
+            @QueryParam("SortBy") String sortBy,
+            @QueryParam("Limit")Integer limit, @QueryParam("Offset")Integer offset,
+            @QueryParam("GetRowCount")boolean getRowCount,
+            @QueryParam("MetadataOnly")boolean getOnlyMetaData)
+    {
+
+
+        if(limit!=null)
+        {
+            if(limit >= GlobalConstants.max_limit)
+            {
+                limit = GlobalConstants.max_limit;
+            }
+
+            if(offset==null)
+            {
+                offset = 0;
+            }
+        }
+
+
+
+        CurrentTripEndpoint endPoint = Globals.daoCurrentTrip.getCurrentTripForEnduserNew(
+                ((User) Globals.accountApproved).getUserID(),
+                sortBy,limit,offset,
+                getRowCount,getOnlyMetaData
+        );
 
 
 
 
+        if(limit!=null)
+        {
+            endPoint.setLimit(limit);
+            endPoint.setOffset(offset);
+            endPoint.setMax_limit(GlobalConstants.max_limit);
+        }
 
 
-//    @GET
-//    @Path("/GetCurrentTripForEndUser")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    @RolesAllowed({GlobalConstants.ROLE_END_USER,ROLE_DRIVER,ROLE_STAFF,ROLE_ADMIN})
-//    public Response getCurrentTripForEndUser()
-//    {
-//
-//        // Roles allowed not used for this method due to performance and effeciency requirements. Also
-//        // this endpoint doesnt required to be secured as it does not expose any confidential information
-//
-//
-//        User user = (User) Globals.accountApproved;
-//
-//        CurrentTrip result = daoCurrentTrip.getCurrentTripForEndUser(user.getUserID());
-//
-////        System.out.println(email);
-//
-//
-////        try {
-////            Thread.sleep(400);
-////        } catch (InterruptedException e) {
-////            e.printStackTrace();
-////        }
-//
-//
-//        if(result!=null)
-//        {
-//            return Response.status(Response.Status.OK)
-//                    .entity(result)
-//                    .build();
-//
+
+
+        //Marker
+        return Response.status(Response.Status.OK)
+                .entity(endPoint)
+                .build();
+    }
+
+
+
+
+    @GET
+    @Path("/GetCurrentTripForEndUser/{CurrentTripID}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_END_USER,ROLE_DRIVER,ROLE_STAFF,ROLE_ADMIN})
+    public Response getCurrentTripForEndUser(@PathParam("CurrentTripID")int currentTripID)
+    {
+
+        // Roles allowed not used for this method due to performance and effeciency requirements. Also
+        // this endpoint doesnt required to be secured as it does not expose any confidential information
+
+        User user = (User) Globals.accountApproved;
+        CurrentTrip result = daoCurrentTrip.getCurrentTripForEndUser(user.getUserID(),currentTripID);
+
+//        System.out.println(email);
+
+
+//        try {
+//            Thread.sleep(400);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
 //        }
-//        else
-//        {
-//            return Response.status(Response.Status.NO_CONTENT)
-//                    .build();
-//        }
-//
-//    }
+
+
+        if(result!=null)
+        {
+            return Response.status(Response.Status.OK)
+                    .entity(result)
+                    .build();
+
+        }
+        else
+        {
+            return Response.status(Response.Status.NO_CONTENT)
+                    .build();
+        }
+
+    }
 
 
 
@@ -542,6 +598,9 @@ public class CurrentTripRESTEndpoint {
                     .build();
         }
     }
+
+
+
 
 
 

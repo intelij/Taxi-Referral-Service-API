@@ -12,9 +12,6 @@ public class TaxiImage {
 
 
 
-
-
-
     // Table Name
     public static final String TABLE_NAME = "ITEM_IMAGES";
 
@@ -72,6 +69,9 @@ public class TaxiImage {
             + " FOREIGN KEY(" + TaxiImage.VEHICLE_ID +") REFERENCES " + Vehicle.TABLE_NAME + "(" + Vehicle.VEHICLE_ID + ") ON DELETE SET NULL ,"
             + " FOREIGN KEY(" + TaxiImage.APPROVED_BY +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE SET NULL "
             + ")";
+
+
+
 
 
 

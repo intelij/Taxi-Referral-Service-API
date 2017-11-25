@@ -76,6 +76,8 @@ public class TripRequest {
 
 
 
+
+
     // instance variables
 
     private int tripRequestID;
@@ -105,11 +107,25 @@ public class TripRequest {
     private int rt_driver_id;
     private Vehicle rt_vehicle;
     private User rt_end_user;
+    private double rt_fare_estimate;
+
+
+
+
+
 
 
 
     // getter and setters
 
+
+    public double getRt_fare_estimate() {
+        return rt_fare_estimate;
+    }
+
+    public void setRt_fare_estimate(double rt_fare_estimate) {
+        this.rt_fare_estimate = rt_fare_estimate;
+    }
 
     public int getRt_driver_id() {
         return rt_driver_id;

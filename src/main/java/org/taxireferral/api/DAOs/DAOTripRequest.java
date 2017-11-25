@@ -879,9 +879,26 @@ public class DAOTripRequest {
                 + " + sin( radians(" + TripRequest.LAT_PICK_UP + ")) * sin(radians(" + Vehicle.LAT_CURRENT + "))) as distance" + ","
 
 
+
                 + TripRequest.TABLE_NAME + "." + TripRequest.TRIP_REQUEST_ID + ","
                 + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + ","
                 + TripRequest.TABLE_NAME + "." + TripRequest.END_USER_ID + ","
+
+
+                + "(  ( Greatest( ( 6371 * acos( cos( radians("
+                + TripRequest.LAT_PICK_UP + ")) * cos( radians(" +  Vehicle.LAT_CURRENT +  ") ) * cos(radians(" + Vehicle.LON_CURRENT +  ") - radians("
+                + TripRequest.LON_PICK_UP + "))"
+                + " + sin( radians(" + TripRequest.LAT_PICK_UP + ")) * sin(radians(" + Vehicle.LAT_CURRENT + "))) ) * " + GlobalConstants.SHORTEST_DISTANCE_MULTIPLIER + " - " + GlobalConstants.free_pickup_distance + ", 0 ) + "
+
+
+                + "( 6371 * acos( cos( radians("
+                + TripRequest.LAT_PICK_UP + ")) * cos( radians(" +  TripRequest.LAT_DESTINATION +  ") ) * cos(radians(" + TripRequest.LON_DESTINATION +  ") - radians("
+                + TripRequest.LON_PICK_UP + "))"
+                + " + sin( radians(" + TripRequest.LAT_PICK_UP + ")) * sin(radians(" + TripRequest.LAT_DESTINATION + "))) * " + GlobalConstants.SHORTEST_DISTANCE_MULTIPLIER + " )"
+
+                + " ) * " + Vehicle.CHARGES_PER_KM + " + " + GlobalConstants.taxi_referral_charges + " ) * (1 + 0.01 * " + GlobalConstants.tax_rate_in_percent + ") as fare_estimate,"
+
+
 
                 + TripRequest.TABLE_NAME + "." + TripRequest.TIMESTAMP_CREATED + ","
                 + TripRequest.TABLE_NAME + "." + TripRequest.TIMESTAMP_EXPIRES + ","
@@ -1046,6 +1063,9 @@ public class DAOTripRequest {
                 {
 
                     TripRequest tripRequest = new TripRequest();
+
+                    tripRequest.setRt_fare_estimate(rs.getFloat("fare_estimate"));
+//                    System.out.println("Fare estimate : " + tripRequest.getRt_fare_estimate());
 
                     tripRequest.setTripRequestID(rs.getInt(TripRequest.TRIP_REQUEST_ID));
                     tripRequest.setVehicleID(rs.getInt(TripRequest.VEHICLE_ID));
