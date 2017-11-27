@@ -108,6 +108,8 @@ public class TripRequest {
     private Vehicle rt_vehicle;
     private User rt_end_user;
     private double rt_fare_estimate;
+//    private double rt_rating_avg;
+//    private int rt_rating_count;
 
 
 

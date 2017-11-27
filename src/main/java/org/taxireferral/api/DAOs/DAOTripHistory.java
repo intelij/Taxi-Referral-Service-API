@@ -52,9 +52,8 @@ public class DAOTripHistory {
                 + " SET "    + TripHistory.RATING_BY_DRIVER  + "=?,"
                              + TripHistory.FEEDBACK_BY_DRIVER_TITLE + " = ?,"
                              + TripHistory.FEEDBACK_BY_DRIVER      + "=?"
-                + " WHERE "  + TripHistory.TRIP_HISTORY_ID         + " = ?";
-
-
+                + " WHERE "  + TripHistory.TRIP_HISTORY_ID         + " = ?"
+                + " AND "    + TripHistory.IS_CANCELLED            + " = FALSE ";
 
 
 
@@ -124,7 +123,7 @@ public class DAOTripHistory {
 
 
 
-    public int reviewTripByEndUser(TripHistory tripHistory)
+    public int reviewTripByEndUser(TripHistory tripHistory, int endUserID)
     {
 
 
@@ -142,8 +141,9 @@ public class DAOTripHistory {
                 + " SET "    + TripHistory.RATING_BY_END_USER  + "=?,"
                              + TripHistory.FEEDBACK_BY_END_USER_TITLE + " = ?,"
                              + TripHistory.FEEDBACK_BY_END_USER      + "=?"
-                + " WHERE "  + TripHistory.TRIP_HISTORY_ID         + " = ?";
-
+                + " WHERE "  + TripHistory.TRIP_HISTORY_ID         + " = ?"
+                + " AND "    + TripHistory.IS_CANCELLED            + " = FALSE "
+                + " AND "    + TripHistory.END_USER_ID + " = ?";
 
 
 
@@ -161,6 +161,7 @@ public class DAOTripHistory {
             statementUpdate.setObject(++i,tripHistory.getFeedbackByEndUserTitle());
             statementUpdate.setObject(++i,tripHistory.getFeedbackByEndUser());
             statementUpdate.setObject(++i,tripHistory.getTripHistoryID());
+            statementUpdate.setObject(++i,endUserID);
 
             rowCountItems = statementUpdate.executeUpdate();
 
@@ -253,6 +254,7 @@ public class DAOTripHistory {
 
                 + TripHistory.TABLE_NAME + "." + TripHistory.FEEDBACK_BY_DRIVER + ","
                 + TripHistory.TABLE_NAME + "." + TripHistory.FEEDBACK_BY_END_USER + ","
+                + TripHistory.TABLE_NAME + "." + TripHistory.FEEDBACK_BY_END_USER_TITLE + ","
 
                 + TripHistory.TABLE_NAME + "." + TripHistory.IS_CANCELLED + ","
                 + TripHistory.TABLE_NAME + "." + TripHistory.IS_CANCELLED_BY_END_USER + ","
@@ -446,6 +448,7 @@ public class DAOTripHistory {
 
 
 
+
                 rs = statement.executeQuery();
 
                 while(rs.next())
@@ -462,6 +465,8 @@ public class DAOTripHistory {
 
                     tripHistory.setFeedbackByDriver(rs.getString(TripHistory.FEEDBACK_BY_DRIVER));
                     tripHistory.setFeedbackByEndUser(rs.getString(TripHistory.FEEDBACK_BY_END_USER));
+                    tripHistory.setFeedbackByEndUserTitle(rs.getString(TripHistory.FEEDBACK_BY_END_USER_TITLE));
+
 
                     tripHistory.setCancelled(rs.getBoolean(TripHistory.IS_CANCELLED));
                     tripHistory.setCancelledByUser(rs.getBoolean(TripHistory.IS_CANCELLED_BY_END_USER));

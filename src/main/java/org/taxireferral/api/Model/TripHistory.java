@@ -225,6 +225,8 @@ public class TripHistory {
     // getter and setters
 
 
+
+
     public String getFeedbackByDriverTitle() {
         return feedbackByDriverTitle;
     }

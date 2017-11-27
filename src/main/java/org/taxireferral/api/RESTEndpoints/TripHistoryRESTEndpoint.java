@@ -61,7 +61,9 @@ public class TripHistoryRESTEndpoint {
     public Response reviewByEndUser(TripHistory tripHistory)
     {
 
-        int rowCount = Globals.daoTripHistory.reviewTripByEndUser(tripHistory);
+        int endUserID = ((User)Globals.accountApproved).getUserID();
+
+        int rowCount = Globals.daoTripHistory.reviewTripByEndUser(tripHistory,endUserID);
 
         if(rowCount >= 1)
         {
@@ -78,9 +80,6 @@ public class TripHistoryRESTEndpoint {
 
         return null;
     }
-
-
-
 
 
 

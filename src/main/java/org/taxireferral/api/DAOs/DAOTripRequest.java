@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.CurrentTrip;
+import org.taxireferral.api.Model.TripHistory;
 import org.taxireferral.api.Model.TripRequest;
 import org.taxireferral.api.Model.Vehicle;
 import org.taxireferral.api.ModelEndpoints.TripRequestEndPoint;
@@ -890,11 +891,10 @@ public class DAOTripRequest {
                 + TripRequest.LON_PICK_UP + "))"
                 + " + sin( radians(" + TripRequest.LAT_PICK_UP + ")) * sin(radians(" + Vehicle.LAT_CURRENT + "))) ) * " + GlobalConstants.SHORTEST_DISTANCE_MULTIPLIER + " - " + GlobalConstants.free_pickup_distance + ", 0 ) + "
 
-
                 + "( 6371 * acos( cos( radians("
-                + TripRequest.LAT_PICK_UP + ")) * cos( radians(" +  TripRequest.LAT_DESTINATION +  ") ) * cos(radians(" + TripRequest.LON_DESTINATION +  ") - radians("
+                + TripRequest.LAT_PICK_UP + ")) * cos( radians(" + TripRequest.TABLE_NAME + "." + TripRequest.LAT_DESTINATION +  ") ) * cos(radians(" + TripRequest.TABLE_NAME + "." + TripRequest.LON_DESTINATION +  ") - radians("
                 + TripRequest.LON_PICK_UP + "))"
-                + " + sin( radians(" + TripRequest.LAT_PICK_UP + ")) * sin(radians(" + TripRequest.LAT_DESTINATION + "))) * " + GlobalConstants.SHORTEST_DISTANCE_MULTIPLIER + " )"
+                + " + sin( radians(" + TripRequest.LAT_PICK_UP + ")) * sin(radians(" +  TripRequest.TABLE_NAME + "." + TripRequest.LAT_DESTINATION + "))) * " + GlobalConstants.SHORTEST_DISTANCE_MULTIPLIER + " )"
 
                 + " ) * " + Vehicle.CHARGES_PER_KM + " + " + GlobalConstants.taxi_referral_charges + " ) * (1 + 0.01 * " + GlobalConstants.tax_rate_in_percent + ") as fare_estimate,"
 
@@ -917,6 +917,9 @@ public class DAOTripRequest {
                 + TripRequest.TABLE_NAME + "." + TripRequest.ADULTS_FEMALES_COUNT + ","
                 + TripRequest.TABLE_NAME + "." + TripRequest.CHILDREN_COUNT + ","
 
+                +  "avg(" + TripHistory.TABLE_NAME + "." + TripHistory.RATING_BY_END_USER + ") as avg_rating" + ","
+                +  "count( " + TripHistory.TABLE_NAME + "." + TripHistory.RATING_BY_END_USER + ") as rating_count" + ","
+
 
                 + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + ","
@@ -931,6 +934,9 @@ public class DAOTripRequest {
                 + Vehicle.TABLE_NAME + "." + Vehicle.LON_CURRENT + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.TIMESTAMP_LOCATION_UPDATED + ","
 
+                +  "avg(" + TripHistory.TABLE_NAME + "." + TripHistory.RATING_BY_END_USER + ") as avg_rating" + ","
+                +  "count( " + TripHistory.TABLE_NAME + "." + TripHistory.RATING_BY_END_USER + ") as rating_count" + ","
+
                 + User.TABLE_NAME + "." + User.PHONE + ","
                 + User.TABLE_NAME + "." + User.NAME + ","
                 + User.TABLE_NAME + "." + User.GENDER + ","
@@ -939,6 +945,7 @@ public class DAOTripRequest {
                 + " FROM " + TripRequest.TABLE_NAME
                 + " INNER JOIN " + Vehicle.TABLE_NAME + " ON (" + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
                 + " INNER JOIN " + User.TABLE_NAME + " ON (" + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID + ")"
+                + " LEFT OUTER JOIN " + TripHistory.TABLE_NAME + " ON ( " + TripHistory.TABLE_NAME + "." + TripHistory.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
                 + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.ENABLED + " = TRUE "
                 + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.AVIALABLE
                 + " AND " + TripRequest.TABLE_NAME + "." + TripRequest.TIMESTAMP_EXPIRES + " > now()";
@@ -1089,6 +1096,7 @@ public class DAOTripRequest {
                     tripRequest.setChildrenCount(rs.getInt(TripRequest.CHILDREN_COUNT));
 
 
+
                     Vehicle vehicle = new Vehicle();
 
                     vehicle.setRt_distance(rs.getFloat("distance"));
@@ -1107,6 +1115,10 @@ public class DAOTripRequest {
                     vehicle.setLonCurrent(rs.getFloat(Vehicle.LON_CURRENT));
 
                     vehicle.setLocationUpdated(rs.getTimestamp(Vehicle.TIMESTAMP_LOCATION_UPDATED));
+
+                    vehicle.setRt_rating_avg(rs.getDouble("avg_rating"));
+                    vehicle.setRt_rating_count(rs.getInt("rating_count"));
+
 
                     User driver = new User();
 
@@ -1221,6 +1233,8 @@ public class DAOTripRequest {
 
 
 
+
+
     public TripRequestEndPoint getTripRequestsForDriver(
             Integer endUserID,
             Integer driverID,
@@ -1249,6 +1263,21 @@ public class DAOTripRequest {
                 + TripRequest.TABLE_NAME + "." + TripRequest.TRIP_REQUEST_ID + ","
                 + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + ","
                 + TripRequest.TABLE_NAME + "." + TripRequest.END_USER_ID + ","
+
+                + "(  ( Greatest( ( 6371 * acos( cos( radians("
+                + TripRequest.LAT_PICK_UP + ")) * cos( radians(" +  Vehicle.LAT_CURRENT +  ") ) * cos(radians(" + Vehicle.LON_CURRENT +  ") - radians("
+                + TripRequest.LON_PICK_UP + "))"
+                + " + sin( radians(" + TripRequest.LAT_PICK_UP + ")) * sin(radians(" + Vehicle.LAT_CURRENT + "))) ) * " + GlobalConstants.SHORTEST_DISTANCE_MULTIPLIER + " - " + GlobalConstants.free_pickup_distance + ", 0 ) + "
+
+
+                + "( 6371 * acos( cos( radians("
+                + TripRequest.LAT_PICK_UP + ")) * cos( radians(" +  TripRequest.TABLE_NAME + "." + TripRequest.LAT_DESTINATION +  ") ) * cos(radians(" +  TripRequest.TABLE_NAME + "." + TripRequest.LON_DESTINATION +  ") - radians("
+                + TripRequest.LON_PICK_UP + "))"
+                + " + sin( radians(" + TripRequest.LAT_PICK_UP + ")) * sin(radians(" + TripRequest.TABLE_NAME + "." + TripRequest.LAT_DESTINATION + "))) * " + GlobalConstants.SHORTEST_DISTANCE_MULTIPLIER + " )"
+
+                + " ) * " + Vehicle.CHARGES_PER_KM + " + " + GlobalConstants.taxi_referral_charges + " ) * (1 + 0.01 * " + GlobalConstants.tax_rate_in_percent + ") as fare_estimate,"
+
+
 
                 + TripRequest.TABLE_NAME + "." + TripRequest.TIMESTAMP_CREATED + ","
                 + TripRequest.TABLE_NAME + "." + TripRequest.TIMESTAMP_EXPIRES + ","
@@ -1281,6 +1310,10 @@ public class DAOTripRequest {
                 + Vehicle.TABLE_NAME + "." + Vehicle.LON_CURRENT + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.TIMESTAMP_LOCATION_UPDATED + ","
 
+                +  "avg(" + TripHistory.TABLE_NAME + "." + TripHistory.RATING_BY_DRIVER + ") as avg_rating" + ","
+                +  "count( " + TripHistory.TABLE_NAME + "." + TripHistory.RATING_BY_DRIVER + ") as rating_count" + ","
+
+
                 + User.TABLE_NAME + "." + User.PHONE + ","
                 + User.TABLE_NAME + "." + User.NAME + ","
                 + User.TABLE_NAME + "." + User.GENDER + ","
@@ -1289,9 +1322,12 @@ public class DAOTripRequest {
                 + " FROM " + TripRequest.TABLE_NAME
                 + " INNER JOIN " + Vehicle.TABLE_NAME + " ON (" + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
                 + " INNER JOIN " + User.TABLE_NAME + " ON (" + TripRequest.TABLE_NAME + "." + TripRequest.END_USER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID + ")"
+                + " LEFT OUTER JOIN " + TripHistory.TABLE_NAME + " ON ( " + TripHistory.TABLE_NAME + "." + TripHistory.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
                 + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.ENABLED + " = TRUE "
                 + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_STATUS + " = " + GlobalConstants.AVIALABLE
                 + " AND " + TripRequest.TABLE_NAME + "." + TripRequest.TIMESTAMP_EXPIRES + " > now()";
+
+
 
 
 
@@ -1414,6 +1450,7 @@ public class DAOTripRequest {
 
                     TripRequest tripRequest = new TripRequest();
 
+                    tripRequest.setRt_fare_estimate(rs.getFloat("fare_estimate"));
                     tripRequest.setTripRequestID(rs.getInt(TripRequest.TRIP_REQUEST_ID));
                     tripRequest.setVehicleID(rs.getInt(TripRequest.VEHICLE_ID));
                     tripRequest.setEndUserID(rs.getInt(TripRequest.END_USER_ID));
@@ -1455,6 +1492,11 @@ public class DAOTripRequest {
 
                     vehicle.setLocationUpdated(rs.getTimestamp(Vehicle.TIMESTAMP_LOCATION_UPDATED));
 
+                    vehicle.setRt_rating_avg(rs.getDouble("avg_rating"));
+                    vehicle.setRt_rating_count(rs.getInt("rating_count"));
+
+
+
                     User endUser = new User();
 
                     endUser.setUserID(vehicle.getDriverID());
@@ -1473,6 +1515,8 @@ public class DAOTripRequest {
                 endPoint.setResults(itemList);
 
             }
+
+
 
 
             if(getRowCount)

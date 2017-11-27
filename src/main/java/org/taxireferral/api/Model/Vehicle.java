@@ -66,7 +66,6 @@ public class Vehicle {
 
 
 
-
     // Create Table Statement
     public static final String createTableVehiclePostgres =
 
@@ -74,7 +73,7 @@ public class Vehicle {
                     + Vehicle.TABLE_NAME + "("
                     + " " + Vehicle.VEHICLE_ID + " SERIAL PRIMARY KEY,"
                     + " " + Vehicle.DRIVER_ID + " int UNIQUE ,"
-                    + " " + Vehicle.OWNED_BY + " int UNIQUE NOT NULL ,"
+                    + " " + Vehicle.OWNED_BY + " int UNIQUE ,"
 
                     + " " + Vehicle.VEHICLE_MODEL_NAME + " text,"
                     + " " + Vehicle.SEATING_CAPACITY + " int NOT NULL DEFAULT 0,"
@@ -107,6 +106,7 @@ public class Vehicle {
                     + " FOREIGN KEY(" + Vehicle.DRIVER_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE , "
                     + " FOREIGN KEY(" + Vehicle.OWNED_BY +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE"
                     + ")";
+
 
 
 
@@ -157,8 +157,6 @@ public class Vehicle {
     private double rt_min_service_balance;
     private double rt_rating_avg;
     private int rt_rating_count;
-
-
 
 
 
