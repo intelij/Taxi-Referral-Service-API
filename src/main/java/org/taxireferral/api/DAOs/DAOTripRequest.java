@@ -308,8 +308,322 @@ public class DAOTripRequest {
 
 
 
+    public int request_pick_up(int tripRequestID, int endUserID)
+    {
 
-    public int approve_pickup(int tripRequestID, int driverID, boolean getRowCount,
+        Connection connection = null;
+        PreparedStatement statementUpdate = null;
+
+        int rowCountItems = -1;
+
+        String update = "";
+
+
+
+        update =  " UPDATE " + TripRequest.TABLE_NAME
+                + " SET " + TripRequest.TRIP_REQUEST_STATUS + " = " + GlobalConstants.PICKUP_REQUESTED
+                + " WHERE " + TripRequest.TRIP_REQUEST_ID + " = ?"
+                + " AND " + TripRequest.END_USER_ID + " = ?"
+                + " AND " + TripRequest.TRIP_REQUEST_STATUS + " = " + GlobalConstants.REQUEST_APPROVED;
+
+
+
+
+        try {
+
+            connection = dataSource.getConnection();
+//            connection.setAutoCommit(false);
+
+
+            statementUpdate = connection.prepareStatement(update,PreparedStatement.RETURN_GENERATED_KEYS);
+            int i = 0;
+
+
+            statementUpdate.setObject(++i,tripRequestID);
+            statementUpdate.setObject(++i,endUserID);
+
+            rowCountItems = statementUpdate.executeUpdate();
+
+
+//            connection.commit();
+
+        } catch (SQLException e) {
+
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+        }
+        finally
+        {
+
+            if (statementUpdate != null) {
+                try {
+                    statementUpdate.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+
+
+        return rowCountItems;
+    }
+
+
+
+
+
+
+    public int startPickupByEndUser(int tripRequestID, int endUserID,
+                              boolean getRowCount)
+    {
+        // note of precaution : please check the end user id is the id of the user who is requesting to create the trip
+
+        Connection connection = null;
+        PreparedStatement statementInsert = null;
+        PreparedStatement statementDelete = null;
+        PreparedStatement statementUpdate = null;
+
+        int idOfInsertedRow = -1;
+        int rowCountItems = -1;
+
+        int rowCountDelete = -1;
+        int rowCountUpdateStatus = -1;
+
+
+        String deleteTripRequest = "";
+        String updateStatus = "";
+
+
+        String insert = "";
+
+        insert = "INSERT INTO " + CurrentTrip.TABLE_NAME
+                + "("
+                + CurrentTrip.VEHICLE_ID + ","
+                + CurrentTrip.END_USER_ID + ","
+
+                + CurrentTrip.CURRENT_TRIP_STATUS + ","
+
+//                + CurrentTrip.LAT_START_LOCATION + ","
+//                + CurrentTrip.LON_START_LOCATION + ","
+
+                + CurrentTrip.LAT_PICK_UP_LOCATION + ","
+                + CurrentTrip.LON_PICK_UP_LOCATION + ","
+                + CurrentTrip.PICK_UP_ADDRESS + ","
+
+                + CurrentTrip.LAT_DESTINATION + ","
+                + CurrentTrip.LON_DESTINATION + ","
+                + CurrentTrip.DESTINATION_ADDRESS + ","
+
+                + CurrentTrip.FREE_PICKUP_DISTANCE + ","
+                + CurrentTrip.REFERRAL_CHARGES + ","
+
+                + CurrentTrip.MIN_TRIP_CHARGES + ","
+                + CurrentTrip.CHARGES_PER_KM + ","
+
+                + CurrentTrip.FREE_START_WAITING_MINUTES + ","
+                + CurrentTrip.FREE_MINUTES_PER_KM + ","
+                + CurrentTrip.WAIT_CHARGES_PER_MINUTE + ","
+                + CurrentTrip.TAX_RATE + ""
+
+                + ") "
+                + " SELECT "
+                + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + ","
+                + TripRequest.TABLE_NAME + "." + TripRequest.END_USER_ID + ","
+
+                + GlobalConstants.PICKUP_APPROVED + ","
+
+//                + currentLocation.getLatitude() + ","
+//                + currentLocation.getLongitude() + ","
+
+                + TripRequest.TABLE_NAME + "." + TripRequest.LAT_PICK_UP + ","
+                + TripRequest.TABLE_NAME + "." + TripRequest.LON_PICK_UP + ","
+                + TripRequest.TABLE_NAME + "." + TripRequest.PICK_UP_ADDRESS + ","
+
+                + TripRequest.TABLE_NAME + "." + TripRequest.LAT_DESTINATION + ","
+                + TripRequest.TABLE_NAME + "." + TripRequest.LON_DESTINATION + ","
+                + TripRequest.TABLE_NAME + "." + TripRequest.DESTINATION_ADDRESS + ","
+
+                + GlobalConstants.free_pickup_distance + ","
+                + GlobalConstants.taxi_referral_charges + ","
+
+                + Vehicle.TABLE_NAME + "." + Vehicle.MIN_TRIP_CHARGES + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.CHARGES_PER_KM + ","
+
+                + GlobalConstants.free_start_waiting_minutes + ","
+                + GlobalConstants.free_minutes_per_km + ","
+                + GlobalConstants.wait_charges_per_minute + ","
+                + GlobalConstants.tax_rate_in_percent + ""
+
+                + " FROM " + TripRequest.TABLE_NAME
+                + " INNER JOIN " + Vehicle.TABLE_NAME + " ON " + "(" + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID + ")"
+                + " WHERE " + TripRequest.TABLE_NAME + "." + TripRequest.TRIP_REQUEST_ID + " = ? "
+                + " AND " + TripRequest.TABLE_NAME + "." + TripRequest.TRIP_REQUEST_STATUS + " = ? "
+                + " AND " + TripRequest.TABLE_NAME + "." + TripRequest.END_USER_ID + " = ? ";
+
+
+
+        updateStatus =  " UPDATE " + Vehicle.TABLE_NAME +
+                " SET " + Vehicle.VEHICLE_STATUS + " = ? " +
+                " FROM " + TripRequest.TABLE_NAME +
+                " WHERE " + TripRequest.TABLE_NAME + "." + TripRequest.VEHICLE_ID + " = " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_ID +
+                " AND " + TripRequest.TRIP_REQUEST_ID + " = ? ";
+
+
+
+        deleteTripRequest =   " DELETE FROM " + TripRequest.TABLE_NAME
+                + " WHERE " + TripRequest.TRIP_REQUEST_ID + " = ?";
+
+
+
+//        updateStatus =  " UPDATE " + Vehicle.TABLE_NAME +
+//                " SET "    + Vehicle.VEHICLE_STATUS + " = ? " +
+//                " WHERE "  + Vehicle.DRIVER_ID + " = ? ";
+
+
+
+
+
+
+
+        try {
+
+            connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
+
+            statementInsert = connection.prepareStatement(insert,PreparedStatement.RETURN_GENERATED_KEYS);
+            int i = 0;
+
+            statementInsert.setObject(++i,tripRequestID);
+            statementInsert.setObject(++i,GlobalConstants.REQUEST_APPROVED);
+            statementInsert.setObject(++i,endUserID);
+
+            rowCountItems = statementInsert.executeUpdate();
+            ResultSet rs = statementInsert.getGeneratedKeys();
+            if(rs.next())
+            {
+                idOfInsertedRow = rs.getInt(1);
+            }
+
+
+            if(idOfInsertedRow > 0)
+            {
+                // execute the following statements only if the insert is successful
+
+
+
+                statementUpdate = connection.prepareStatement(updateStatus);
+                i = 0;
+
+                statementUpdate.setObject(++i,GlobalConstants.OCCUPIED);
+                statementUpdate.setObject(++i,tripRequestID);
+
+                rowCountUpdateStatus = statementUpdate.executeUpdate();
+
+
+
+
+                statementDelete = connection.prepareStatement(deleteTripRequest);
+                i = 0;
+
+                statementDelete.setObject(++i,tripRequestID);
+                rowCountDelete = statementDelete.executeUpdate();
+
+            }
+
+
+
+
+            connection.commit();
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+            if (connection != null) {
+                try {
+
+                    idOfInsertedRow=-1;
+                    rowCountItems = 0;
+
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        finally
+        {
+
+
+            if (statementInsert != null) {
+                try {
+                    statementInsert.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+
+            if (statementDelete != null) {
+                try {
+                    statementDelete.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            if (statementUpdate != null) {
+                try {
+                    statementUpdate.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        if(getRowCount)
+        {
+            return rowCountItems;
+        }
+        else
+        {
+            return idOfInsertedRow;
+        }
+    }
+
+
+
+
+
+
+
+
+    public int approve_pickup(int tripRequestID, int driverID,int endUserID,
+                              boolean getRowCount,
                               Location currentLocation)
     {
         // note of precaution : please check the end user id is the id of the user who is requesting to create the trip
@@ -402,7 +716,8 @@ public class DAOTripRequest {
 
 
         deleteTripRequest =   " DELETE FROM " + TripRequest.TABLE_NAME
-                            + " WHERE " + TripRequest.TRIP_REQUEST_ID + " = ?";
+                            + " WHERE " + TripRequest.END_USER_ID + " = ?";
+
 
 
         updateStatus =  " UPDATE " + Vehicle.TABLE_NAME +
@@ -416,6 +731,8 @@ public class DAOTripRequest {
 //                        " FROM " + User.TABLE_NAME +
 //                        " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID +
 //                        " AND " + User.USER_ID + " = ? ";
+
+
 
 
 
@@ -448,7 +765,7 @@ public class DAOTripRequest {
                 statementDelete = connection.prepareStatement(deleteTripRequest);
                 i = 0;
 
-                statementDelete.setObject(++i,tripRequestID);
+                statementDelete.setObject(++i,endUserID);
                 rowCountDelete = statementDelete.executeUpdate();
 
 
@@ -773,80 +1090,6 @@ public class DAOTripRequest {
 
 
 
-
-
-
-    public int request_pick_up(int tripRequestID, int endUserID)
-    {
-
-        Connection connection = null;
-        PreparedStatement statementUpdate = null;
-
-        int rowCountItems = -1;
-
-        String update = "";
-
-
-
-        update =  " UPDATE " + TripRequest.TABLE_NAME
-                + " SET " + TripRequest.TRIP_REQUEST_STATUS + " = " + GlobalConstants.PICKUP_REQUESTED
-                + " WHERE " + TripRequest.TRIP_REQUEST_ID + " = ?"
-                + " AND " + TripRequest.END_USER_ID + " = ?"
-                + " AND " + TripRequest.TRIP_REQUEST_STATUS + " = " + GlobalConstants.REQUEST_APPROVED;
-
-
-
-
-        try {
-
-            connection = dataSource.getConnection();
-//            connection.setAutoCommit(false);
-
-
-            statementUpdate = connection.prepareStatement(update,PreparedStatement.RETURN_GENERATED_KEYS);
-            int i = 0;
-
-
-            statementUpdate.setObject(++i,tripRequestID);
-            statementUpdate.setObject(++i,endUserID);
-
-            rowCountItems = statementUpdate.executeUpdate();
-
-
-//            connection.commit();
-
-        } catch (SQLException e) {
-
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-
-        }
-        finally
-        {
-
-            if (statementUpdate != null) {
-                try {
-                    statementUpdate.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-
-
-            try {
-
-                if(connection!=null)
-                {connection.close();}
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-
-
-        return rowCountItems;
-    }
 
 
 

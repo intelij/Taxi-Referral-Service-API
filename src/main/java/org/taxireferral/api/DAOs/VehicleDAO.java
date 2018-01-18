@@ -288,8 +288,8 @@ public class VehicleDAO {
         // add referral credit to the referrer if the referrer is not credited
         updateDUES =  " UPDATE " + User.TABLE_NAME
                 + " SET "
-                + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " + ?,"
-                + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " + ?"
+                + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " + ?"
+//                + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " + ?"
                 + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ( "
                 + " SELECT " + User.REFERRED_BY
                 + " FROM " + User.TABLE_NAME
@@ -416,7 +416,7 @@ public class VehicleDAO {
 
 
                 statementUpdateDUES.setObject(++i, GlobalConstants.REFERRAL_CREDIT_FOR_DRIVER_REGISTRATION);
-                statementUpdateDUES.setObject(++i, GlobalConstants.REFERRAL_CREDIT_FOR_DRIVER_REGISTRATION);
+//                statementUpdateDUES.setObject(++i, GlobalConstants.REFERRAL_CREDIT_FOR_DRIVER_REGISTRATION);
 
                 statementUpdateDUES.setObject(++i, vehicleID);
 
@@ -559,7 +559,8 @@ public class VehicleDAO {
                                     + Vehicle.SEATING_CAPACITY    + "=?,"
                                     + Vehicle.PROFILE_IMAGE_URL   + "=?,"
                                     + Vehicle.MIN_TRIP_CHARGES    + "=?,"
-                                    + Vehicle.CHARGES_PER_KM      + "=?"
+                                    + Vehicle.CHARGES_PER_KM      + "=?,"
+                                    + Vehicle.VEHICLE_REGISTRATION_NUMBER      + "=?"
                         + " WHERE " + Vehicle.DRIVER_ID          + " = ?";
 
 
@@ -592,6 +593,8 @@ public class VehicleDAO {
             statementUpdate.setString(++i,vehicle.getProfileImageURL());
             statementUpdate.setObject(++i,vehicle.getMinTripCharges());
             statementUpdate.setObject(++i,vehicle.getChargesPerKM());
+            statementUpdate.setString(++i,vehicle.getRegistrationNumber());
+
 
             statementUpdate.setObject(++i,vehicle.getDriverID());
 
@@ -1462,11 +1465,14 @@ public class VehicleDAO {
 
                 +  "avg(" + TripHistory.TABLE_NAME + "." + TripHistory.RATING_BY_END_USER + ") as avg_rating" + ","
                 +  "count( " + TripHistory.TABLE_NAME + "." + TripHistory.RATING_BY_END_USER + ") as rating_count" + ","
+                +  "sum( " + TripHistory.TABLE_NAME + "." + TripHistory.DISTANCE_TRAVELLED_FOR_TRIP + ") as experience" + ","
 
                 + User.TABLE_NAME + "." + User.PHONE + ","
                 + User.TABLE_NAME + "." + User.NAME + ","
                 + User.TABLE_NAME + "." + User.GENDER + ","
-                + User.TABLE_NAME + "." + User.PROFILE_IMAGE_URL + ""
+                + User.TABLE_NAME + "." + User.ABOUT + ","
+                + User.TABLE_NAME + "." + User.PROFILE_IMAGE_URL + ","
+                + User.TABLE_NAME + "." + User.IS_ACCOUNT_PRIVATE + ""
 
                 + " FROM " + User.TABLE_NAME
                 + " INNER JOIN " + Vehicle.TABLE_NAME + " ON (" + Vehicle.TABLE_NAME + "." + Vehicle.DRIVER_ID + " = " + User.TABLE_NAME + "." + User.USER_ID + ")"
@@ -1589,8 +1595,7 @@ public class VehicleDAO {
 
                 rs = statement.executeQuery();
 
-                while(rs.next())
-                {
+                while(rs.next()) {
 
                     Vehicle vehicle = new Vehicle();
 
@@ -1607,7 +1612,7 @@ public class VehicleDAO {
                     vehicle.setMinTripCharges(rs.getInt(Vehicle.MIN_TRIP_CHARGES));
                     vehicle.setChargesPerKM(rs.getInt(Vehicle.CHARGES_PER_KM));
 
-                    vehicle.setProfileImageURL(rs.getString(Vehicle.PROFILE_IMAGE_URL));
+
 
                     vehicle.setLatCurrent(rs.getFloat(Vehicle.LAT_CURRENT));
                     vehicle.setLonCurrent(rs.getFloat(Vehicle.LON_CURRENT));
@@ -1621,22 +1626,41 @@ public class VehicleDAO {
 
                     vehicle.setRt_rating_avg(rs.getDouble("avg_rating"));
                     vehicle.setRt_rating_count(rs.getInt("rating_count"));
-
-
+                    vehicle.setRt_kms_total(rs.getDouble("experience"));
 
 
                     User driver = new User();
 
                     driver.setUserID(vehicle.getDriverID());
-                    driver.setPhone(rs.getString(User.PHONE));
-                    driver.setName(rs.getString(User.NAME));
-                    driver.setGender(rs.getBoolean(User.GENDER));
-                    driver.setProfileImagePath(rs.getString(User.PROFILE_IMAGE_URL));
+
+//                    driver.setGender(rs.getBoolean(User.GENDER));
+//                    driver.setProfileImagePath(rs.getString(User.PROFILE_IMAGE_URL));
+                    driver.setAccountPrivate(rs.getBoolean(User.IS_ACCOUNT_PRIVATE));
+
+
+                    if (driver.isAccountPrivate())
+                    {
+                        vehicle.setProfileImageURL(null);
+                        driver.setPhone(null);
+                        driver.setName(null);
+                        driver.setAbout(null);
+                    }
+                    else
+                    {
+                        vehicle.setProfileImageURL(rs.getString(Vehicle.PROFILE_IMAGE_URL));
+                        driver.setPhone(rs.getString(User.PHONE));
+                        driver.setName(rs.getString(User.NAME));
+                        driver.setAbout(rs.getString(User.ABOUT));
+                    }
+
+
+
 
                     vehicle.setRt_driver(driver);
 
                     itemList.add(vehicle);
                 }
+
 
                 endPoint.setResults(itemList);
 

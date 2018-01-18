@@ -34,6 +34,8 @@ public class TaxiImage {
     public static final String TIMESTAMP_APPROVED = "TIMESTAMP_APPROVED";
     public static final String REVIEWER_FEEDBACK = "REVIEWER_FEEDBACK";
     public static final String NOTES_FOR_REVIEWER = "NOTES_FOR_REVIEWER";
+
+    public static final String SUBMITTED_BY = "SUBMITTED_BY";
     public static final String IS_DOCUMENT = "IS_DOCUMENT";
     public static final String IS_PRIVATE = "IS_PRIVATE";
 
@@ -57,18 +59,24 @@ public class TaxiImage {
             + " " + TaxiImage.IMAGE_COPYRIGHTS + " text,"
             + " " + TaxiImage.IMAGE_ORDER + " int NOT NULL default 0,"
 
-            + " " + TaxiImage.IS_APPROVED + " int,"
+            + " " + TaxiImage.IS_APPROVED + " boolean NOT NULL default 'f',"
             + " " + TaxiImage.APPROVED_BY + " int,"
             + " " + TaxiImage.TIMESTAMP_APPROVED + " timestamp with time zone,"
             + " " + TaxiImage.REVIEWER_FEEDBACK + " text,"
             + " " + TaxiImage.NOTES_FOR_REVIEWER + " text,"
+
+            + " " + TaxiImage.SUBMITTED_BY + " int,"
             + " " + TaxiImage.IS_DOCUMENT + " boolean NOT NULL default 'f',"
             + " " + TaxiImage.IS_PRIVATE + " boolean NOT NULL default 'f',"
 
             + " FOREIGN KEY(" + TaxiImage.DRIVER_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE SET NULL ,"
             + " FOREIGN KEY(" + TaxiImage.VEHICLE_ID +") REFERENCES " + Vehicle.TABLE_NAME + "(" + Vehicle.VEHICLE_ID + ") ON DELETE SET NULL ,"
+            + " FOREIGN KEY(" + TaxiImage.SUBMITTED_BY +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE SET NULL ,"
             + " FOREIGN KEY(" + TaxiImage.APPROVED_BY +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE SET NULL "
             + ")";
+
+
+
 
 
 
@@ -95,19 +103,22 @@ public class TaxiImage {
     private Timestamp timestampApproved;
     private String reviewerFeedback;
     private String notesForReviewer;
+
+    private int submittedBy;
     private boolean isDocument;
     private boolean isPrivate;
 
 
-
-
-
-
-
-
-
     // getter and setters
 
+
+    public int getSubmittedBy() {
+        return submittedBy;
+    }
+
+    public void setSubmittedBy(int submittedBy) {
+        this.submittedBy = submittedBy;
+    }
 
     public Boolean getApproved() {
         return isApproved;

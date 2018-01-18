@@ -469,226 +469,226 @@ public class DAOUserNew {
 
 
 
-
-    public User checkGoogleID(String googleID) {
-
-
-        String query = "SELECT "
-
-                + User.USER_ID + ","
-                + User.USERNAME + ","
-                + User.PASSWORD + ","
-                + User.E_MAIL + ","
-                + User.PHONE + ","
-                + User.NAME + ","
-                + User.GENDER + ","
-//                + User.PROFILE_IMAGE_ID + ","
-                + User.IS_ACCOUNT_PRIVATE + ","
-                + User.ABOUT + ""
-
-                + " FROM " + User.TABLE_NAME
-                + " WHERE " + User.GOOGLE_ID + " = ?";
-
-        Connection connection = null;
-        PreparedStatement statement = null;
-        ResultSet rs = null;
-
-        System.out.println("Checked Google ID : " + googleID);
-
-
-        User user = null;
-
-        try {
-
-            connection = dataSource.getConnection();
-            statement = connection.prepareStatement(query);
-
-            statement.setObject(1,googleID);
-
-            rs = statement.executeQuery();
-
-
-            while(rs.next())
-            {
-                user = new User();
-
-                user.setUserID(rs.getInt(User.USER_ID));
-                user.setUsername(rs.getString(User.USERNAME));
-                user.setPassword(rs.getString(User.PASSWORD));
-                user.setEmail(rs.getString(User.E_MAIL));
-                user.setPhone(rs.getString(User.PHONE));
-                user.setName(rs.getString(User.NAME));
-                user.setGender(rs.getBoolean(User.GENDER));
-//                user.setProfileImageID(rs.getInt(User.PROFILE_IMAGE_ID));
-                user.setAccountPrivate(rs.getBoolean(User.IS_ACCOUNT_PRIVATE));
-                user.setAbout(rs.getString(User.ABOUT));
-            }
-
-
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } finally
-
-        {
-
-            try {
-                if(rs!=null)
-                {rs.close();}
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-            try {
-
-                if(statement!=null)
-                {statement.close();}
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-            try {
-
-                if(connection!=null)
-                {connection.close();}
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        return user;
-    }
-
-
-
-
-    public int saveGoogleProfile(User user, boolean getRowCount)
-    {
-
-        Connection connection = null;
-        PreparedStatement statement = null;
-
-        int idOfInsertedRow = -1;
-        int rowCountItems = -1;
-
-        String insertItemSubmission = "INSERT INTO "
-                + User.TABLE_NAME
-                + "("
-
-                + User.USERNAME + ","
-                + User.PASSWORD + ","
-                + User.E_MAIL + ","
-
-                + User.PHONE + ","
-                + User.NAME + ","
-                + User.GENDER + ","
-
-//                + User.PROFILE_IMAGE_ID + ","
-                + User.ROLE + ","
-                + User.IS_ACCOUNT_PRIVATE + ","
-                + User.GOOGLE_ID + ","
-
-                + User.TOKEN + ","
-                + User.TIMESTAMP_TOKEN_EXPIRES + ","
-
-                + User.ABOUT + ""
-
-
-                + ") VALUES(?,?,? ,?,?,? ,?,?,?  ,?,?, ?)";
-
-
-        try {
-
-            connection = dataSource.getConnection();
-            connection.setAutoCommit(false);
-
-
-            statement = connection.prepareStatement(insertItemSubmission,PreparedStatement.RETURN_GENERATED_KEYS);
-            int i = 0;
-
-            statement.setString(++i,user.getUsername());
-            statement.setString(++i,user.getPassword());
-            statement.setString(++i,user.getEmail());
-
-            statement.setString(++i,user.getPhone());
-            statement.setString(++i,user.getName());
-            statement.setObject(++i,user.getGender());
-
-//            statement.setInt(++i,user.getProfileImageID());
-            statement.setObject(++i,user.getRole());
-            statement.setObject(++i,user.isAccountPrivate());
-            statement.setString(++i,user.getGoogleID());
-
-            statement.setString(++i,user.getToken());
-            statement.setTimestamp(++i,user.getTimestampTokenExpires());
-
-            statement.setString(++i,user.getAbout());
-
-            rowCountItems = statement.executeUpdate();
-
-
-            ResultSet rs = statement.getGeneratedKeys();
-
-            if(rs.next())
-            {
-                idOfInsertedRow = rs.getInt(1);
-            }
-
-
-
-            connection.commit();
-
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-
-            if (connection != null) {
-                try {
-
-                    idOfInsertedRow=-1;
-                    rowCountItems = 0;
-
-                    connection.rollback();
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }
-        finally
-        {
-
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-
-
-            try {
-
-                if(connection!=null)
-                {connection.close();}
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        if(getRowCount)
-        {
-            return rowCountItems;
-        }
-        else
-        {
-            return idOfInsertedRow;
-        }
-    }
-
+//
+//    public User checkGoogleID(String googleID) {
+//
+//
+//        String query = "SELECT "
+//
+//                + User.USER_ID + ","
+//                + User.USERNAME + ","
+//                + User.PASSWORD + ","
+//                + User.E_MAIL + ","
+//                + User.PHONE + ","
+//                + User.NAME + ","
+//                + User.GENDER + ","
+////                + User.PROFILE_IMAGE_ID + ","
+//                + User.IS_ACCOUNT_PRIVATE + ","
+//                + User.ABOUT + ""
+//
+//                + " FROM " + User.TABLE_NAME
+//                + " WHERE " + User.GOOGLE_ID + " = ?";
+//
+//        Connection connection = null;
+//        PreparedStatement statement = null;
+//        ResultSet rs = null;
+//
+//        System.out.println("Checked Google ID : " + googleID);
+//
+//
+//        User user = null;
+//
+//        try {
+//
+//            connection = dataSource.getConnection();
+//            statement = connection.prepareStatement(query);
+//
+//            statement.setObject(1,googleID);
+//
+//            rs = statement.executeQuery();
+//
+//
+//            while(rs.next())
+//            {
+//                user = new User();
+//
+//                user.setUserID(rs.getInt(User.USER_ID));
+//                user.setUsername(rs.getString(User.USERNAME));
+//                user.setPassword(rs.getString(User.PASSWORD));
+//                user.setEmail(rs.getString(User.E_MAIL));
+//                user.setPhone(rs.getString(User.PHONE));
+//                user.setName(rs.getString(User.NAME));
+//                user.setGender(rs.getBoolean(User.GENDER));
+////                user.setProfileImageID(rs.getInt(User.PROFILE_IMAGE_ID));
+//                user.setAccountPrivate(rs.getBoolean(User.IS_ACCOUNT_PRIVATE));
+//                user.setAbout(rs.getString(User.ABOUT));
+//            }
+//
+//
+//        } catch (SQLException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        } finally
+//
+//        {
+//
+//            try {
+//                if(rs!=null)
+//                {rs.close();}
+//            } catch (SQLException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//
+//            try {
+//
+//                if(statement!=null)
+//                {statement.close();}
+//            } catch (SQLException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//
+//            try {
+//
+//                if(connection!=null)
+//                {connection.close();}
+//            } catch (SQLException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        return user;
+//    }
+//
+//
+//
+//
+//    public int saveGoogleProfile(User user, boolean getRowCount)
+//    {
+//
+//        Connection connection = null;
+//        PreparedStatement statement = null;
+//
+//        int idOfInsertedRow = -1;
+//        int rowCountItems = -1;
+//
+//        String insertItemSubmission = "INSERT INTO "
+//                + User.TABLE_NAME
+//                + "("
+//
+//                + User.USERNAME + ","
+//                + User.PASSWORD + ","
+//                + User.E_MAIL + ","
+//
+//                + User.PHONE + ","
+//                + User.NAME + ","
+//                + User.GENDER + ","
+//
+////                + User.PROFILE_IMAGE_ID + ","
+//                + User.ROLE + ","
+//                + User.IS_ACCOUNT_PRIVATE + ","
+//                + User.GOOGLE_ID + ","
+//
+//                + User.TOKEN + ","
+//                + User.TIMESTAMP_TOKEN_EXPIRES + ","
+//
+//                + User.ABOUT + ""
+//
+//
+//                + ") VALUES(?,?,? ,?,?,? ,?,?,?  ,?,?, ?)";
+//
+//
+//        try {
+//
+//            connection = dataSource.getConnection();
+//            connection.setAutoCommit(false);
+//
+//
+//            statement = connection.prepareStatement(insertItemSubmission,PreparedStatement.RETURN_GENERATED_KEYS);
+//            int i = 0;
+//
+//            statement.setString(++i,user.getUsername());
+//            statement.setString(++i,user.getPassword());
+//            statement.setString(++i,user.getEmail());
+//
+//            statement.setString(++i,user.getPhone());
+//            statement.setString(++i,user.getName());
+//            statement.setObject(++i,user.getGender());
+//
+////            statement.setInt(++i,user.getProfileImageID());
+//            statement.setObject(++i,user.getRole());
+//            statement.setObject(++i,user.isAccountPrivate());
+//            statement.setString(++i,user.getGoogleID());
+//
+//            statement.setString(++i,user.getToken());
+//            statement.setTimestamp(++i,user.getTimestampTokenExpires());
+//
+//            statement.setString(++i,user.getAbout());
+//
+//            rowCountItems = statement.executeUpdate();
+//
+//
+//            ResultSet rs = statement.getGeneratedKeys();
+//
+//            if(rs.next())
+//            {
+//                idOfInsertedRow = rs.getInt(1);
+//            }
+//
+//
+//
+//            connection.commit();
+//
+//        } catch (SQLException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//
+//            if (connection != null) {
+//                try {
+//
+//                    idOfInsertedRow=-1;
+//                    rowCountItems = 0;
+//
+//                    connection.rollback();
+//                } catch (SQLException e1) {
+//                    e1.printStackTrace();
+//                }
+//            }
+//        }
+//        finally
+//        {
+//
+//            if (statement != null) {
+//                try {
+//                    statement.close();
+//                } catch (SQLException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//
+//            try {
+//
+//                if(connection!=null)
+//                {connection.close();}
+//            } catch (SQLException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        if(getRowCount)
+//        {
+//            return rowCountItems;
+//        }
+//        else
+//        {
+//            return idOfInsertedRow;
+//        }
+//    }
+//
 
 
 
@@ -1072,7 +1072,7 @@ public class DAOUserNew {
 
                 + User.USER_ID + ","
                 + User.USERNAME + ","
-                + User.ENABLED + ","
+//                + User.ENABLED + ","
                 + User.ROLE + ""
 
                 + " FROM " + User.TABLE_NAME
@@ -1120,7 +1120,7 @@ public class DAOUserNew {
 
                 user.setUserID(rs.getInt(User.USER_ID));
                 user.setUsername(rs.getString(User.USERNAME));
-                user.setEnabled(rs.getBoolean(User.ENABLED));
+//                user.setEnabled(rs.getBoolean(User.ENABLED));
                 user.setRole(rs.getInt(User.ROLE));
             }
 

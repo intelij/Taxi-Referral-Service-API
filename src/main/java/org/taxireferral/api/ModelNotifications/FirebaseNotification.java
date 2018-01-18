@@ -7,8 +7,17 @@ public class FirebaseNotification {
 
 
     private String to;
+    private AndroidOptions android;
     private NotificationData data;
 
+
+    public AndroidOptions getAndroid() {
+        return android;
+    }
+
+    public void setAndroid(AndroidOptions android) {
+        this.android = android;
+    }
 
     public String getTo() {
         return to;

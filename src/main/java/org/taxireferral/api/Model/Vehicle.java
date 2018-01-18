@@ -60,6 +60,13 @@ public class Vehicle {
     public static final String VEHICLE_INSURANCE_NUMBER = "VEHICLE_INSURANCE_NUMBER";
     public static final String VEHICLE_PUC_ID = "VEHICLE_PUC_ID";
 
+
+    public static final String FILTER_BY_DESTINATION = "FILTER_BY_DESTINATION";
+    public static final String DESTINATION_FILTER_LAT = "DESTINATION_FILTER_LAT";
+    public static final String DESTINATION_FILTER_LON = "DESTINATION_FILTER_LON";
+    public static final String DESTINATION_FILTER_RADIUS = "DESTINATION_FILTER_RADIUS";
+
+
 //    public static final String DRIVING_LICENSE = "DRIVING_LICENSE";
 
 
@@ -102,6 +109,11 @@ public class Vehicle {
                     + " " + Vehicle.VEHICLE_REGISTRATION_NUMBER + " text,"
                     + " " + Vehicle.VEHICLE_INSURANCE_NUMBER + " text,"
                     + " " + Vehicle.VEHICLE_PUC_ID + " text,"
+
+                    + " " + Vehicle.FILTER_BY_DESTINATION + " boolean NOT NULL default 'f',"
+                    + " " + Vehicle.DESTINATION_FILTER_LAT + " float NOT NULL default 0,"
+                    + " " + Vehicle.DESTINATION_FILTER_LON + " float NOT NULL default 0,"
+                    + " " + Vehicle.DESTINATION_FILTER_RADIUS + " float NOT NULL default 0,"
 
                     + " FOREIGN KEY(" + Vehicle.DRIVER_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE , "
                     + " FOREIGN KEY(" + Vehicle.OWNED_BY +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE"
@@ -150,19 +162,34 @@ public class Vehicle {
     private String insuranceID;
     private String pollutionCertificateID;
 
+    private boolean filterByDestination;
+
     private double rt_distance;
     private User rt_driver;
     private double rt_fare_estimate;
+
     private double rt_min_tax_balance;
     private double rt_min_service_balance;
+
     private double rt_rating_avg;
     private int rt_rating_count;
+    private double rt_kms_total;
+
 
 
 
 
 
     // getter and setters
+
+
+    public double getRt_kms_total() {
+        return rt_kms_total;
+    }
+
+    public void setRt_kms_total(double rt_kms_total) {
+        this.rt_kms_total = rt_kms_total;
+    }
 
     public double getRt_rating_avg() {
         return rt_rating_avg;

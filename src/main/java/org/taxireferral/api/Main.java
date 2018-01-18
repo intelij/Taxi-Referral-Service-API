@@ -4,12 +4,12 @@ import org.apache.commons.configuration2.Configuration;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.taxireferral.api.Globals.ConfigurationKeys;
+import org.taxireferral.api.Globals.GlobalConfig;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.*;
 import org.taxireferral.api.ModelBilling.Transaction;
 import org.taxireferral.api.ModelBilling.TransactionTaxAccount;
-import org.taxireferral.api.ModelBilling.UPIPaymentRequest;
 import org.taxireferral.api.ModelImages.TaxiImage;
 import org.taxireferral.api.ModelRoles.EmailVerificationCode;
 import org.taxireferral.api.ModelRoles.PhoneVerificationCode;
@@ -202,13 +202,16 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
 
-        Globals.loadGlobalConfiguration();
+        GlobalConfig.loadGlobalConfiguration();
 
         createDB();
         upgradeTables();
 
         createTables();
         startJettyServer();
+
+
+
     }
 
 
@@ -223,7 +226,7 @@ public class Main {
 
 
 
-        Configuration configuration = Globals.getConfiguration();
+        Configuration configuration = GlobalConfig.getConfiguration();
 
 
         if(configuration==null)
@@ -237,6 +240,7 @@ public class Main {
         String connection_url = configuration.getString(ConfigurationKeys.CONNECTION_URL_CREATE_DB);
         String username = configuration.getString(ConfigurationKeys.POSTGRES_USERNAME);
         String password = configuration.getString(ConfigurationKeys.POSTGRES_PASSWORD);
+
 
 
         try {
@@ -301,7 +305,7 @@ public class Main {
         Statement statement = null;
 
 
-        Configuration configuration = Globals.getConfiguration();
+        Configuration configuration = GlobalConfig.getConfiguration();
 
 
         if(configuration==null)
@@ -382,7 +386,7 @@ public class Main {
 
 
 
-        Configuration configuration = Globals.getConfiguration();
+        Configuration configuration = GlobalConfig.getConfiguration();
 
 
         if(configuration==null)
@@ -458,7 +462,7 @@ public class Main {
 
 
 
-        Configuration configuration = Globals.getConfiguration();
+        Configuration configuration = GlobalConfig.getConfiguration();
 
 
         if(configuration==null)
@@ -475,9 +479,7 @@ public class Main {
 
 
 
-
-
-
+        
 
 
         try {
@@ -488,9 +490,9 @@ public class Main {
 
             statement = connection.createStatement();
 
-            statement.executeUpdate(UPIPaymentRequest.createTablePostgres);
+//            statement.executeUpdate(UPIPaymentRequest.createTablePostgres);
 
-            statement.executeUpdate(User.createTableUsernamesPostgres);
+            statement.executeUpdate(User.createTable);
             statement.executeUpdate(StaffPermissions.createTablePostgres);
 
             statement.executeUpdate(Vehicle.createTableVehiclePostgres);
@@ -518,26 +520,26 @@ public class Main {
             // Insert the default administrator if it does not exit
 
 
-//
-//            User admin = new User();
-//            admin.setUsername("admin");
-//            admin.setRole(1);
-//            admin.setPassword("password");
-//
-//            try
-//            {
-//                int rowCount = Globals.daoUserSignUp.registerUsingUsername(admin,true);
-//
-//                if(rowCount==1)
-//                {
-//                    System.out.println("Admin Account created !");
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                System.out.println(ex.toString());
-//            }
-//
+
+            User admin = new User();
+            admin.setUsername("admin");
+            admin.setRole(1);
+            admin.setPassword("password");
+
+            try
+            {
+                int rowCount = Globals.daoUserSignUp.registerUsingUsername(admin,true);
+
+                if(rowCount==1)
+                {
+                    System.out.println("Admin Account created !");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.out.println(ex.toString());
+            }
+
 
 
 

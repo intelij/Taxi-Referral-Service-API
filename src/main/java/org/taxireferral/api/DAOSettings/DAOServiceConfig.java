@@ -199,6 +199,9 @@ public class DAOServiceConfig {
 
 
 
+
+
+
     public ServiceConfiguration getServiceConfig()
     {
 
@@ -232,7 +235,8 @@ public class DAOServiceConfig {
                 + ServiceConfiguration.CREATED + ","
                 + ServiceConfiguration.UPDATED + ","
 
-                + ServiceConfiguration.STYLE_URL + ""
+                + ServiceConfiguration.STYLE_URL + ","
+                + ServiceConfiguration.MQTT_SERVER_ADDRESS + ""
 
                 + " FROM " + ServiceConfiguration.TABLE_NAME
                 + " WHERE " + ServiceConfiguration.SERVICE_CONFIGURATION_ID  + " = 1 ";
@@ -300,6 +304,8 @@ public class DAOServiceConfig {
 
 //                serviceConfig.setStyleURL(rs.getString(ServiceConfiguration.STYLE_URL));
                 serviceConfig.setStyleURL(GlobalConstants.TILESERVER_GL_STYLE_URL);
+                serviceConfig.setMqttServerAddress(GlobalConstants.NOTIFICATION_SERVER_HOST_MQTT);
+
             }
 
 
@@ -339,9 +345,6 @@ public class DAOServiceConfig {
 
         return serviceConfig;
     }
-
-
-
 
 
 

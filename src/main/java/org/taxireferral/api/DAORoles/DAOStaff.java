@@ -171,6 +171,8 @@ public class DAOStaff {
 
 
 
+
+
         Connection connection = null;
         PreparedStatement statement = null;
 
@@ -362,6 +364,9 @@ public class DAOStaff {
 
 
 
+
+
+
     public StaffPermissions getStaffPermissions(int staffID)
     {
 
@@ -372,7 +377,9 @@ public class DAOStaff {
                 + StaffPermissions.STAFF_ID + ","
                 + StaffPermissions.PERMIT_TAXI_REGISTRATION_AND_RENEWAL + ","
                 + StaffPermissions.PERMIT_TAXI_PROFILE_UPDATE + ","
-                + StaffPermissions.PERMIT_ACCEPT_PAYMENTS + ""
+                + StaffPermissions.PERMIT_ACCEPT_PAYMENTS + ","
+                + StaffPermissions.PERMIT_ADD_EDIT_TAXI_IMAGES + ","
+                + StaffPermissions.PERMIT_APPROVE_TAXI_IMAGES + ""
 
                 + " FROM "  + StaffPermissions.TABLE_NAME
                 + " WHERE " + StaffPermissions.STAFF_ID  + " = ? ";
@@ -408,6 +415,9 @@ public class DAOStaff {
                 permissions.setPermitTaxiRegistrationAndRenewal(rs.getBoolean(StaffPermissions.PERMIT_TAXI_REGISTRATION_AND_RENEWAL));
                 permissions.setPermitTaxiProfileUpdate(rs.getBoolean(StaffPermissions.PERMIT_TAXI_PROFILE_UPDATE));
                 permissions.setPermitAcceptPayments(rs.getBoolean(StaffPermissions.PERMIT_ACCEPT_PAYMENTS));
+                permissions.setPermitAddEditTaxiImages(rs.getBoolean(StaffPermissions.PERMIT_ADD_EDIT_TAXI_IMAGES));
+                permissions.setPermitApproveTaxiImages(rs.getBoolean(StaffPermissions.PERMIT_APPROVE_TAXI_IMAGES));
+
             }
 
 
@@ -447,10 +457,6 @@ public class DAOStaff {
 
         return permissions;
     }
-
-
-
-
 
 
 
@@ -751,6 +757,8 @@ public class DAOStaff {
 
         return endPoint;
     }
+
+
 
 
 

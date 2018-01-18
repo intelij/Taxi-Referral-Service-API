@@ -1,6 +1,4 @@
 package org.taxireferral.api.RESTEndpoints;
-
-import jdk.nashorn.internal.objects.Global;
 import net.coobird.thumbnailator.Thumbnails;
 import org.taxireferral.api.DAOs.VehicleDAO;
 import org.taxireferral.api.Globals.GlobalConstants;
@@ -30,13 +28,21 @@ import java.nio.file.StandardCopyOption;
 
 
 
+
+
+
 @Path("/api/v1/Vehicle")
 public class VehicleResource {
 
     private VehicleDAO daoVehicle = Globals.vehicleDAO;
 
 
+
 //    @RolesAllowed({GlobalConstants.ROLE_DRIVER})
+
+
+
+
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -45,7 +51,6 @@ public class VehicleResource {
     {
 
         int idOfInsertedRow = -1;
-
 
 
         idOfInsertedRow = daoVehicle.insert_vehicle(vehicle,false);
@@ -501,6 +506,10 @@ public class VehicleResource {
                 .entity(endPoint)
                 .build();
     }
+
+
+
+
 
 
 

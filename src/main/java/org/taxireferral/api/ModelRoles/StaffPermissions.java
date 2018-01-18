@@ -1,8 +1,4 @@
 package org.taxireferral.api.ModelRoles;
-
-import org.taxireferral.api.Model.Vehicle;
-import org.taxireferral.api.ModelRoles.Deprecated.Staff;
-
 /**
  * Created by sumeet on 28/8/17.
  */
@@ -22,6 +18,8 @@ public class StaffPermissions {
     public static final String PERMIT_TAXI_REGISTRATION_AND_RENEWAL = "PERMIT_TAXI_REGISTRATION_AND_RENEWAL";
     public static final String PERMIT_TAXI_PROFILE_UPDATE = "PERMIT_TAXI_PROFILE_UPDATE";
     public static final String PERMIT_ACCEPT_PAYMENTS = "PERMIT_ACCEPT_PAYMENTS";
+    public static final String PERMIT_ADD_EDIT_TAXI_IMAGES = "PERMIT_ADD_EDIT_TAXI_IMAGES";
+    public static final String PERMIT_APPROVE_TAXI_IMAGES = "PERMIT_APPROVE_TAXI_IMAGES";
 
 
 
@@ -38,8 +36,12 @@ public class StaffPermissions {
                     + " " + StaffPermissions.PERMIT_TAXI_REGISTRATION_AND_RENEWAL + " boolean NOT NULL default 'f',"
                     + " " + StaffPermissions.PERMIT_TAXI_PROFILE_UPDATE + " boolean NOT NULL default 'f',"
                     + " " + StaffPermissions.PERMIT_ACCEPT_PAYMENTS + " boolean NOT NULL default 'f',"
+                    + " " + StaffPermissions.PERMIT_ADD_EDIT_TAXI_IMAGES + " boolean NOT NULL default 'f',"
+                    + " " + StaffPermissions.PERMIT_APPROVE_TAXI_IMAGES + " boolean NOT NULL default 'f',"
+
                     + " FOREIGN KEY(" + StaffPermissions.STAFF_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE "
                     + ")";
+
 
 
 
@@ -52,13 +54,30 @@ public class StaffPermissions {
     private boolean permitTaxiRegistrationAndRenewal;
     private boolean permitTaxiProfileUpdate;
     private boolean permitAcceptPayments;
+    private boolean permitAddEditTaxiImages;
+    private boolean permitApproveTaxiImages;
     private double rt_distance;
 
 
 
-
-
     // getter and setters
+
+
+    public boolean isPermitAddEditTaxiImages() {
+        return permitAddEditTaxiImages;
+    }
+
+    public void setPermitAddEditTaxiImages(boolean permitAddEditTaxiImages) {
+        this.permitAddEditTaxiImages = permitAddEditTaxiImages;
+    }
+
+    public boolean isPermitApproveTaxiImages() {
+        return permitApproveTaxiImages;
+    }
+
+    public void setPermitApproveTaxiImages(boolean permitApproveTaxiImages) {
+        this.permitApproveTaxiImages = permitApproveTaxiImages;
+    }
 
     public boolean isPermitAcceptPayments() {
         return permitAcceptPayments;

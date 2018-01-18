@@ -95,8 +95,8 @@ public class DAOUserSignUp {
         // add joining credit to the users account
         updateDUES =  " UPDATE " + User.TABLE_NAME
                     + " SET "
-                    + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " + ?,"
-                    + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " + ?"
+                    + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " + ?"
+//                    + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " + ?"
                     + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
 
 
@@ -155,8 +155,8 @@ public class DAOUserSignUp {
         // add referral credit
         updateDUESReferral =  " UPDATE " + User.TABLE_NAME
                 + " SET "
-                + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " + ?,"
-                + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " + ?"
+                + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " + ?"
+//                + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " + ?"
                 + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
 
 
@@ -276,6 +276,7 @@ public class DAOUserSignUp {
 
 
 
+
             if(rowCountItems == 1)
             {
 
@@ -284,17 +285,17 @@ public class DAOUserSignUp {
 
                 if(user.getRole()==GlobalConstants.ROLE_DRIVER_CODE)
                 {
-                    statementUpdateDUES.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_DRIVER);
+//                    statementUpdateDUES.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_DRIVER);
                     statementUpdateDUES.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_DRIVER);
                 }
                 else if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
                 {
-                    statementUpdateDUES.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_END_USER);
+//                    statementUpdateDUES.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_END_USER);
                     statementUpdateDUES.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_END_USER);
                 }
                 else
                 {
-                    statementUpdateDUES.setObject(++i,0);
+//                    statementUpdateDUES.setObject(++i,0);
                     statementUpdateDUES.setObject(++i,0);
                 }
 
@@ -344,12 +345,12 @@ public class DAOUserSignUp {
 
                     if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
                     {
-                        statementUpdateDUESReferral.setObject(++i,GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION);
+//                        statementUpdateDUESReferral.setObject(++i,GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION);
                         statementUpdateDUESReferral.setObject(++i,GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION);
                     }
                     else
                     {
-                        statementUpdateDUESReferral.setObject(++i,0);
+//                        statementUpdateDUESReferral.setObject(++i,0);
                         statementUpdateDUESReferral.setObject(++i,0);
                     }
 
@@ -562,8 +563,8 @@ public class DAOUserSignUp {
         // add joining credit
         updateDUES =  " UPDATE " + User.TABLE_NAME
                 + " SET "
-                + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " + ?,"
-                + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " + ?"
+                + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " + ?"
+//                + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " + ?"
                 + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
 
 
@@ -624,8 +625,8 @@ public class DAOUserSignUp {
         // add referral credit to the user
         updateDUESReferral =  " UPDATE " + User.TABLE_NAME
                 + " SET "
-                + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " + ?,"
-                + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " + ?"
+                + User.SERVICE_ACCOUNT_BALANCE + " = " + User.SERVICE_ACCOUNT_BALANCE + " + ?"
+//                + User.TOTAL_CREDITS + " = " + User.TOTAL_CREDITS + " + ?"
                 + " WHERE " + User.TABLE_NAME + "." + User.USER_ID + " = ? ";
 
 
@@ -734,17 +735,17 @@ public class DAOUserSignUp {
 
                 if(user.getRole()==GlobalConstants.ROLE_DRIVER_CODE)
                 {
-                    statementUpdateDUES.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_DRIVER);
+//                    statementUpdateDUES.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_DRIVER);
                     statementUpdateDUES.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_DRIVER);
                 }
                 else if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
                 {
-                    statementUpdateDUES.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_END_USER);
+//                    statementUpdateDUES.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_END_USER);
                     statementUpdateDUES.setObject(++i,GlobalConstants.JOINING_CREDIT_FOR_END_USER);
                 }
                 else
                 {
-                    statementUpdateDUES.setObject(++i,0);
+//                    statementUpdateDUES.setObject(++i,0);
                     statementUpdateDUES.setObject(++i,0);
                 }
 
@@ -793,12 +794,12 @@ public class DAOUserSignUp {
 
                     if(user.getRole()==GlobalConstants.ROLE_END_USER_CODE)
                     {
-                        statementUpdateDUESReferral.setObject(++i,GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION);
+//                        statementUpdateDUESReferral.setObject(++i,GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION);
                         statementUpdateDUESReferral.setObject(++i,GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION);
                     }
                     else
                     {
-                        statementUpdateDUESReferral.setObject(++i,0);
+//                        statementUpdateDUESReferral.setObject(++i,0);
                         statementUpdateDUESReferral.setObject(++i,0);
                     }
 

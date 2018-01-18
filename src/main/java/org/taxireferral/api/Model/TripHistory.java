@@ -23,7 +23,6 @@ public class TripHistory {
 
     public static final String RATING_BY_END_USER_CLEANLINESS = "RATING_BY_END_USER_CLEANLINESS";
 
-
     public static final String FEEDBACK_BY_DRIVER = "FEEDBACK_BY_DRIVER";
     public static final String FEEDBACK_BY_DRIVER_TITLE = "FEEDBACK_BY_DRIVER_TITLE";
     public static final String FEEDBACK_BY_END_USER = "FEEDBACK_BY_END_USER";
@@ -118,6 +117,7 @@ public class TripHistory {
 
                     + " " + TripHistory.DISTANCE_TRAVELLED_FOR_PICKUP + " float NOT NULL default 0,"
                     + " " + TripHistory.DISTANCE_TRAVELLED_FOR_TRIP + " float NOT NULL default 0,"
+
 
                     + " " + TripHistory.FREE_PICKUP_DISTANCE + " float NOT NULL default 0,"
                     + " " + TripHistory.REFERRAL_CHARGES + " float NOT NULL default 0,"

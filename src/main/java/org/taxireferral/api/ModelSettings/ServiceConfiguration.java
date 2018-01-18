@@ -48,6 +48,7 @@ public class ServiceConfiguration {
     public static final String UPDATED = "UPDATED";
 
     public static final String STYLE_URL = "STYLE_URL";
+    public static final String MQTT_SERVER_ADDRESS = "MQTT_SERVER_ADDRESS";
 
     // to be taken out to global Service Configuration
     public static final String IS_OFFICIAL_SERVICE_PROVIDER = "IS_OFFICIAL_SERVICE_PROVIDER";
@@ -72,6 +73,7 @@ public class ServiceConfiguration {
             + " " + ServiceConfiguration.DESCRIPTION_SHORT + " text,"
             + " " + ServiceConfiguration.DESCRIPTION_LONG + " text,"
 
+
             + " " + ServiceConfiguration.ADDRESS + " text,"
             + " " + ServiceConfiguration.CITY + " text,"
             + " " + ServiceConfiguration.PINCODE + " BIGINT,"
@@ -93,7 +95,8 @@ public class ServiceConfiguration {
             + " " + ServiceConfiguration.UPDATED + " timestamp with time zone,"
             + " " + ServiceConfiguration.CREATED + " timestamp with time zone NOT NULL DEFAULT now(),"
 
-            + " " + ServiceConfiguration.STYLE_URL + " text"
+            + " " + ServiceConfiguration.STYLE_URL + " text,"
+            + " " + ServiceConfiguration.MQTT_SERVER_ADDRESS + " text"
             + ")";
 
 
@@ -138,9 +141,12 @@ public class ServiceConfiguration {
     private Timestamp updated;
 
     private String styleURL;
+    private String mqttServerAddress;
 
     // real time variables : the values of these variables are generated in real time.
     private Double rt_distance;
+
+
 
 
 
@@ -172,7 +178,7 @@ public class ServiceConfiguration {
         serviceConfig.setServiceRange(234);
 
         serviceConfig.setStyleURL("https://example.com");
-
+        serviceConfig.setMqttServerAddress("tcp://mqtt.example.com:1883");
 
         return serviceConfig;
     }
@@ -183,6 +189,14 @@ public class ServiceConfiguration {
 
     //    Getter and Setters
 
+
+    public String getMqttServerAddress() {
+        return mqttServerAddress;
+    }
+
+    public void setMqttServerAddress(String mqttServerAddress) {
+        this.mqttServerAddress = mqttServerAddress;
+    }
 
     public String getStyleURL() {
         return styleURL;

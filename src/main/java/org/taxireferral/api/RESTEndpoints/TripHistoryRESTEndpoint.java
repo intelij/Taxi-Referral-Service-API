@@ -82,13 +82,76 @@ public class TripHistoryRESTEndpoint {
     }
 
 
+    @GET
+    @Path("/TripHistoryForStaff")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({GlobalConstants.ROLE_STAFF,GlobalConstants.ROLE_ADMIN})
+    public Response getTripHistoryForStaff(
+            @QueryParam("IsCancelled") Boolean isCancelled,
+            @QueryParam("IsCancelledByEndUser") Boolean isCancelledByEndUser,
+            @QueryParam("SortBy") String sortBy,
+            @QueryParam("Limit")Integer limit, @QueryParam("Offset")Integer offset,
+            @QueryParam("GetRowCount")boolean getRowCount,
+            @QueryParam("MetadataOnly")boolean getOnlyMetaData)
+    {
+
+//        @QueryParam("EndUserID") Integer endUserID,
+
+
+
+        if(limit!=null)
+        {
+            if(limit >= GlobalConstants.max_limit)
+            {
+                limit = GlobalConstants.max_limit;
+            }
+
+            if(offset==null)
+            {
+                offset = 0;
+            }
+
+
+        }
+
+
+
+
+        TripHistoryEndPoint endPoint
+                = Globals.daoTripHistory.getTripHistoryForStaff(
+                null,
+                null,
+                isCancelled,isCancelledByEndUser,
+                sortBy,limit,offset,
+                getRowCount,getOnlyMetaData
+        );
+
+
+
+
+//		try {
+//			Thread.sleep(1000);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+
+
+        //Marker
+
+        return Response.status(Response.Status.OK)
+                .entity(endPoint)
+                .build();
+    }
+
+
+
 
 
 
     @GET
     @Path("/TripHistoryForEndUser")
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({GlobalConstants.ROLE_END_USER})
+    @RolesAllowed({GlobalConstants.ROLE_END_USER,GlobalConstants.ROLE_STAFF,GlobalConstants.ROLE_ADMIN})
     public Response getTripHistoryForEndUser(
             @QueryParam("IsCancelled") Boolean isCancelled,
             @QueryParam("IsCancelledByEndUser") Boolean isCancelledByEndUser,
@@ -145,6 +208,9 @@ public class TripHistoryRESTEndpoint {
                 .entity(endPoint)
                 .build();
     }
+
+
+
 
 
 

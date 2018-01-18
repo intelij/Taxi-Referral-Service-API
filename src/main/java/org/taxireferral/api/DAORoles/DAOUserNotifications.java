@@ -5,8 +5,10 @@ import com.google.gson.GsonBuilder;
 import com.zaxxer.hikari.HikariDataSource;
 import okhttp3.*;
 import org.postgresql.util.Base64;
+import org.taxireferral.api.Globals.GlobalConfig;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
+import org.taxireferral.api.ModelNotifications.AndroidOptions;
 import org.taxireferral.api.ModelNotifications.FirebaseNotification;
 import org.taxireferral.api.ModelNotifications.NotificationData;
 import org.taxireferral.api.ModelRoles.User;
@@ -68,7 +70,7 @@ public class DAOUserNotifications {
                 userID,
                 notificationType,
                 notificationSubType,
-                Globals.getFirebaseEndUserKey()
+                GlobalConfig.getFirebaseEndUserKey()
         );
 
 //        GlobalConstants.FIREBASE_END_USER_KEY
@@ -86,12 +88,15 @@ public class DAOUserNotifications {
                 userID,
                 notificationType,
                 notificationSubType,
-                Globals.getFirebaseEndUserKey(),
+                GlobalConfig.getFirebaseEndUserKey(),
                 locationCurrentTrip
         );
 
 //        GlobalConstants.FIREBASE_END_USER_KEY,
     }
+
+
+
 
 
 
@@ -106,7 +111,7 @@ public class DAOUserNotifications {
                 userID,
                 notificationType,
                 notificationSubType,
-                Globals.getFirebaseDriverKey()
+                GlobalConfig.getFirebaseDriverKey()
         );
 
 
@@ -135,9 +140,15 @@ public class DAOUserNotifications {
         data.setNotificationType(notificationType);
         data.setNotificationSubType(notificationSubType);
 
+
+        AndroidOptions androidOptions = new AndroidOptions();
+        androidOptions.setPriority("high");
+
         FirebaseNotification firebaseNotification = new FirebaseNotification();
         firebaseNotification.setTo(user.getFirebaseID());
         firebaseNotification.setData(data);
+        firebaseNotification.setAndroid(androidOptions);
+
 
 
         GsonBuilder gsonBuilder = new GsonBuilder();
@@ -184,6 +195,10 @@ public class DAOUserNotifications {
 
 
 
+
+
+
+
     public void sendNotificationToUser(
             int userID,
             int notificationType,
@@ -199,8 +214,13 @@ public class DAOUserNotifications {
         data.setNotificationSubType(notificationSubType);
         data.setLocationCurrentTrip(locationCurrentTrip);
 
+        AndroidOptions androidOptions = new AndroidOptions();
+        androidOptions.setPriority("high");
+
         FirebaseNotification firebaseNotification = new FirebaseNotification();
         firebaseNotification.setTo(user.getFirebaseID());
+        firebaseNotification.setAndroid(androidOptions);
+
         firebaseNotification.setData(data);
 
 
@@ -362,7 +382,7 @@ public class DAOUserNotifications {
 
             rowCountUpdated = statement.executeUpdate();
 
-            System.out.println("Total rows updated: " + rowCountUpdated);
+            System.out.println("Total rows updated : FIrebaseID : " + rowCountUpdated);
 
 
         } catch (SQLException e) {

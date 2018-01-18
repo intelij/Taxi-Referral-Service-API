@@ -65,11 +65,9 @@ public class GlobalConstants {
 
 
 
-
-
     // style url for maps
     public static String TILESERVER_GL_STYLE_URL;
-
+    public static String NOTIFICATION_SERVER_HOST_MQTT;
 
 
     // roles
@@ -77,6 +75,10 @@ public class GlobalConstants {
     public static final String ROLE_STAFF = "STAFF";
     public static final String ROLE_DRIVER = "DRIVER";
     public static final String ROLE_END_USER = "END_USER";
+
+
+
+
 
     // role codes
     public static final int ROLE_ADMIN_CODE = 1;

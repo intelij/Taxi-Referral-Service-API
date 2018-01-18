@@ -189,7 +189,7 @@ public class TripRequestRESTEndpoint {
 
         int rowCount = daoTripRequest.approve_pickup(
                 tripRequestID,((User) Globals.accountApproved).getUserID(),
-                true,location
+                userID,true,location
         );
 
 
@@ -216,6 +216,59 @@ public class TripRequestRESTEndpoint {
 
         return null;
     }
+
+
+
+
+    @PUT
+    @Path("/StartPickup/{TripRequestID}/DriverID/{DriverID}")
+    @RolesAllowed({GlobalConstants.ROLE_END_USER})
+    public Response startPickup(@PathParam("TripRequestID")int tripRequestID,
+                                @PathParam("DriverID")int driverID
+    )
+
+
+    {
+
+        System.out.println("Start Pickup by EndUser");
+
+        int rowCount = daoTripRequest.startPickupByEndUser(
+                tripRequestID,
+                ((User) Globals.accountApproved).getUserID(),
+                true
+        );
+
+
+
+
+        if(rowCount >= 1)
+        {
+
+            Globals.userNotifications.sendNotificationToDriver(
+                    driverID,
+                    NotificationData.NOTIFICATION_TYPE_TAXI_REQUEST,
+                    NotificationData.NOTIFICATION_SUB_TYPE_TAXI_REQUEST_PICKUP_STARTED
+            );
+
+
+
+            return Response.status(Response.Status.OK)
+                    .build();
+        }
+        else if(rowCount <= 0)
+        {
+
+            return Response.status(Response.Status.NOT_MODIFIED)
+                    .build();
+        }
+
+        return null;
+    }
+
+
+
+
+
 
 
 

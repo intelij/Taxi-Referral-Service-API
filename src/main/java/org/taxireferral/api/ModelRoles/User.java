@@ -37,8 +37,8 @@ public class User {
 
     public static final String IS_ACCOUNT_PRIVATE = "IS_ACCOUNT_PRIVATE";
     public static final String ABOUT = "ABOUT";
-    public static final String ENABLED = "ENABLED";
-    public static final String GOOGLE_ID = "GOOGLE_ID";
+//    public static final String ENABLED = "ENABLED";
+//    public static final String GOOGLE_ID = "GOOGLE_ID";
     public static final String FIREBASE_ID = "FIREBASE_ID";
 
     public static final String TIMESTAMP_CREATED = "TIMESTAMP_CREATED";
@@ -53,9 +53,9 @@ public class User {
     public static final String TAX_ACCOUNT_BALANCE = "TAX_ACCOUNT_BALANCE";
     public static final String SERVICE_ACCOUNT_BALANCE = "SERVICE_ACCOUNT_BALANCE";
 
-    public static final String TOTAL_SERVICE_CHARGES = "TOTAL_SERVICE_CHARGES";
-    public static final String TOTAL_CREDITS = "TOTAL_CREDITS";
-    public static final String TOTAL_PAID = "TOTAL_PAID";
+//    public static final String TOTAL_SERVICE_CHARGES = "TOTAL_SERVICE_CHARGES";
+//    public static final String TOTAL_CREDITS = "TOTAL_CREDITS";
+//    public static final String TOTAL_PAID = "TOTAL_PAID";
 
     public static final String EXTENDED_CREDIT_LIMIT = "EXTENDED_CREDIT_LIMIT";
 
@@ -67,13 +67,13 @@ public class User {
 
 
     // for communicating with the local server on the client : this can be used to send push notifications
-    public static final String IP_ADDRESS = "IP_ADDRESS";
-    public static final String PORT = "PORT";
+//    public static final String IP_ADDRESS = "IP_ADDRESS";
+//    public static final String PORT = "PORT";
 
 
 
     // Create Table CurrentServiceConfiguration Provider
-    public static final String createTableUsernamesPostgres =
+    public static final String createTable =
 
             "CREATE TABLE IF NOT EXISTS "
                     + User.TABLE_NAME + "("
@@ -94,8 +94,8 @@ public class User {
 
                     + " " + User.IS_ACCOUNT_PRIVATE + " boolean NOT NULL default 't',"
                     + " " + User.ABOUT + " text,"
-                    + " " + User.ENABLED + " boolean NOT NULL default 'f',"
-                    + " " + User.GOOGLE_ID + " text,"
+//                    + " " + User.ENABLED + " boolean NOT NULL default 'f',"
+//                    + " " + User.GOOGLE_ID + " text,"
                     + " " + User.FIREBASE_ID + " text,"
 
                     + " " + User.TIMESTAMP_CREATED + "  timestamp with time zone NOT NULL DEFAULT now(),"
@@ -106,9 +106,9 @@ public class User {
 
                     + " " + User.TAX_ACCOUNT_BALANCE + " float NOT NULL default 0,"
                     + " " + User.SERVICE_ACCOUNT_BALANCE + " float NOT NULL default 0,"
-                    + " " + User.TOTAL_SERVICE_CHARGES + " float NOT NULL default 0,"
-                    + " " + User.TOTAL_CREDITS + " float NOT NULL default 0,"
-                    + " " + User.TOTAL_PAID + " float NOT NULL default 0,"
+//                    + " " + User.TOTAL_SERVICE_CHARGES + " float NOT NULL default 0,"
+//                    + " " + User.TOTAL_CREDITS + " float NOT NULL default 0,"
+//                    + " " + User.TOTAL_PAID + " float NOT NULL default 0,"
 
                     + " " + User.EXTENDED_CREDIT_LIMIT + " float NOT NULL default 0,"
 
@@ -117,11 +117,12 @@ public class User {
 
                     + " " + User.IS_VERIFIED + " boolean NOT NULL default 'f',"
 
-                    + " " + User.IP_ADDRESS + "  text,"
-                    + " " + User.PORT + "  int,"
+//                    + " " + User.IP_ADDRESS + "  text,"
+//                    + " " + User.PORT + "  int,"
 
                     + "CHECK (" + User.USERNAME + " IS NOT NULL OR " + User.E_MAIL + " IS NOT NULL OR " + User.PHONE + " IS NOT NULL " +  ")"
                     + ")";
+
 
 
 
@@ -479,6 +480,7 @@ public class User {
     public void setTimestampTokenExpires(Timestamp timestampTokenExpires) {
         this.timestampTokenExpires = timestampTokenExpires;
     }
+
 
 
 }

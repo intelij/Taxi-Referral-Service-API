@@ -129,6 +129,8 @@ public class TaxiImagesDAO {
         int rowCount = 0;
 
 
+
+
         String insert = "INSERT INTO "
                 + TaxiImage.TABLE_NAME
                 + "("
@@ -147,6 +149,7 @@ public class TaxiImagesDAO {
                 + TaxiImage.IS_PRIVATE + ""
 
                 + ") VALUES(?,?,? ,?,?,?,? ,?,?,?)";
+
 
         try {
 
@@ -223,7 +226,11 @@ public class TaxiImagesDAO {
 
 
 
-    public int updateItemImage(TaxiImage taxiImage)
+
+
+
+
+    public int updateImage(TaxiImage taxiImage)
     {
 
         String updateStatement = "UPDATE " + TaxiImage.TABLE_NAME
@@ -239,7 +246,6 @@ public class TaxiImagesDAO {
                 + TaxiImage.IMAGE_COPYRIGHTS + "=?,"
                 + TaxiImage.IMAGE_ORDER + "=?,"
 
-                + TaxiImage.NOTES_FOR_REVIEWER + "=?,"
                 + TaxiImage.IS_DOCUMENT + "=?,"
                 + TaxiImage.IS_PRIVATE + "=?"
 
@@ -268,7 +274,6 @@ public class TaxiImagesDAO {
             statement.setString(++i,taxiImage.getImageCopyrights());
             statement.setObject(++i,taxiImage.getImageOrder());
 
-            statement.setString(++i,taxiImage.getNotesForReviewer());
             statement.setObject(++i,taxiImage.isDocument());
             statement.setObject(++i,taxiImage.isPrivate());
 
@@ -312,10 +317,11 @@ public class TaxiImagesDAO {
 
 
 
-    public int deleteItemImage(int imageID)
+    public int deleteImage(int imageID)
     {
 
-        String deleteStatement = "DELETE FROM " + TaxiImage.TABLE_NAME + " WHERE " + TaxiImage.IMAGE_ID + " = ?";
+        String deleteStatement = " DELETE FROM " + TaxiImage.TABLE_NAME +
+                                 " WHERE " + TaxiImage.IMAGE_ID + " = ?";
 
         Connection connection= null;
         PreparedStatement statement = null;
@@ -369,15 +375,9 @@ public class TaxiImagesDAO {
 
 
 
-
-
-
-
-
-
-
-
     public TaxiImageEndpoint getTaxiImages(
+            Integer vehicleID,
+            Integer driverID,
             Boolean isDocument,
             Boolean isPrivate,
             Boolean isApproved,
@@ -421,6 +421,16 @@ public class TaxiImagesDAO {
 
                 + " FROM " + TaxiImage.TABLE_NAME
                 + " WHERE TRUE ";
+
+
+
+        if (vehicleID != null) {
+            queryJoin = queryJoin + " AND " + TaxiImage.TABLE_NAME + "." + TaxiImage.VEHICLE_ID + " = ?";
+        }
+
+        if (driverID != null) {
+            queryJoin = queryJoin + " AND " + TaxiImage.TABLE_NAME + "." + TaxiImage.DRIVER_ID + " = ?";
+        }
 
 
         if (isDocument != null) {
@@ -548,6 +558,18 @@ public class TaxiImagesDAO {
             {
                 statement = connection.prepareStatement(queryJoin);
 
+                if(vehicleID!=null)
+                {
+                    statement.setObject(++i,vehicleID);
+                }
+
+                if(driverID!=null)
+                {
+                    statement.setObject(++i,driverID);
+                }
+
+
+
                 if(isDocument!=null)
                 {
                     statement.setObject(++i,isDocument);
@@ -596,6 +618,17 @@ public class TaxiImagesDAO {
                 statementCount = connection.prepareStatement(queryCount);
 
                 i = 0;
+
+
+                if(vehicleID!=null)
+                {
+                    statementCount.setObject(++i,vehicleID);
+                }
+
+                if(driverID!=null)
+                {
+                    statementCount.setObject(++i,driverID);
+                }
 
 
                 if(isDocument!=null)

@@ -74,6 +74,7 @@ public class ServiceConfigRESTEndpoint {
 
         if(serviceConfig==null)
         {
+
             Globals.daoServiceConfig.updateServiceConfig(
               ServiceConfiguration.getDefaultConfig()
             );

@@ -52,13 +52,13 @@ public class CurrentTripRESTEndpoint {
 
 
 
-            Globals.userNotifications.sendNotificationToEndUser(
-                    locationCurrentTrip.getRt_end_user_id(),
-                    NotificationData.NOTIFICATION_TYPE_CURRENT_TRIP,
-                    NotificationData.NOTIFICATION_SUB_TYPE_CURRENT_TRIP_LOCATION_UPDATE,
-                    locationCurrentTrip
-            );
-//
+//            Globals.userNotifications.sendNotificationToEndUser(
+//                    locationCurrentTrip.getRt_end_user_id(),
+//                    NotificationData.NOTIFICATION_TYPE_CURRENT_TRIP,
+//                    NotificationData.NOTIFICATION_SUB_TYPE_CURRENT_TRIP_LOCATION_UPDATE,
+//                    locationCurrentTrip
+//            );
+////
 
 
             return Response.status(Response.Status.OK)
@@ -408,6 +408,62 @@ public class CurrentTripRESTEndpoint {
 
 
 
+
+
+
+        //Marker
+        return Response.status(Response.Status.OK)
+                .entity(endPoint)
+                .build();
+    }
+
+
+    @GET
+    @Path("/GetCurrentTripListForStaff")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ROLE_STAFF,ROLE_ADMIN})
+    public Response getCurrentTripsForStaff(
+            @QueryParam("SortBy") String sortBy,
+            @QueryParam("Limit")Integer limit, @QueryParam("Offset")Integer offset,
+            @QueryParam("GetRowCount")boolean getRowCount,
+            @QueryParam("MetadataOnly")boolean getOnlyMetaData)
+    {
+
+
+        if(limit!=null)
+        {
+            if(limit >= GlobalConstants.max_limit)
+            {
+                limit = GlobalConstants.max_limit;
+            }
+
+            if(offset==null)
+            {
+                offset = 0;
+            }
+        }
+
+
+
+
+        CurrentTripEndpoint endPoint = Globals.daoCurrentTrip.getCurrentTripForStaff(
+                null,
+                sortBy,limit,offset,
+                getRowCount,getOnlyMetaData
+        );
+
+
+
+        if(limit!=null)
+        {
+            endPoint.setLimit(limit);
+            endPoint.setOffset(offset);
+            endPoint.setMax_limit(GlobalConstants.max_limit);
+        }
+
+
+
+
         //Marker
         return Response.status(Response.Status.OK)
                 .entity(endPoint)
@@ -470,10 +526,13 @@ public class CurrentTripRESTEndpoint {
 
 
 
+
+
+
     @GET
     @Path("/GetCurrentTripForEndUser/{CurrentTripID}")
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({GlobalConstants.ROLE_END_USER,ROLE_DRIVER,ROLE_STAFF,ROLE_ADMIN})
+    @RolesAllowed({GlobalConstants.ROLE_END_USER})
     public Response getCurrentTripForEndUser(@PathParam("CurrentTripID")int currentTripID)
     {
 
@@ -487,11 +546,11 @@ public class CurrentTripRESTEndpoint {
 
 
 //        try {
-//            Thread.sleep(400);
+//            Thread.sleep(6000);
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
-
+//
 
         if(result!=null)
         {
@@ -507,6 +566,7 @@ public class CurrentTripRESTEndpoint {
         }
 
     }
+
 
 
 
@@ -646,6 +706,45 @@ public class CurrentTripRESTEndpoint {
             return Response.status(Response.Status.NO_CONTENT)
                     .build();
         }
+    }
+
+
+
+
+
+    @GET
+    @Path("/GetCurrentTripForStaff/{CurrentTripID}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ROLE_STAFF,ROLE_ADMIN})
+    public Response getCurrentTripForStaff(@PathParam("CurrentTripID")int currentTripID)
+    {
+
+
+        CurrentTrip result = daoCurrentTrip.getCurrentTripForStaff(currentTripID);
+
+//        System.out.println(email);
+
+
+//        try {
+//            Thread.sleep(6000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+
+        if(result!=null)
+        {
+            return Response.status(Response.Status.OK)
+                    .entity(result)
+                    .build();
+
+        }
+        else
+        {
+            return Response.status(Response.Status.NO_CONTENT)
+                    .build();
+        }
+
     }
 
 

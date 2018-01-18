@@ -38,8 +38,8 @@ public class NotificationData {
     private int notificationType;
     private int notificationSubType;
 
-
     private LocationCurrentTrip locationCurrentTrip;
+
 
 
     public LocationCurrentTrip getLocationCurrentTrip() {

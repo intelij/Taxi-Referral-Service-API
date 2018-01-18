@@ -52,6 +52,18 @@ public class CurrentTrip {
 
     public static final String TAX_RATE = "TAX_RATE";
 
+    public static final String IS_EMERGENCY = "IS_EMERGENCY";
+    public static final String IS_EMERGENCY_RESOLVED = "IS_EMERGENCY_RESOLVED";
+    public static final String EMERGENCY_TYPE = "EMERGENCY_TYPE";
+    public static final String EMERGENCY_DESCRIPTION = "EMERGENCY_DESCRIPTION";
+    public static final String LAT_CURRENT_USER = "LAT_CURRENT_USER";
+    public static final String LON_CURRENT_USER = "LON_CURRENT_USER";
+
+    public static final String IS_EMERGENCY_BY_DRIVER = "IS_EMERGENCY_BY_DRIVER";
+    public static final String IS_EMERGENCY_BY_DRIVER_RESOLVED = "IS_EMERGENCY_BY_DRIVER_RESOLVED";
+    public static final String EMERGENCY_TYPE_BY_DRIVER = "EMERGENCY_TYPE_BY_DRIVER";
+    public static final String EMERGENCY_DESCRIPTION_BY_DRIVER = "EMERGENCY_DESCRIPTION_BY_DRIVER";
+
 
 
 //    public static final String LAT_CURRENT = "LAT_CURRENT"; // not required - because it equals vehicle coordinates
