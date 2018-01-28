@@ -17,8 +17,6 @@ Triplogic is conceptually similar to Sidecar App which has now shutdown its serv
 ![Sign-In](https://triplogic.org/wp-content/uploads/2018/01/7-e1517148628451.png)
 
 
-
-
 ## Technology Stack
 
 On the backend triplogic API is built with Postgres ( Our Primary Database), Hikari-CP ( Connection Pooling Library), Jetty Server, Jersey REST framework, Thumbnailator (For Generating thumbnails)
@@ -43,7 +41,7 @@ Triplogic connects with backend though an android app. Which is built using nati
 
 ## How it works ? 
 
-Triplogic uses GPS to keep the driver location updated. When a user wants to hire a taxi the users is presented a list of nearby drivers … and their phone numbers.
+Triplogic uses GPS to keep the driver location updated. When a user wants to hire a taxi the user is presented a list of nearby drivers … and their phone numbers.
 The user can simply send the pickup request and call up the driver and the driver will come to pick the user.
 
 ## Bussiness Model
@@ -54,6 +52,6 @@ The Software will be managed by a nonprofit. The bussiness model will be similar
 
 You can find installation guide on the https://triplogic.org/index/
 
-## Licence
+## License
 
 Designed and Developed at Bluetree Software LLP, India and Released under the MIT license. 
