@@ -75,7 +75,7 @@ public class GlobalConfig {
 
         GlobalConstants.TILESERVER_GL_STYLE_URL = configuration.getString(ConfigurationKeys.KEY_TILESERVER_GL_STYLE_URL);
         GlobalConstants.NOTIFICATION_SERVER_HOST_MQTT = configuration.getString(ConfigurationKeys.KEY_MQTT_SERVER_ADDRESS);
-
+        GlobalConstants.GEOCODER_ADDRESS = configuration.getString(ConfigurationKeys.KEY_GEOCODER_ADDRESS);
 
         printGlobalConfiguration();
     }

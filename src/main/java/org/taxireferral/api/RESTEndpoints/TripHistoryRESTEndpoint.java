@@ -89,6 +89,7 @@ public class TripHistoryRESTEndpoint {
     public Response getTripHistoryForStaff(
             @QueryParam("IsCancelled") Boolean isCancelled,
             @QueryParam("IsCancelledByEndUser") Boolean isCancelledByEndUser,
+            @QueryParam("SearchString")String searchString,
             @QueryParam("SortBy") String sortBy,
             @QueryParam("Limit")Integer limit, @QueryParam("Offset")Integer offset,
             @QueryParam("GetRowCount")boolean getRowCount,
@@ -122,6 +123,7 @@ public class TripHistoryRESTEndpoint {
                 null,
                 null,
                 isCancelled,isCancelledByEndUser,
+                searchString,
                 sortBy,limit,offset,
                 getRowCount,getOnlyMetaData
         );

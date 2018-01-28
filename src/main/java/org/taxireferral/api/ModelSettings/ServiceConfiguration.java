@@ -141,12 +141,12 @@ public class ServiceConfiguration {
     private Timestamp updated;
 
     private String styleURL;
+    private String geocoderAddress;
     private String mqttServerAddress;
+
 
     // real time variables : the values of these variables are generated in real time.
     private Double rt_distance;
-
-
 
 
 
@@ -189,6 +189,14 @@ public class ServiceConfiguration {
 
     //    Getter and Setters
 
+
+    public String getGeocoderAddress() {
+        return geocoderAddress;
+    }
+
+    public void setGeocoderAddress(String geocoderAddress) {
+        this.geocoderAddress = geocoderAddress;
+    }
 
     public String getMqttServerAddress() {
         return mqttServerAddress;
@@ -400,35 +408,4 @@ public class ServiceConfiguration {
         this.serviceRange = serviceRange;
     }
 
-//    public Double getLatMax() {
-//        return latMax;
-//    }
-//
-//    public void setLatMax(Double latMax) {
-//        this.latMax = latMax;
-//    }
-//
-//    public Double getLonMax() {
-//        return lonMax;
-//    }
-//
-//    public void setLonMax(Double lonMax) {
-//        this.lonMax = lonMax;
-//    }
-//
-//    public Double getLatMin() {
-//        return latMin;
-//    }
-//
-//    public void setLatMin(Double latMin) {
-//        this.latMin = latMin;
-//    }
-//
-//    public Double getLonMin() {
-//        return lonMin;
-//    }
-//
-//    public void setLonMin(Double lonMin) {
-//        this.lonMin = lonMin;
-//    }
 }

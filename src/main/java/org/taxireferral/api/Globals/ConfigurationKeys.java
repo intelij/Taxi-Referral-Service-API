@@ -60,6 +60,7 @@ public class ConfigurationKeys {
 
 
     public static final String KEY_TILESERVER_GL_STYLE_URL = "tileserverGL.styleURL";
+    public static final String KEY_GEOCODER_ADDRESS = "geocoder_address";
     public static final String KEY_MQTT_SERVER_ADDRESS = "mqtt_server_address";
 
 }

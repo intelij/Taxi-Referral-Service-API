@@ -305,6 +305,8 @@ public class DAOServiceConfig {
 //                serviceConfig.setStyleURL(rs.getString(ServiceConfiguration.STYLE_URL));
                 serviceConfig.setStyleURL(GlobalConstants.TILESERVER_GL_STYLE_URL);
                 serviceConfig.setMqttServerAddress(GlobalConstants.NOTIFICATION_SERVER_HOST_MQTT);
+                serviceConfig.setGeocoderAddress(GlobalConstants.GEOCODER_ADDRESS);
+
 
             }
 

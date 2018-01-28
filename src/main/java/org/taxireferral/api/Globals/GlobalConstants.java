@@ -18,9 +18,6 @@ public class GlobalConstants {
 //    public static final int NOTIFICATION_TYPE_CURRENT_TRIP = 2;
 
 
-
-
-
     // credits and offers
     public static int REFERRAL_CREDIT_FOR_DRIVER_REGISTRATION; // credited in the account of the one who refers
     public static int REFERRAL_CREDIT_FOR_END_USER_REGISTRATION; // referral credit - credited into the account of the one who refers
@@ -67,7 +64,9 @@ public class GlobalConstants {
 
     // style url for maps
     public static String TILESERVER_GL_STYLE_URL;
+    public static String GEOCODER_ADDRESS;
     public static String NOTIFICATION_SERVER_HOST_MQTT;
+
 
 
     // roles

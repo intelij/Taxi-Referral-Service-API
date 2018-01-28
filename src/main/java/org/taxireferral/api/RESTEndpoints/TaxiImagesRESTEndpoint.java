@@ -101,6 +101,7 @@ public class TaxiImagesRESTEndpoint {
 
 
 
+
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({GlobalConstants.ROLE_ADMIN,GlobalConstants.ROLE_STAFF})

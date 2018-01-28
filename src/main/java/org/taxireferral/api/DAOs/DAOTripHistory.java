@@ -220,6 +220,7 @@ public class DAOTripHistory {
             Integer vehicleID,
             Boolean isCancelled,
             Boolean isCancelledByEndUser,
+            String searchString,
             String sortBy,
             Integer limit, Integer offset,
             boolean getRowCount,
@@ -335,6 +336,19 @@ public class DAOTripHistory {
         }
 
 
+
+
+        if(searchString !=null) {
+
+
+            String queryPartSearch = " AND " + " ( CAST ( " + User.TABLE_NAME + "." + User.USER_ID + " AS text )" + " ilike '%" + searchString + "%'" + " "
+                    + " OR " + "  CAST ( " + TripHistory.TABLE_NAME + "." + TripHistory.TRIP_HISTORY_ID + " AS text )" + " ilike '%" + searchString + "%'" + " ) ";
+
+
+            queryJoin = queryJoin + queryPartSearch;
+        }
+
+//
 
 
 
