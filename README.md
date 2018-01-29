@@ -1,4 +1,8 @@
-# Triplogic-API
+
+
+
+![Logo](https://triplogic.org/wp-content/uploads/2018/01/cropped-bitmap-copy.png)
+
 Triplogic is an open-source taxi app. This repository contains the code for REST API which is built using Java. 
 
 This software is developed with an intent to help small entrepreneurs and muncipal corporations create their own taxi app.
