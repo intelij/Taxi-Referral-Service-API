@@ -210,8 +210,6 @@ public class Main {
         createTables();
         startJettyServer();
 
-
-
     }
 
 
