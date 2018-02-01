@@ -32,7 +32,7 @@ public class SendSMS {
 
 
         String urlOTP = "https://control.msg91.com/api/sendotp.php?authkey=" +
-                GlobalConfig.getMsg91APIKey() +
+                GlobalConstants.MSG91_SMS_SERVICE_API_KEY +
                 "&mobile=" + countryCode + phone +
                 "&message=Your%20one time password (OTP) for Triplogic is " + otp +
                 "&sender=TRPLOG&otp=" + otp;
@@ -99,7 +99,7 @@ public class SendSMS {
 
 
         String urlMessage = "http://api.msg91.com/api/sendhttp.php?authkey=" +
-                GlobalConfig.getMsg91APIKey() +
+                GlobalConstants.MSG91_SMS_SERVICE_API_KEY +
                 "&mobiles=" + countryCode + phone +
                 "&message=" + message +
                 "&sender=TRPLOG&route=4&country=91";

@@ -11,12 +11,19 @@ public class GlobalConstants {
 
 	public static String POSTGRES_CONNECTION_URL;
     public static String CONNECTION_URL_CREATE_DB;
-	public static String POSTGRES_USERNAME;
+
+    public static String POSTGRES_USERNAME;
 	public static String POSTGRES_PASSWORD;
 
 //    public static final int NOTIFICATION_TYPE_TRIP_REQUESTS = 1;
 //    public static final int NOTIFICATION_TYPE_CURRENT_TRIP = 2;
 
+
+
+    public static String MAILGUN_DOMAIN;
+    public static String MAILGUN_API_KEY;
+    public static String MAILGUN_NAME;
+    public static String MAILGUN_EMAIL;
 
     // credits and offers
     public static int REFERRAL_CREDIT_FOR_DRIVER_REGISTRATION; // credited in the account of the one who refers
@@ -57,8 +64,14 @@ public class GlobalConstants {
     public static double SHORTEST_DISTANCE_MULTIPLIER;
 
     // services get suspended if the user current_dues exceed the max current dues
-    public static int CREDIT_LIMIT_FOR_DRIVER = - 1000;
+//    public static int CREDIT_LIMIT_FOR_DRIVER = - 1000;
 //    public static final int CREDIT_LIMIT_FOR_END_USER = - 1000;
+
+
+    public static String FIREBASE_DRIVER_KEY;
+    public static String FIREBASE_END_USER_KEY;
+    public static String MSG91_SMS_SERVICE_API_KEY;
+
 
 
     public static String DEFAULT_COUNTRY_CODE;

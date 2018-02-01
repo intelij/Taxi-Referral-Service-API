@@ -10,10 +10,10 @@ public class ConfigurationKeys {
     public static final String POSTGRES_USERNAME = "postgres.username";
     public static final String POSTGRES_PASSWORD = "postgres.password";
 
-    public static final String MAILGUN_DOMAIN = "mailgun.domain";
+    public static final String MAILGUN_DOMAIN_KEY = "mailgun.domain";
     public static final String MAILGUN_API_KEY = "mailgun.apikey";
-    public static final String MAILGUN_NAME = "mailgun.name";
-    public static final String MAILGUN_EMAIL = "mailgun.email";
+    public static final String MAILGUN_NAME_KEY = "mailgun.name";
+    public static final String MAILGUN_EMAIL_KEY = "mailgun.email";
 
     public static final String MSG91_SMS_SERVICE_API_KEY = "msg91.apikey";
 

@@ -5,6 +5,7 @@ import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.eclipse.jetty.util.PathWatcher;
 
 public class GlobalConfig {
 
@@ -31,10 +32,14 @@ public class GlobalConfig {
         GlobalConstants.POSTGRES_USERNAME = configuration.getString(ConfigurationKeys.POSTGRES_USERNAME);
         GlobalConstants.POSTGRES_PASSWORD = configuration.getString(ConfigurationKeys.POSTGRES_PASSWORD);
 
+        GlobalConstants.MAILGUN_API_KEY = configuration.getString(ConfigurationKeys.MAILGUN_API_KEY);
+        GlobalConstants.MAILGUN_DOMAIN = configuration.getString(ConfigurationKeys.MAILGUN_DOMAIN_KEY);
+        GlobalConstants.MAILGUN_EMAIL = configuration.getString(ConfigurationKeys.MAILGUN_EMAIL_KEY);
+        GlobalConstants.MAILGUN_NAME = configuration.getString(ConfigurationKeys.MAILGUN_NAME_KEY);
 
-        MSG91_SMS_SERVICE_API_KEY = configuration.getString(ConfigurationKeys.MSG91_SMS_SERVICE_API_KEY);
-        FIREBASE_DRIVER_KEY = configuration.getString(ConfigurationKeys.FIREBASE_DRIVER_KEY);
-        FIREBASE_END_USER_KEY = configuration.getString(ConfigurationKeys.FIREBASE_END_USER_KEY);
+        GlobalConstants.MSG91_SMS_SERVICE_API_KEY = configuration.getString(ConfigurationKeys.MSG91_SMS_SERVICE_API_KEY);
+        GlobalConstants.FIREBASE_DRIVER_KEY = configuration.getString(ConfigurationKeys.FIREBASE_DRIVER_KEY);
+        GlobalConstants.FIREBASE_END_USER_KEY = configuration.getString(ConfigurationKeys.FIREBASE_END_USER_KEY);
 
 
         GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION = configuration.getInt(ConfigurationKeys.REFERRAL_CREDIT_END_USER_REGISTRATION);
@@ -98,10 +103,14 @@ public class GlobalConfig {
         System.out.println("Postgres Username : " + GlobalConstants.POSTGRES_USERNAME);
         System.out.println("Postgres Password : " + GlobalConstants.POSTGRES_PASSWORD);
 
-        System.out.println("MSG91_KEY : " + MSG91_SMS_SERVICE_API_KEY);
+        System.out.println("Mailgun Name : " + GlobalConstants.MAILGUN_NAME);
+        System.out.println("Mailgun E-mail : " + GlobalConstants.MAILGUN_EMAIL);
+        System.out.println("Mailgun Domain : " + GlobalConstants.MAILGUN_DOMAIN);
+        System.out.println("Mailgun API KEY : " + GlobalConstants.MAILGUN_API_KEY);
 
-        System.out.println("FIREBASE_DRIVER_KEY : " + FIREBASE_DRIVER_KEY);
-        System.out.println("FIREBASE_END_USER_KEY : " + FIREBASE_END_USER_KEY);
+        System.out.println("MSG91_KEY : " + GlobalConstants.MSG91_SMS_SERVICE_API_KEY);
+        System.out.println("FIREBASE_DRIVER_KEY : " + GlobalConstants.FIREBASE_DRIVER_KEY);
+        System.out.println("FIREBASE_END_USER_KEY : " + GlobalConstants.FIREBASE_END_USER_KEY);
 
         System.out.println("REFERRAL CREDIT FOR DRIVER REGISTRATION : " + GlobalConstants.REFERRAL_CREDIT_FOR_DRIVER_REGISTRATION);
         System.out.println("REFERRAL CREDIT FOR END USER REGISTRATION : " + GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION);
@@ -199,32 +208,30 @@ public class GlobalConfig {
 
 
 
-    static String MSG91_SMS_SERVICE_API_KEY = null;
-
-    public static String getMsg91APIKey()
-    {
-
-        if(MSG91_SMS_SERVICE_API_KEY==null)
-        {
-            org.apache.commons.configuration2.Configuration configuration = GlobalConfig.getConfiguration();
-
-
-            if(configuration==null)
-            {
-                System.out.println("Configuration is null : getMsg91APIKey() !");
-
-                return null ;
-            }
-
-
-            MSG91_SMS_SERVICE_API_KEY = configuration.getString(ConfigurationKeys.MSG91_SMS_SERVICE_API_KEY);
-        }
-
-
-        System.out.println("Msg91 API KEY : " + MSG91_SMS_SERVICE_API_KEY);
-
-        return MSG91_SMS_SERVICE_API_KEY;
-    }
+//    public static String getMsg91APIKey()
+//    {
+//
+//        if(MSG91_SMS_SERVICE_API_KEY==null)
+//        {
+//            org.apache.commons.configuration2.Configuration configuration = GlobalConfig.getConfiguration();
+//
+//
+//            if(configuration==null)
+//            {
+//                System.out.println("Configuration is null : getMsg91APIKey() !");
+//
+//                return null ;
+//            }
+//
+//
+//            MSG91_SMS_SERVICE_API_KEY = configuration.getString(ConfigurationKeys.MSG91_SMS_SERVICE_API_KEY);
+//        }
+//
+//
+//        System.out.println("Msg91 API KEY : " + MSG91_SMS_SERVICE_API_KEY);
+//
+//        return MSG91_SMS_SERVICE_API_KEY;
+//    }
 
 
 
@@ -233,66 +240,63 @@ public class GlobalConfig {
 
 
 
-    private static String FIREBASE_DRIVER_KEY = null;
-    private static String FIREBASE_END_USER_KEY = null;
-
-
-    public static String getFirebaseDriverKey()
-    {
-
-        if(FIREBASE_DRIVER_KEY==null)
-        {
-            org.apache.commons.configuration2.Configuration configuration = GlobalConfig.getConfiguration();
-
-
-            if(configuration==null)
-            {
-                System.out.println("Configuration is null : getFirebaseDriverKey() !");
-
-                return null ;
-            }
-
-
-            FIREBASE_DRIVER_KEY = configuration.getString(ConfigurationKeys.FIREBASE_DRIVER_KEY);
-        }
-
-
-
-        System.out.println("Firebase Driver Key : " + FIREBASE_DRIVER_KEY);
-
-        return FIREBASE_DRIVER_KEY;
-    }
-
+//
+//    public static String getFirebaseDriverKey()
+//    {
+//
+//        if(FIREBASE_DRIVER_KEY==null)
+//        {
+//            org.apache.commons.configuration2.Configuration configuration = GlobalConfig.getConfiguration();
+//
+//
+//            if(configuration==null)
+//            {
+//                System.out.println("Configuration is null : getFirebaseDriverKey() !");
+//
+//                return null ;
+//            }
+//
+//
+//            FIREBASE_DRIVER_KEY = configuration.getString(ConfigurationKeys.FIREBASE_DRIVER_KEY);
+//        }
+//
+//
+//
+//        System.out.println("Firebase Driver Key : " + FIREBASE_DRIVER_KEY);
+//
+//        return FIREBASE_DRIVER_KEY;
+//    }
+//
 
 
 
-
-    public static String getFirebaseEndUserKey()
-    {
-
-        if(FIREBASE_END_USER_KEY==null)
-        {
-            org.apache.commons.configuration2.Configuration configuration = GlobalConfig.getConfiguration();
-
-
-            if(configuration==null)
-            {
-                System.out.println("Configuration is null : getFirebaseEndUserKey() !");
-
-                return null ;
-            }
-
-
-            FIREBASE_END_USER_KEY = configuration.getString(ConfigurationKeys.FIREBASE_END_USER_KEY);
-        }
-
-
-
-
-        System.out.println("FirebaseEndUserKey : " + FIREBASE_END_USER_KEY);
-
-        return FIREBASE_END_USER_KEY;
-    }
+//
+//    public static String getFirebaseEndUserKey()
+//    {
+//
+//        if(FIREBASE_END_USER_KEY==null)
+//        {
+//            org.apache.commons.configuration2.Configuration configuration = GlobalConfig.getConfiguration();
+//
+//
+//            if(configuration==null)
+//            {
+//                System.out.println("Configuration is null : getFirebaseEndUserKey() !");
+//
+//                return null ;
+//            }
+//
+//
+//            FIREBASE_END_USER_KEY = configuration.getString(ConfigurationKeys.FIREBASE_END_USER_KEY);
+//        }
+//
+//
+//
+//
+//        System.out.println("FirebaseEndUserKey : " + FIREBASE_END_USER_KEY);
+//
+//        return FIREBASE_END_USER_KEY;
+//    }
 
 
 }

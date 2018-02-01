@@ -4,15 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zaxxer.hikari.HikariDataSource;
 import okhttp3.*;
-import org.postgresql.util.Base64;
-import org.taxireferral.api.Globals.GlobalConfig;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.ModelNotifications.AndroidOptions;
 import org.taxireferral.api.ModelNotifications.FirebaseNotification;
 import org.taxireferral.api.ModelNotifications.NotificationData;
 import org.taxireferral.api.ModelRoles.User;
-import org.taxireferral.api.ModelUtility.Location;
 import org.taxireferral.api.ModelUtility.LocationCurrentTrip;
 
 import java.io.IOException;
@@ -70,7 +67,7 @@ public class DAOUserNotifications {
                 userID,
                 notificationType,
                 notificationSubType,
-                GlobalConfig.getFirebaseEndUserKey()
+                GlobalConstants.FIREBASE_END_USER_KEY
         );
 
 //        GlobalConstants.FIREBASE_END_USER_KEY
@@ -88,7 +85,7 @@ public class DAOUserNotifications {
                 userID,
                 notificationType,
                 notificationSubType,
-                GlobalConfig.getFirebaseEndUserKey(),
+                GlobalConstants.FIREBASE_END_USER_KEY,
                 locationCurrentTrip
         );
 
@@ -111,7 +108,7 @@ public class DAOUserNotifications {
                 userID,
                 notificationType,
                 notificationSubType,
-                GlobalConfig.getFirebaseDriverKey()
+                GlobalConstants.FIREBASE_DRIVER_KEY
         );
 
 
