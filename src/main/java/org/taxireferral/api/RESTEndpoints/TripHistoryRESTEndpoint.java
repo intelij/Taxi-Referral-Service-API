@@ -23,7 +23,6 @@ public class TripHistoryRESTEndpoint {
 
 
 
-
     @PUT
     @Path("/ReviewByDriver")
     @Consumes(MediaType.APPLICATION_JSON)

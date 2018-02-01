@@ -16,27 +16,26 @@ public class SendSMS {
 
 
 
+
+
+
+
     public static void sendOTP(String otp, String phone)
     {
-
-
-
 
 //        GsonBuilder gsonBuilder = new GsonBuilder();
 //        Gson gson = gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
 //        String json = gson.toJson(firebaseNotification);
 
 
+        String countryCode = GlobalConstants.DEFAULT_COUNTRY_CODE;
 
 
         String urlOTP = "https://control.msg91.com/api/sendotp.php?authkey=" +
                 GlobalConfig.getMsg91APIKey() +
-                "&mobile=91" +
-                phone +
-                "&message=Your%20one time password (OTP) for Taxi Referral Service is " +
-                otp +
-                "&sender=TRSAPP&otp=" +
-                otp;
+                "&mobile=" + countryCode + phone +
+                "&message=Your%20one time password (OTP) for Triplogic is " + otp +
+                "&sender=TRPLOG&otp=" + otp;
 
 
 
@@ -90,6 +89,9 @@ public class SendSMS {
 
 
 
+        String countryCode = GlobalConstants.DEFAULT_COUNTRY_CODE;
+
+
 //        GsonBuilder gsonBuilder = new GsonBuilder();
 //        Gson gson = gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
 //        String json = gson.toJson(firebaseNotification);
@@ -98,12 +100,10 @@ public class SendSMS {
 
         String urlMessage = "http://api.msg91.com/api/sendhttp.php?authkey=" +
                 GlobalConfig.getMsg91APIKey() +
-                "&mobiles=" +
-                "91" +
-                phone +
-                "&message=" +
-                message +
-                "&sender=TRSAPP&route=4&country=91";
+                "&mobiles=" + countryCode + phone +
+                "&message=" + message +
+                "&sender=TRPLOG&route=4&country=91";
+
 
 
         final Request request = new Request.Builder()

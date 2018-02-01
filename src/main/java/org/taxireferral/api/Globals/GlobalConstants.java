@@ -61,6 +61,7 @@ public class GlobalConstants {
 //    public static final int CREDIT_LIMIT_FOR_END_USER = - 1000;
 
 
+    public static String DEFAULT_COUNTRY_CODE;
 
     // style url for maps
     public static String TILESERVER_GL_STYLE_URL;

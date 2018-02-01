@@ -73,6 +73,8 @@ public class GlobalConfig {
 
         GlobalConstants.SHORTEST_DISTANCE_MULTIPLIER = configuration.getDouble(ConfigurationKeys.KEY_SHORTEST_DISTANCE_MULTIPLIER);
 
+        GlobalConstants.DEFAULT_COUNTRY_CODE = configuration.getString(ConfigurationKeys.KEY_DEFAULT_COUNTRY_CODE);
+
         GlobalConstants.TILESERVER_GL_STYLE_URL = configuration.getString(ConfigurationKeys.KEY_TILESERVER_GL_STYLE_URL);
         GlobalConstants.NOTIFICATION_SERVER_HOST_MQTT = configuration.getString(ConfigurationKeys.KEY_MQTT_SERVER_ADDRESS);
         GlobalConstants.GEOCODER_ADDRESS = configuration.getString(ConfigurationKeys.KEY_GEOCODER_ADDRESS);
@@ -124,6 +126,7 @@ public class GlobalConfig {
         System.out.println("MAX MIN TRIP CHARGES : " + GlobalConstants.max_min_trip_charges);
 
 
+        System.out.println("Default Country Code : " + GlobalConstants.DEFAULT_COUNTRY_CODE);
         System.out.println("TileServerGL StyleURL : " + GlobalConstants.TILESERVER_GL_STYLE_URL);
         System.out.println("MQTT Host address : " + GlobalConstants.NOTIFICATION_SERVER_HOST_MQTT);
     }
