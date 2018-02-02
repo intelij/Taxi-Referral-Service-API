@@ -148,6 +148,7 @@ public class Globals {
 
 
 
+
     // Configure Connection Pooling
 
 
@@ -159,12 +160,14 @@ public class Globals {
         if (dataSource == null) {
 
             HikariConfig config = new HikariConfig();
+
             config.setJdbcUrl(GlobalConstants.POSTGRES_CONNECTION_URL);
             config.setUsername(GlobalConstants.POSTGRES_USERNAME);
             config.setPassword(GlobalConstants.POSTGRES_PASSWORD);
 
             dataSource = new HikariDataSource(config);
         }
+
 
         return dataSource;
     }

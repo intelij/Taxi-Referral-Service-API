@@ -204,11 +204,12 @@ public class Main {
 
         GlobalConfig.loadGlobalConfiguration();
 
-        createDB();
-        upgradeTables();
+//        createDB();
+//        upgradeTables();
 
         createTables();
         startJettyServer();
+
 
     }
 
@@ -233,6 +234,7 @@ public class Main {
 
             return;
         }
+
 
 
         String connection_url = configuration.getString(ConfigurationKeys.CONNECTION_URL_CREATE_DB);
