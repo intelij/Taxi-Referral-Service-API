@@ -9,6 +9,7 @@ import org.taxireferral.api.Model.Vehicle;
 import org.taxireferral.api.ModelEndpoints.TripRequestEndPoint;
 import org.taxireferral.api.ModelEndpoints.VehicleEndPoint;
 import org.taxireferral.api.ModelNotifications.NotificationData;
+import org.taxireferral.api.ModelOneSignal.SignalNotification;
 import org.taxireferral.api.ModelRoles.User;
 import org.taxireferral.api.ModelUtility.Location;
 
@@ -290,7 +291,6 @@ public class TripRequestRESTEndpoint {
 
 
 
-
         if(rowCount >= 1)
         {
 
@@ -312,7 +312,7 @@ public class TripRequestRESTEndpoint {
                     "Pickup Started",
                     "Please go to pickup the customer !",
                     2,
-                    1
+                    SignalNotification.NOTIFICATION_TYPE_START_PICKUP
             );
 
 

@@ -9,6 +9,12 @@ import java.util.ArrayList;
 public class SignalNotification {
 
 
+    public static final int NOTIFICATION_TYPE_SEND_REQUEST = 1;
+    public static final int NOTIFICATION_TYPE_READY_TO_GO = 2;
+    public static final int NOTIFICATION_TYPE_START_PICKUP = 3;
+
+
+
 
     private String app_id;
     private ArrayList<String> include_player_ids = new ArrayList<>();
