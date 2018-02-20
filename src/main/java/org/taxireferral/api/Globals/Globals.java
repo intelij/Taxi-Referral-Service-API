@@ -62,6 +62,7 @@ public class Globals {
     public static TripIssueOptionsDAO issueOptionsDAO = new TripIssueOptionsDAO();
 
     public static DAOUserNotifications userNotifications = new DAOUserNotifications();
+    public static DAOOneSignal oneSignalNotifications = new DAOOneSignal();
 
     // static reference for holding security accountApproved
 

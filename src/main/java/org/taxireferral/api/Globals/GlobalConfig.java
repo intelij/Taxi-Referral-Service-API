@@ -42,6 +42,12 @@ public class GlobalConfig {
         GlobalConstants.FIREBASE_END_USER_KEY = configuration.getString(ConfigurationKeys.FIREBASE_END_USER_KEY);
 
 
+        GlobalConstants.ONE_SIGNAL_API_KEY_DRIVER = configuration.getString(ConfigurationKeys.KEY_ONE_SIGNAL_REST_KEY_DRIVER);
+        GlobalConstants.ONE_SIGNAL_API_KEY_USER = configuration.getString(ConfigurationKeys.KEY_ONE_SIGNAL_REST_KEY_USER);
+        GlobalConstants.ONE_SIGNAL_APP_ID_DRIVER = configuration.getString(ConfigurationKeys.KEY_ONE_SIGNAL_APP_ID_DRIVER);
+        GlobalConstants.ONE_SIGNAL_APP_ID_USER = configuration.getString(ConfigurationKeys.KEY_ONE_SIGNAL_APP_ID_USER);
+
+
         GlobalConstants.REFERRAL_CREDIT_FOR_END_USER_REGISTRATION = configuration.getInt(ConfigurationKeys.REFERRAL_CREDIT_END_USER_REGISTRATION);
         GlobalConstants.REFERRAL_CREDIT_FOR_DRIVER_REGISTRATION = configuration.getInt(ConfigurationKeys.REFERRAL_CREDIT_DRIVER_REGISTRATION);
 

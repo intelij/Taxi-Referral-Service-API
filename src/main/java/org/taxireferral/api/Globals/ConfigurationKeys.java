@@ -17,6 +17,13 @@ public class ConfigurationKeys {
 
     public static final String MSG91_SMS_SERVICE_API_KEY = "msg91.apikey";
 
+
+    public static final String KEY_ONE_SIGNAL_REST_KEY_DRIVER = "one_signal_rest_api_key_driver";
+    public static final String KEY_ONE_SIGNAL_APP_ID_DRIVER = "one_signal_app_id_driver";
+    public static final String KEY_ONE_SIGNAL_REST_KEY_USER = "one_signal_rest_api_key_user";
+    public static final String KEY_ONE_SIGNAL_APP_ID_USER = "one_signal_app_id_end_user";
+
+
     public static final String FIREBASE_DRIVER_KEY = "firebase.driverkey";
     public static final String FIREBASE_END_USER_KEY = "firebase.enduserkey";
 

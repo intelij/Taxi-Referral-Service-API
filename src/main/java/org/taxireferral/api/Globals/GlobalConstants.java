@@ -72,6 +72,11 @@ public class GlobalConstants {
     public static String FIREBASE_END_USER_KEY;
     public static String MSG91_SMS_SERVICE_API_KEY;
 
+    public static String ONE_SIGNAL_API_KEY_DRIVER;
+    public static String ONE_SIGNAL_APP_ID_DRIVER;
+    public static String ONE_SIGNAL_API_KEY_USER;
+    public static String ONE_SIGNAL_APP_ID_USER;
+
 
 
     public static String DEFAULT_COUNTRY_CODE;

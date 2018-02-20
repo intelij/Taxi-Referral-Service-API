@@ -208,12 +208,21 @@ public class User {
     private int rt_registration_mode; // 1 for registration by email 2 for registration by phone
     private Vehicle rt_vehicle;
     private StaffPermissions rt_staff_permissions;
+    private String rt_oneSignalPlayerID;
 
 
 
 
     // Getters and Setters
 
+
+    public String getRt_oneSignalPlayerID() {
+        return rt_oneSignalPlayerID;
+    }
+
+    public void setRt_oneSignalPlayerID(String rt_oneSignalPlayerID) {
+        this.rt_oneSignalPlayerID = rt_oneSignalPlayerID;
+    }
 
     public StaffPermissions getRt_staff_permissions() {
         return rt_staff_permissions;
@@ -480,7 +489,5 @@ public class User {
     public void setTimestampTokenExpires(Timestamp timestampTokenExpires) {
         this.timestampTokenExpires = timestampTokenExpires;
     }
-
-
 
 }

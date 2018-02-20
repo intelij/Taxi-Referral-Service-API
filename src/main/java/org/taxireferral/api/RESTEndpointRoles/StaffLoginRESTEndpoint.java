@@ -149,6 +149,10 @@ public class StaffLoginRESTEndpoint {
                 offset = 0;
             }
         }
+        else
+        {
+            limit = GlobalConstants.max_limit;
+        }
 
 
 
@@ -162,13 +166,9 @@ public class StaffLoginRESTEndpoint {
 
 
 
-
-        if(limit!=null)
-        {
-            endPoint.setLimit(limit);
-            endPoint.setOffset(offset);
-            endPoint.setMax_limit(GlobalConstants.max_limit);
-        }
+        endPoint.setLimit(limit);
+        endPoint.setOffset(offset);
+        endPoint.setMax_limit(GlobalConstants.max_limit);
 
 
         //Marker
@@ -219,8 +219,6 @@ public class StaffLoginRESTEndpoint {
                 sortBy,limit,offset,
                 getRowCount,getOnlyMetaData
         );
-
-
 
 
         if(limit!=null)

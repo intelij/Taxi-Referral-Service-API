@@ -89,6 +89,39 @@ public class UserLoginRESTEndpoint {
     }
 
 
+
+    @PUT
+    @Path("/UpdateOneSignalID/{OneSignalID}")
+    @RolesAllowed({GlobalConstants.ROLE_END_USER,GlobalConstants.ROLE_DRIVER,GlobalConstants.ROLE_STAFF,GlobalConstants.ROLE_ADMIN})
+    public Response updateOneSignalID(@PathParam("OneSignalID") String oneSignalID)
+    {
+
+        User user = (User) Globals.accountApproved;
+        user.setRt_oneSignalPlayerID(oneSignalID);
+
+        int rowCount = Globals.oneSignalNotifications.updateOneSignalID(
+                                    user.getUserID(),
+                                    user.getRt_oneSignalPlayerID());
+
+
+        if(rowCount >= 1)
+        {
+
+            return Response.status(Response.Status.OK)
+                    .build();
+        }
+        if(rowCount == 0)
+        {
+
+            return Response.status(Response.Status.NOT_MODIFIED)
+                    .build();
+        }
+
+
+        return null;
+    }
+
+
 //    @GET
 //    @Path("/Notifications/{UserID}")
 //    @Produces(SseFeature.SERVER_SENT_EVENTS)
@@ -250,10 +283,11 @@ public class UserLoginRESTEndpoint {
 
 
 
+
     @PUT
     @Path("/ChangePassword/{OldPassword}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({GlobalConstants.ROLE_DRIVER,GlobalConstants.ROLE_END_USER,GlobalConstants.ROLE_STAFF})
+    @RolesAllowed({GlobalConstants.ROLE_DRIVER,GlobalConstants.ROLE_END_USER,GlobalConstants.ROLE_STAFF,GlobalConstants.ROLE_ADMIN})
     public Response changePassword(User user, @PathParam("OldPassword")String oldPassword)
     {
 

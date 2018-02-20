@@ -269,7 +269,6 @@ public class DAOUserNotifications {
 
 
 
-
     public User getFirebaseToken(int userID)
     {
 
@@ -349,6 +348,10 @@ public class DAOUserNotifications {
 
         return user;
     }
+
+
+
+
 
 
 

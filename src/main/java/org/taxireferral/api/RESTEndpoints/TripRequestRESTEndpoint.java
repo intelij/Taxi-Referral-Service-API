@@ -56,11 +56,30 @@ public class TripRequestRESTEndpoint {
         if(idOfInsertedRow >=1)
         {
 
-            Globals.userNotifications.sendNotificationToDriver(
+//            Globals.userNotifications.sendNotificationToDriver(
+//                    tripRequest.getRt_vehicle().getDriverID(),
+//                    NotificationData.NOTIFICATION_TYPE_TAXI_REQUEST,
+//                    NotificationData.NOTIFICATION_SUB_TYPE_TAXI_REQUEST_REQUEST_RECEIVED
+//            );
+
+
+
+            System.out.print("Trip Request created ! Sending notification");
+
+
+            Globals.oneSignalNotifications.sendNotificationToDriver(
                     tripRequest.getRt_vehicle().getDriverID(),
-                    NotificationData.NOTIFICATION_TYPE_TAXI_REQUEST,
-                    NotificationData.NOTIFICATION_SUB_TYPE_TAXI_REQUEST_REQUEST_RECEIVED
+                    "https://triplogic.org/wp-content/uploads/2018/01/cropped-bitmap-copy.png",
+                    "http://static4.uk.businessinsider.com/image/59c295c0ba785e2b2c41a3d2-1190-625/a-greenwich-hedge-fund-is-behind-the-mysterious-buyer-of-the-nyc-taxi-kings-medallions.jpg",
+                    "siren",
+                    10,
+                    "Request Received",
+                    "You have received a trip request !",
+                    2,
+                    1
             );
+
+
 
 
             return Response.status(Response.Status.CREATED)

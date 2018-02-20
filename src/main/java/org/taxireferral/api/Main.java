@@ -11,10 +11,7 @@ import org.taxireferral.api.Model.*;
 import org.taxireferral.api.ModelBilling.Transaction;
 import org.taxireferral.api.ModelBilling.TransactionTaxAccount;
 import org.taxireferral.api.ModelImages.TaxiImage;
-import org.taxireferral.api.ModelRoles.EmailVerificationCode;
-import org.taxireferral.api.ModelRoles.PhoneVerificationCode;
-import org.taxireferral.api.ModelRoles.StaffPermissions;
-import org.taxireferral.api.ModelRoles.User;
+import org.taxireferral.api.ModelRoles.*;
 import org.taxireferral.api.ModelSettings.ServiceConfiguration;
 
 import java.io.File;
@@ -460,15 +457,15 @@ public class Main {
 
 
 
-        Configuration configuration = GlobalConfig.getConfiguration();
-
-
-        if(configuration==null)
-        {
-            System.out.println("Configuration is null : createTables()  !");
-
-            return;
-        }
+//        Configuration configuration = GlobalConfig.getConfiguration();
+//
+//
+//        if(configuration==null)
+//        {
+//            System.out.println("Configuration is null : createTables()  !");
+//
+//            return;
+//        }
 
 
 //        String connection_url = configuration.getString(ConfigurationKeys.CONNECTION_URL);
@@ -491,6 +488,9 @@ public class Main {
 //            statement.executeUpdate(UPIPaymentRequest.createTablePostgres);
 
             statement.executeUpdate(User.createTable);
+            statement.executeUpdate(OneSignalIDs.createTable);
+
+
             statement.executeUpdate(StaffPermissions.createTablePostgres);
 
             statement.executeUpdate(Vehicle.createTableVehiclePostgres);
