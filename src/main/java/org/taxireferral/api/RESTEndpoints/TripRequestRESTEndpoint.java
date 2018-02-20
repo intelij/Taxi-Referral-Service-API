@@ -75,7 +75,7 @@ public class TripRequestRESTEndpoint {
                     10,
                     "Request Received",
                     "You have received a trip request !",
-                    2,
+                    1,
                     1
             );
 
@@ -126,10 +126,26 @@ public class TripRequestRESTEndpoint {
         if(rowCount >= 1)
         {
 
-            Globals.userNotifications.sendNotificationToEndUser(userID,
-                    NotificationData.NOTIFICATION_TYPE_TAXI_REQUEST,
-                    NotificationData.NOTIFICATION_SUB_TYPE_TAXI_REQUEST_REQUEST_ACCEPTED
+
+//            Globals.userNotifications.sendNotificationToEndUser(userID,
+//                    NotificationData.NOTIFICATION_TYPE_TAXI_REQUEST,
+//                    NotificationData.NOTIFICATION_SUB_TYPE_TAXI_REQUEST_REQUEST_ACCEPTED
+//            );
+
+
+            Globals.oneSignalNotifications.sendNotificationToEndUser(
+                    userID,
+                    "https://triplogic.org/wp-content/uploads/2018/01/cropped-bitmap-copy.png",
+                    "http://static4.uk.businessinsider.com/image/59c295c0ba785e2b2c41a3d2-1190-625/a-greenwich-hedge-fund-is-behind-the-mysterious-buyer-of-the-nyc-taxi-kings-medallions.jpg",
+                    null,
+                    10,
+                    "Request Accepted",
+                    "Driver has accepted your request and ready to pick you up !",
+                    2,
+                    1
             );
+
+
 
             return Response.status(Response.Status.OK)
                     .build();
@@ -170,6 +186,21 @@ public class TripRequestRESTEndpoint {
                         NotificationData.NOTIFICATION_TYPE_TAXI_REQUEST,
                         NotificationData.NOTIFICATION_SUB_TYPE_TAXI_REQUEST_PICKUP_REQUESTED
                 );
+
+
+//                Globals.oneSignalNotifications.sendNotificationToDriver(
+//                         driverID,
+//                        "https://triplogic.org/wp-content/uploads/2018/01/cropped-bitmap-copy.png",
+//                        "http://static4.uk.businessinsider.com/image/59c295c0ba785e2b2c41a3d2-1190-625/a-greenwich-hedge-fund-is-behind-the-mysterious-buyer-of-the-nyc-taxi-kings-medallions.jpg",
+//                        "siren",
+//                        10,
+//                        "Pickup Started",
+//                        "Please go to pickup the customer !",
+//                        2,
+//                        1
+//                );
+
+
 
 
                 return Response.status(Response.Status.OK)
@@ -263,11 +294,28 @@ public class TripRequestRESTEndpoint {
         if(rowCount >= 1)
         {
 
-            Globals.userNotifications.sendNotificationToDriver(
+
+//            Globals.userNotifications.sendNotificationToDriver(
+//                    driverID,
+//                    NotificationData.NOTIFICATION_TYPE_TAXI_REQUEST,
+//                    NotificationData.NOTIFICATION_SUB_TYPE_TAXI_REQUEST_PICKUP_STARTED
+//            );
+
+
+
+            Globals.oneSignalNotifications.sendNotificationToDriver(
                     driverID,
-                    NotificationData.NOTIFICATION_TYPE_TAXI_REQUEST,
-                    NotificationData.NOTIFICATION_SUB_TYPE_TAXI_REQUEST_PICKUP_STARTED
+                    "https://triplogic.org/wp-content/uploads/2018/01/cropped-bitmap-copy.png",
+                    "http://static4.uk.businessinsider.com/image/59c295c0ba785e2b2c41a3d2-1190-625/a-greenwich-hedge-fund-is-behind-the-mysterious-buyer-of-the-nyc-taxi-kings-medallions.jpg",
+                    "siren",
+                    10,
+                    "Pickup Started",
+                    "Please go to pickup the customer !",
+                    2,
+                    1
             );
+
+
 
 
 
