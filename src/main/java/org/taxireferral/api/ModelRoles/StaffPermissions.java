@@ -19,7 +19,6 @@ public class StaffPermissions {
     public static final String PERMIT_TAXI_PROFILE_UPDATE = "PERMIT_TAXI_PROFILE_UPDATE";
     public static final String PERMIT_ACCEPT_PAYMENTS = "PERMIT_ACCEPT_PAYMENTS";
     public static final String PERMIT_ADD_EDIT_TAXI_IMAGES = "PERMIT_ADD_EDIT_TAXI_IMAGES";
-    public static final String PERMIT_APPROVE_TAXI_IMAGES = "PERMIT_APPROVE_TAXI_IMAGES";
 
 
 
@@ -37,10 +36,10 @@ public class StaffPermissions {
                     + " " + StaffPermissions.PERMIT_TAXI_PROFILE_UPDATE + " boolean NOT NULL default 'f',"
                     + " " + StaffPermissions.PERMIT_ACCEPT_PAYMENTS + " boolean NOT NULL default 'f',"
                     + " " + StaffPermissions.PERMIT_ADD_EDIT_TAXI_IMAGES + " boolean NOT NULL default 'f',"
-                    + " " + StaffPermissions.PERMIT_APPROVE_TAXI_IMAGES + " boolean NOT NULL default 'f',"
 
                     + " FOREIGN KEY(" + StaffPermissions.STAFF_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE "
                     + ")";
+
 
 
 
