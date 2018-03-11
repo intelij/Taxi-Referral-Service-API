@@ -12,6 +12,8 @@ import org.taxireferral.api.ModelBilling.Transaction;
 import org.taxireferral.api.ModelBilling.TransactionTaxAccount;
 import org.taxireferral.api.ModelImages.TaxiImage;
 import org.taxireferral.api.ModelRoles.*;
+import org.taxireferral.api.ModelServices.Service;
+import org.taxireferral.api.ModelServices.ServiceRequest;
 import org.taxireferral.api.ModelSettings.ServiceConfiguration;
 
 import java.io.File;
@@ -322,7 +324,7 @@ public class Main {
 
             statement = connection.createStatement();
 
-            statement.executeUpdate(Vehicle.addColumns);
+//            statement.executeUpdate(Vehicle.addColumns);
             statement.executeUpdate(CurrentTrip.upgradeTableSchema);
             statement.executeUpdate(TripHistory.upgradeTableSchema);
             statement.executeUpdate(User.upgradeTableSchema);
@@ -485,14 +487,18 @@ public class Main {
 
             statement = connection.createStatement();
 
-//            statement.executeUpdate(UPIPaymentRequest.createTablePostgres);
+//            statement.executeUpdate(UPIPaymentRequest.createTable);
 
             statement.executeUpdate(User.createTable);
             statement.executeUpdate(OneSignalIDs.createTable);
-
-
             statement.executeUpdate(StaffPermissions.createTablePostgres);
 
+            statement.executeUpdate(Service.createTablePostgres);
+            statement.executeUpdate(ServiceRequest.createTablePostgres);
+
+
+
+            statement.executeUpdate(VehicleType.createTable);
             statement.executeUpdate(Vehicle.createTableVehiclePostgres);
             statement.executeUpdate(TaxiImage.createTablePostgres);
             statement.executeUpdate(TripRequest.createTablePostgres);
@@ -502,8 +508,6 @@ public class Main {
             statement.executeUpdate(EmailVerificationCode.createTablePostgres);
             statement.executeUpdate(PhoneVerificationCode.createTablePostgres);
 
-            statement.executeUpdate(VehicleType.createTablePostgres);
-//            statement.executeUpdate(VehicleTypeVersion.createTablePostgres);
             statement.executeUpdate(Transaction.createTablePostgres);
             statement.executeUpdate(TransactionTaxAccount.createTablePostgres);
 

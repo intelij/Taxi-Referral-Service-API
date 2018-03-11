@@ -381,8 +381,7 @@ public class DAOStaff {
                 + StaffPermissions.PERMIT_TAXI_REGISTRATION_AND_RENEWAL + ","
                 + StaffPermissions.PERMIT_TAXI_PROFILE_UPDATE + ","
                 + StaffPermissions.PERMIT_ACCEPT_PAYMENTS + ","
-                + StaffPermissions.PERMIT_ADD_EDIT_TAXI_IMAGES + ","
-                + StaffPermissions.PERMIT_APPROVE_TAXI_IMAGES + ""
+                + StaffPermissions.PERMIT_ADD_EDIT_TAXI_IMAGES + ""
 
                 + " FROM "  + StaffPermissions.TABLE_NAME
                 + " WHERE " + StaffPermissions.STAFF_ID  + " = ? ";
@@ -419,7 +418,6 @@ public class DAOStaff {
                 permissions.setPermitTaxiProfileUpdate(rs.getBoolean(StaffPermissions.PERMIT_TAXI_PROFILE_UPDATE));
                 permissions.setPermitAcceptPayments(rs.getBoolean(StaffPermissions.PERMIT_ACCEPT_PAYMENTS));
                 permissions.setPermitAddEditTaxiImages(rs.getBoolean(StaffPermissions.PERMIT_ADD_EDIT_TAXI_IMAGES));
-                permissions.setPermitApproveTaxiImages(rs.getBoolean(StaffPermissions.PERMIT_APPROVE_TAXI_IMAGES));
 
             }
 

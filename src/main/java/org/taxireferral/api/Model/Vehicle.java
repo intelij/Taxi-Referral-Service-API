@@ -21,6 +21,8 @@ public class Vehicle {
     public static final String DRIVER_ID = "DRIVER_ID"; // foreign key
     public static final String OWNED_BY = "OWNED_BY"; // foreign key
 
+    public static final String VEHICLE_TYPE = "VEHICLE_TYPE"; // foreign key
+
 //    public static final String VEHICLE_MODEL = "VEHICLE_MODEL"; // foreign key
 
     public static final String VEHICLE_MODEL_NAME = "VEHICLE_MODEL_NAME";
@@ -37,6 +39,7 @@ public class Vehicle {
 
     public static final String MIN_TRIP_CHARGES = "MIN_TRIP_CHARGES";
     public static final String CHARGES_PER_KM = "CHARGES_PER_KM";
+    public static final String SURGE_MULTIPLIER = "SURGE_MULTIPLIER";
 
 
     public static final String LAT_CURRENT = "LAT_CURRENT";
@@ -82,6 +85,8 @@ public class Vehicle {
                     + " " + Vehicle.DRIVER_ID + " int UNIQUE ,"
                     + " " + Vehicle.OWNED_BY + " int UNIQUE ,"
 
+                    + " " + Vehicle.VEHICLE_TYPE + " int,"
+
                     + " " + Vehicle.VEHICLE_MODEL_NAME + " text,"
                     + " " + Vehicle.SEATING_CAPACITY + " int NOT NULL DEFAULT 0,"
 
@@ -115,6 +120,7 @@ public class Vehicle {
                     + " " + Vehicle.DESTINATION_FILTER_LON + " float NOT NULL default 0,"
                     + " " + Vehicle.DESTINATION_FILTER_RADIUS + " float NOT NULL default 0,"
 
+                    + " FOREIGN KEY(" + Vehicle.VEHICLE_TYPE +") REFERENCES " + VehicleType.TABLE_NAME + "(" + VehicleType.VEHICLE_TYPE_ID + ") ON DELETE SET NULL , "
                     + " FOREIGN KEY(" + Vehicle.DRIVER_ID +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE , "
                     + " FOREIGN KEY(" + Vehicle.OWNED_BY +") REFERENCES " + User.TABLE_NAME + "(" + User.USER_ID + ") ON DELETE CASCADE"
                     + ")";
@@ -123,18 +129,21 @@ public class Vehicle {
 
 
 
-    public static final String addColumns =
-            " ALTER TABLE IF EXISTS " + Vehicle.TABLE_NAME +
-                    " ADD COLUMN IF NOT EXISTS " + Vehicle.BEARING + " float NOT NULL default 0," +
-                    " ADD COLUMN IF NOT EXISTS " + Vehicle.SPEED + " float NOT NULL default 0";
-
-
-    
+//
+//
+//    public static final String addColumns =
+//            " ALTER TABLE IF EXISTS " + Vehicle.TABLE_NAME +
+//                    " ADD COLUMN IF NOT EXISTS " + Vehicle.BEARING + " float NOT NULL default 0," +
+//                    " ADD COLUMN IF NOT EXISTS " + Vehicle.SPEED + " float NOT NULL default 0";
+//
+//
+//
 
 
     // instance variables
     private int vehicleID;
     private int driverID;
+    private int vehicleTypeID;
 
     private String vehicleModelName;
     private int seatingCapacity;
@@ -163,6 +172,9 @@ public class Vehicle {
     private String pollutionCertificateID;
 
     private boolean filterByDestination;
+    private double latDestinationFilter;
+    private double lonDestinationFilter;
+    private double radiusDestinationFilter;
 
     private double rt_distance;
     private User rt_driver;
@@ -182,6 +194,46 @@ public class Vehicle {
 
     // getter and setters
 
+
+    public double getRadiusDestinationFilter() {
+        return radiusDestinationFilter;
+    }
+
+    public void setRadiusDestinationFilter(double radiusDestinationFilter) {
+        this.radiusDestinationFilter = radiusDestinationFilter;
+    }
+
+    public double getLatDestinationFilter() {
+        return latDestinationFilter;
+    }
+
+    public void setLatDestinationFilter(double latDestinationFilter) {
+        this.latDestinationFilter = latDestinationFilter;
+    }
+
+    public double getLonDestinationFilter() {
+        return lonDestinationFilter;
+    }
+
+    public void setLonDestinationFilter(double lonDestinationFilter) {
+        this.lonDestinationFilter = lonDestinationFilter;
+    }
+
+    public int getVehicleTypeID() {
+        return vehicleTypeID;
+    }
+
+    public void setVehicleTypeID(int vehicleTypeID) {
+        this.vehicleTypeID = vehicleTypeID;
+    }
+
+    public boolean isFilterByDestination() {
+        return filterByDestination;
+    }
+
+    public void setFilterByDestination(boolean filterByDestination) {
+        this.filterByDestination = filterByDestination;
+    }
 
     public double getRt_kms_total() {
         return rt_kms_total;

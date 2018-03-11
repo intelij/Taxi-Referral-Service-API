@@ -2,28 +2,16 @@ package org.taxireferral.api.Globals;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import jdk.nashorn.internal.objects.Global;
 import net.sargue.mailgun.Configuration;
-import org.apache.commons.configuration2.FileBasedConfiguration;
-import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
-import org.apache.commons.configuration2.builder.fluent.Parameters;
-import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.taxireferral.api.DAOBilling.DAOUPIPayments;
 import org.taxireferral.api.DAOImages.TaxiImagesDAO;
 import org.taxireferral.api.DAOIssues.TripIssueOptionsDAO;
 import org.taxireferral.api.DAORoles.*;
-import org.taxireferral.api.DAORoles.deprecated.DAOUser;
 import org.taxireferral.api.DAOSettings.DAOServiceConfig;
 import org.taxireferral.api.DAOs.*;
-import org.taxireferral.api.JDBCContract;
-import org.taxireferral.api.Main;
+import org.taxireferral.api.DAOs.Deprecated.VehicleTypeDAOGet;
+import org.taxireferral.api.DAOs.Deprecated.VehicleTypeDAOVersions;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.security.SecureRandom;
 
 /**

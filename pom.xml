@@ -229,6 +229,16 @@
             <!-- Dependencies for apache commons configuration : Ends -->
 
 
+            <!-- Parsing JSON -->
+            <!-- https://mvnrepository.com/artifact/org.json/json -->
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>20180130</version>
+            </dependency>
+
+            <!-- Library for Parsing JSON Ends -->
+
     </dependencies>
 
 

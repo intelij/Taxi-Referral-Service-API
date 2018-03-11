@@ -133,6 +133,7 @@ public class VehicleResource {
                     .build();
         }
 
+
         return null;
     }
 
@@ -144,7 +145,7 @@ public class VehicleResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({GlobalConstants.ROLE_ADMIN,GlobalConstants.ROLE_STAFF})
     public Response extendRegistration(@PathParam("VehicleID")int vehicleID,
-                                  @PathParam("MonthsToExtend")int monthsToExtend)
+                                        @PathParam("MonthsToExtend")int monthsToExtend)
     {
 
         User user = (User) Globals.accountApproved;
@@ -219,6 +220,8 @@ public class VehicleResource {
             return Response.status(Response.Status.NOT_MODIFIED)
                     .build();
         }
+
+
 
         return null;
     }
@@ -442,10 +445,14 @@ public class VehicleResource {
 
 
 
+
+
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTaxisAvailable(
             @QueryParam("LatPickup") Double latPickUp, @QueryParam("LonPickup") Double lonPickUp,
+            @QueryParam("LatDestination") double latDest, @QueryParam("LonDestination") double lonDest,
             @QueryParam("TripDistance") double tripDistance,
             @QueryParam("DriversGender") Boolean driversGender,
             @QueryParam("AdultMalesCount") Integer adultMalesCount,
@@ -482,8 +489,13 @@ public class VehicleResource {
 
 
 
+
+
         endPoint = daoVehicle.getTaxisAvailable(
-                latPickUp,lonPickUp,tripDistance,driversGender,sortBy,limit,offset,
+                latPickUp,lonPickUp,
+                latDest,lonDest,
+                tripDistance,
+                driversGender,sortBy,limit,offset,
                 getRowCount,getOnlyMetaData
         );
 

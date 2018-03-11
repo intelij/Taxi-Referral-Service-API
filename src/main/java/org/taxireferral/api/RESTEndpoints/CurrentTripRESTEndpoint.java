@@ -6,8 +6,6 @@ import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.CurrentTrip;
 import org.taxireferral.api.Model.TripHistory;
 import org.taxireferral.api.ModelEndpoints.CurrentTripEndpoint;
-import org.taxireferral.api.ModelEndpoints.VehicleEndPoint;
-import org.taxireferral.api.ModelNotifications.NotificationData;
 import org.taxireferral.api.ModelRoles.User;
 import org.taxireferral.api.ModelUtility.LocationCurrentTrip;
 
@@ -127,7 +125,6 @@ public class CurrentTripRESTEndpoint {
                     3,
                     1
             );
-
 
 
 

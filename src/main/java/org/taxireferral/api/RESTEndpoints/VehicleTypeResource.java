@@ -1,10 +1,10 @@
 package org.taxireferral.api.RESTEndpoints;
 
 import net.coobird.thumbnailator.Thumbnails;
-import org.taxireferral.api.DAOs.VehicleTypeDAOVersions;
+import org.taxireferral.api.DAOs.Deprecated.VehicleTypeDAOVersions;
 import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
-import org.taxireferral.api.Model.VehicleTypeVersion;
+import org.taxireferral.api.Model.DeprecatedVehicleType.VehicleTypeVersion;
 import org.taxireferral.api.ModelEndpoints.VehicleTypeEndPoint;
 import org.taxireferral.api.ModelImages.Image;
 import org.taxireferral.api.ModelRoles.User;

@@ -5,6 +5,7 @@ import org.taxireferral.api.Globals.GlobalConstants;
 import org.taxireferral.api.Globals.Globals;
 import org.taxireferral.api.Model.TripHistory;
 import org.taxireferral.api.Model.Vehicle;
+import org.taxireferral.api.Model.VehicleType;
 import org.taxireferral.api.ModelBilling.Transaction;
 import org.taxireferral.api.ModelEndpoints.VehicleEndPoint;
 import org.taxireferral.api.ModelRoles.User;
@@ -685,6 +686,134 @@ public class VehicleDAO {
 
 
 
+    public int updateVehicleByDriverNew(Vehicle vehicle)
+    {
+
+
+
+        Connection connection = null;
+        PreparedStatement statementUpdate = null;
+
+        int rowCountItems = -1;
+
+        String update = "";
+
+
+
+        update =  " UPDATE " + Vehicle.TABLE_NAME
+                + " SET "   + Vehicle.MIN_TRIP_CHARGES    + "=?,"
+                            + Vehicle.CHARGES_PER_KM      + "=?,"
+                            + Vehicle.FILTER_BY_DESTINATION   + "=?,"
+                            + Vehicle.DESTINATION_FILTER_LAT   + "=?,"
+                            + Vehicle.DESTINATION_FILTER_LON   + "=?,"
+                            + Vehicle.DESTINATION_FILTER_RADIUS   + "=?"
+                + " FROM "  + VehicleType.TABLE_NAME
+                + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_TYPE + " = " + VehicleType.TABLE_NAME + "." + VehicleType.VEHICLE_TYPE_ID
+                + " AND "   + Vehicle.DRIVER_ID  + " = ?"
+                + " AND "   + Vehicle.TABLE_NAME + "." + Vehicle.MIN_TRIP_CHARGES + " <= " + VehicleType.TABLE_NAME + "." + VehicleType.MAX_MIN_TRIP_CHARGE
+                + " AND "   + Vehicle.TABLE_NAME + "." + Vehicle.CHARGES_PER_KM + " <= " + VehicleType.TABLE_NAME + "." + VehicleType.MAX_CHARGES_PER_KM ;
+
+
+
+
+//        update =  " UPDATE " + Vehicle.TABLE_NAME
+//                + " SET "   + Vehicle.MIN_TRIP_CHARGES    + "=?,"
+//                            + Vehicle.CHARGES_PER_KM      + "=?,"
+//                            + Vehicle.FILTER_BY_DESTINATION   + "=?,"
+//                            + Vehicle.DESTINATION_FILTER_LAT   + "=?,"
+//                            + Vehicle.DESTINATION_FILTER_LON   + "=?,"
+//                            + Vehicle.DESTINATION_FILTER_RADIUS   + "=?"
+//                + " FROM "  + VehicleType.TABLE_NAME
+//                + " WHERE " + Vehicle.TABLE_NAME + "." + Vehicle.VEHICLE_TYPE + " = " + VehicleType.TABLE_NAME + "." + VehicleType.VEHICLE_TYPE_ID
+//                + " AND "   + Vehicle.DRIVER_ID          + " = ?"
+//                + " AND ( "   + " ( " + Vehicle.VEHICLE_TYPE + " IS NOT NULL "
+//                                + " AND "   + Vehicle.TABLE_NAME + "." + Vehicle.MIN_TRIP_CHARGES + " <= " + VehicleType.TABLE_NAME + "." + VehicleType.MAX_MIN_TRIP_CHARGE
+//                                + " AND "   + Vehicle.TABLE_NAME + "." + Vehicle.CHARGES_PER_KM + " <= " + VehicleType.TABLE_NAME + "." + VehicleType.MAX_CHARGES_PER_KM  + " ) "
+//                + " OR " + " ( "  + Vehicle.VEHICLE_TYPE + " IS NULL "
+//                                + " AND "   + Vehicle.TABLE_NAME + "." + Vehicle.MIN_TRIP_CHARGES + " <= " + GlobalConstants.max_min_trip_charges
+//                                + " AND "   + Vehicle.TABLE_NAME + "." + Vehicle.CHARGES_PER_KM + " <= " + GlobalConstants.max_charges_per_km + " )"
+//                + " ) ";
+//
+//
+
+
+        try {
+
+            connection = dataSource.getConnection();
+//            connection.setAutoCommit(false);
+
+
+            statementUpdate = connection.prepareStatement(update,PreparedStatement.RETURN_GENERATED_KEYS);
+            int i = 0;
+
+            statementUpdate.setObject(++i,vehicle.getMinTripCharges());
+            statementUpdate.setObject(++i,vehicle.getChargesPerKM());
+
+            statementUpdate.setObject(++i,vehicle.isFilterByDestination());
+            statementUpdate.setObject(++i,vehicle.getLatDestinationFilter());
+            statementUpdate.setObject(++i,vehicle.getLonDestinationFilter());
+            statementUpdate.setObject(++i,vehicle.getRadiusDestinationFilter());
+
+
+            statementUpdate.setObject(++i,vehicle.getDriverID());
+
+            rowCountItems = statementUpdate.executeUpdate();
+
+
+
+
+
+//            connection.commit();
+
+        } catch (SQLException e) {
+
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+//            if (connection != null) {
+//                try {
+//
+//                    idOfInsertedRow=-1;
+//                    rowCountItems = 0;
+//
+//                    connection.rollback();
+//                } catch (SQLException e1) {
+//                    e1.printStackTrace();
+//                }
+//            }
+        }
+        finally
+        {
+
+            if (statementUpdate != null) {
+                try {
+                    statementUpdate.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            try {
+
+                if(connection!=null)
+                {connection.close();}
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+
+
+        return rowCountItems;
+    }
+
+
+
+
+
+
 
 
     public int updateVehicleByDriver(Vehicle vehicle)
@@ -723,7 +852,12 @@ public class VehicleDAO {
 
         update =  " UPDATE " + Vehicle.TABLE_NAME
                 + " SET "   + Vehicle.MIN_TRIP_CHARGES    + "=?,"
-                            + Vehicle.CHARGES_PER_KM      + "=?"
+                            + Vehicle.CHARGES_PER_KM      + "=?,"
+                            + Vehicle.FILTER_BY_DESTINATION   + "=?,"
+                            + Vehicle.DESTINATION_FILTER_LAT   + "=?,"
+                            + Vehicle.DESTINATION_FILTER_LON   + "=?,"
+                            + Vehicle.DESTINATION_FILTER_RADIUS   + "=?"
+
                 + " WHERE " + Vehicle.DRIVER_ID          + " = ?";
 
 
@@ -739,10 +873,14 @@ public class VehicleDAO {
             statementUpdate = connection.prepareStatement(update,PreparedStatement.RETURN_GENERATED_KEYS);
             int i = 0;
 
-
-//            statementUpdate.setString(++i,vehicle.getVehicleModelName());
             statementUpdate.setObject(++i,vehicle.getMinTripCharges());
             statementUpdate.setObject(++i,vehicle.getChargesPerKM());
+
+            statementUpdate.setObject(++i,vehicle.isFilterByDestination());
+            statementUpdate.setObject(++i,vehicle.getLatDestinationFilter());
+            statementUpdate.setObject(++i,vehicle.getLonDestinationFilter());
+            statementUpdate.setObject(++i,vehicle.getRadiusDestinationFilter());
+
 
             statementUpdate.setObject(++i,vehicle.getDriverID());
 
@@ -1108,9 +1246,7 @@ public class VehicleDAO {
 
 
         update = "UPDATE " + Vehicle.TABLE_NAME
-
-                + " SET "
-                + Vehicle.VEHICLE_STATUS + "=?"
+                + " SET " + Vehicle.VEHICLE_STATUS + "=?"
                 + " WHERE " + Vehicle.VEHICLE_ID + " = ?";
 
 
@@ -1271,6 +1407,10 @@ public class VehicleDAO {
                 + Vehicle.TABLE_NAME + "." + Vehicle.ENABLED + ","
                 + Vehicle.TABLE_NAME + "." + Vehicle.ENABLED_UPTO + ","
 
+                + Vehicle.TABLE_NAME + "." + Vehicle.FILTER_BY_DESTINATION + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.DESTINATION_FILTER_LAT + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.DESTINATION_FILTER_LON + ","
+                + Vehicle.TABLE_NAME + "." + Vehicle.DESTINATION_FILTER_RADIUS + ","
 
                 + User.TABLE_NAME + "." + User.USER_ID + ","
                 + User.TABLE_NAME + "." + User.E_MAIL + ","
@@ -1344,6 +1484,11 @@ public class VehicleDAO {
                 vehicle.setEnabled(rs.getBoolean(Vehicle.ENABLED));
                 vehicle.setEnabledUpto(rs.getTimestamp(Vehicle.ENABLED_UPTO));
 
+                vehicle.setFilterByDestination(rs.getBoolean(Vehicle.FILTER_BY_DESTINATION));
+                vehicle.setLatDestinationFilter(rs.getDouble(Vehicle.DESTINATION_FILTER_LAT));
+                vehicle.setLonDestinationFilter(rs.getDouble(Vehicle.DESTINATION_FILTER_LON));
+                vehicle.setRadiusDestinationFilter(rs.getDouble(Vehicle.DESTINATION_FILTER_RADIUS));
+
 
                 User driver = new User();
 
@@ -1409,8 +1554,11 @@ public class VehicleDAO {
 
 
 
+
+
     public VehicleEndPoint getTaxisAvailable(
             Double latPickUp, Double lonPickUp,
+            double latDestination, double lonDestination,
             Double tripDistance,
             Boolean gender,
             String sortBy,
@@ -1433,7 +1581,6 @@ public class VehicleDAO {
                 + latPickUp + ")) * cos( radians(" +  Vehicle.LAT_CURRENT +  ") ) * cos(radians(" + Vehicle.LON_CURRENT +  ") - radians("
                 + lonPickUp + "))"
                 + " + sin( radians(" + latPickUp + ")) * sin(radians(" + Vehicle.LAT_CURRENT + "))) as distance" + ","
-
 
 
                 + "(  ( Greatest( ( 6371 * acos( cos( radians("
@@ -1481,9 +1628,16 @@ public class VehicleDAO {
                 + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.ENABLED + " = TRUE "
                 + " AND " + User.TABLE_NAME + "." + User.TAX_ACCOUNT_BALANCE + " > " + GlobalConstants.MIN_TAX_ACCOUNT_BALANCE
                 + " AND " + User.TABLE_NAME + "." + User.SERVICE_ACCOUNT_BALANCE + " > " + GlobalConstants.MIN_SERVICE_ACCOUNT_BALANCE + " - " + User.TABLE_NAME + "." + User.EXTENDED_CREDIT_LIMIT
-                + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.ENABLED_UPTO + " > now()";
-
-
+                + " AND " + Vehicle.TABLE_NAME + "." + Vehicle.ENABLED_UPTO + " > now()"
+                + " AND ( " + Vehicle.TABLE_NAME + "." + Vehicle.FILTER_BY_DESTINATION + " = FALSE"
+                + " OR " + " ( " + Vehicle.TABLE_NAME + "." + Vehicle.FILTER_BY_DESTINATION + " = TRUE AND "
+                + "( " +
+                "( 6371 * acos( cos( radians("
+                + latDestination + ")) * cos( radians(" +  Vehicle.DESTINATION_FILTER_LAT +  ") ) * cos(radians(" + Vehicle.DESTINATION_FILTER_LON +  ") - radians("
+                + lonDestination + "))"
+                + " + sin( radians(" + latDestination + ")) * sin(radians(" + Vehicle.DESTINATION_FILTER_LAT + "))))"
+                + " < " + Vehicle.TABLE_NAME + "." + Vehicle.DESTINATION_FILTER_RADIUS + ")" + ")"
+                + ")";
 
 
 

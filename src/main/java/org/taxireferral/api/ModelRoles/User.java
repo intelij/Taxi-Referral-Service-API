@@ -1,5 +1,6 @@
 package org.taxireferral.api.ModelRoles;
 
+
 import org.taxireferral.api.Model.Vehicle;
 
 import java.sql.Timestamp;
@@ -7,6 +8,9 @@ import java.sql.Timestamp;
 /**
  * Created by sumeet on 29/5/16.
  */
+
+
+
 public class User {
 
     // constants
@@ -52,6 +56,7 @@ public class User {
     // current_due = total_service_charges - total_credits - total_paid
     public static final String TAX_ACCOUNT_BALANCE = "TAX_ACCOUNT_BALANCE";
     public static final String SERVICE_ACCOUNT_BALANCE = "SERVICE_ACCOUNT_BALANCE";
+    public static final String SERVICE_REQUESTS_BALANCE = "SERVICE_REQUESTS_BALANCE";
 
 //    public static final String TOTAL_SERVICE_CHARGES = "TOTAL_SERVICE_CHARGES";
 //    public static final String TOTAL_CREDITS = "TOTAL_CREDITS";
@@ -106,6 +111,9 @@ public class User {
 
                     + " " + User.TAX_ACCOUNT_BALANCE + " float NOT NULL default 0,"
                     + " " + User.SERVICE_ACCOUNT_BALANCE + " float NOT NULL default 0,"
+                    + " " + User.SERVICE_REQUESTS_BALANCE + " float NOT NULL default 0,"
+
+
 //                    + " " + User.TOTAL_SERVICE_CHARGES + " float NOT NULL default 0,"
 //                    + " " + User.TOTAL_CREDITS + " float NOT NULL default 0,"
 //                    + " " + User.TOTAL_PAID + " float NOT NULL default 0,"
@@ -189,6 +197,7 @@ public class User {
 
     private double taxAccountBalance;
     private double serviceAccountBalance;
+    private double serviceRequestsBalance;
 
 //    private double totalServiceCharges;
 //    private double totalCredited;
@@ -215,6 +224,14 @@ public class User {
 
     // Getters and Setters
 
+
+    public double getServiceRequestsBalance() {
+        return serviceRequestsBalance;
+    }
+
+    public void setServiceRequestsBalance(double serviceRequestsBalance) {
+        this.serviceRequestsBalance = serviceRequestsBalance;
+    }
 
     public String getRt_oneSignalPlayerID() {
         return rt_oneSignalPlayerID;

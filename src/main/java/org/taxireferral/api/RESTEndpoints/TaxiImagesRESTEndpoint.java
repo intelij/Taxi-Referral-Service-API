@@ -36,9 +36,7 @@ public class TaxiImagesRESTEndpoint {
     public Response insertImage(TaxiImage image)
     {
         User user = (User) Globals.accountApproved;
-
         image.setSubmittedBy(user.getUserID());
-
 
 
         if(user.getRole()==GlobalConstants.ROLE_STAFF_CODE)

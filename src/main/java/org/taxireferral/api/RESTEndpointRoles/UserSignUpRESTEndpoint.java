@@ -123,6 +123,9 @@ public class UserSignUpRESTEndpoint {
                         .send();
 
 
+
+
+
             }
         }
         else if(user.getRt_registration_mode()==User.REGISTRATION_MODE_PHONE)

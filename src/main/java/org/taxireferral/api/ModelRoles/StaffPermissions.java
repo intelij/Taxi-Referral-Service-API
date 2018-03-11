@@ -6,8 +6,10 @@ package org.taxireferral.api.ModelRoles;
 
 public class StaffPermissions {
 
+
     // Table Name for User
     public static final String TABLE_NAME = "STAFF_PERMISSIONS";
+
 
     // Column names
     public static final String PERMISSION_ID = "PERMISSION_ID";

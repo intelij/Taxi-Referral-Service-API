@@ -1,7 +1,6 @@
 package org.taxireferral.api.Model;
 
 import org.taxireferral.api.ModelRoles.User;
-
 import java.sql.Timestamp;
 
 /**
@@ -19,23 +18,26 @@ public class VehicleType {
     public static final String IMAGE_PATH = "IMAGE_PATH";
     public static final String DESCRIPTION = "DESCRIPTION";
 
+    public static final String MAX_MIN_TRIP_CHARGE = "MAX_MIN_TRIP_CHARGE";
+    public static final String MAX_CHARGES_PER_KM = "MAX_CHARGES_PER_KM";
 
 
 
 
     // Create Table CurrentServiceConfiguration Provider
-    public static final String createTablePostgres =
+    public static final String createTable =
 
             "CREATE TABLE IF NOT EXISTS "
                     + VehicleType.TABLE_NAME + "("
                     + " " + VehicleType.VEHICLE_TYPE_ID + " SERIAL PRIMARY KEY,"
                     + " " + VehicleType.NAME + " text ,"
                     + " " + VehicleType.IMAGE_PATH + " text ,"
-                    + " " + VehicleType.DESCRIPTION + " text "
+                    + " " + VehicleType.DESCRIPTION + " text ,"
+                    + " " + VehicleType.MAX_MIN_TRIP_CHARGE + " float ,"
+                    + " " + VehicleType.MAX_CHARGES_PER_KM + " float "
                     + ")";
 
 
-    // + " " + VehicleType.TIMESTAMP_UPDATED + " timestamp with time zone not null default now() ,"
 
 
     // instance variables
@@ -44,48 +46,10 @@ public class VehicleType {
     private String name;
     private String imagePath;
     private String description;
-
-//    private int parent;
-    private boolean backupExists;
-    private Timestamp timestampCreated;
-//    private Timestamp timestampUpdated;
-//    private Timestamp timestampApplied;
-//    private Timestamp timestampApproved;
-//    private boolean isApproved;
-    private Integer submittedBy;
-//    private String notesForReviewer;
-//    private String reviewerFeedback;
-//    private int reviewedBy;
+    private double maxMinTripCharges;
+    private double maxChargesPerKm;
 
 
-
-
-
-
-    public boolean isBackupExists() {
-        return backupExists;
-    }
-
-    public void setBackupExists(boolean backupExists) {
-        this.backupExists = backupExists;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-
-    public Timestamp getTimestampCreated() {
-        return timestampCreated;
-    }
-
-    public void setTimestampCreated(Timestamp timestampCreated) {
-        this.timestampCreated = timestampCreated;
-    }
 
 
     // getter and setter methods
@@ -112,5 +76,30 @@ public class VehicleType {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public double getMaxMinTripCharges() {
+        return maxMinTripCharges;
+    }
+
+    public void setMaxMinTripCharges(double maxMinTripCharges) {
+        this.maxMinTripCharges = maxMinTripCharges;
+    }
+
+    public double getMaxChargesPerKm() {
+        return maxChargesPerKm;
+    }
+
+    public void setMaxChargesPerKm(double maxChargesPerKm) {
+        this.maxChargesPerKm = maxChargesPerKm;
     }
 }
